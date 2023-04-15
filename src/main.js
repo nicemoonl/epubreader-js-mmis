@@ -3,12 +3,13 @@ import { Storage } from './storage.js';
 
 "use strict";
 
+window.ResizeObserver = undefined;
 window.onload = function () {
 
 	const storage = new Storage();
 	const url = new URL(window.location);
-	const path = url.search.length > 0 
-		? url.searchParams.get("bookPath") 
+	const path = url.search.length > 0
+		? url.searchParams.get("bookPath")
 		: "https://s3.amazonaws.com/moby-dick/";
 
 	storage.init(function () {
