@@ -1,6 +1,6 @@
 {
     "name": "epubjs-reader",
-    "version": "0.3.0",
+    "version": "0.3.1",
     "repository": "https://github.com/futurepress/epubjs-reader",
     "description": "ePub.js Reader",
     "main": "src/main.js",
@@ -14,10 +14,10 @@
     "license": "MIT",
     "devDependencies": {
         "copy-webpack-plugin": "^8.1.1",
-        "webpack": "^5.75.0",
+        "webpack": "^5.79.0",
         "webpack-cli": "^4.10.0",
         "webpack-concat-files-plugin": "^0.5.2",
-        "webpack-dev-server": "^4.11.1"
+        "webpack-dev-server": "^4.13.3"
     },
     "dependencies": {
         "epubjs": "^0.3.93",
