@@ -3,8 +3,6 @@ Epub.js Reader
 
 ![UI](demo-ui.png)
 
-[Try it while reading Moby Dick](https://futurepress.github.io/epubjs-reader/)
-
 About the Reader
 -------------------------
 
@@ -44,19 +42,3 @@ To generate a new build run
 ```javascript
 npm run build
 ```
-
-Additional Resources
--------------------------
-
-[Epub.js Developer Mailing List](https://groups.google.com/forum/#!forum/epubjs)
-
-IRC Server: freenode.net Channel: #epub.js
-
-Follow us on twitter: @Epubjs
-
-+ http://twitter.com/#!/Epubjs
-
-Other
--------------------------
-
-EPUB is a registered trademark of the [IDPF](http://idpf.org/).
