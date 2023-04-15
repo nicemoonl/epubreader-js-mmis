@@ -2,149 +2,149 @@ import { UIPanel, UIDiv, UIInput } from './ui.js';
 import { MetadataPanel } from './panels/metadata_panel.js';
 
 export class Toolbar {
-    
-    constructor(reader) {
 
-        const strings = reader.strings;
+	constructor(reader) {
 
-        const container = new UIDiv().setId('toolbar');
+		const strings = reader.strings;
 
-        const start = new UIPanel().setId('start');
-        const opener = new UIInput('button').setId('btn-s');
-        const openerStr = strings.get('toolbar/opener');
-        opener.dom.title = openerStr;
-        opener.dom.onclick = () => {
+		const container = new UIDiv().setId('toolbar');
 
-            const isOpen = opener.dom.classList.length > 0;
+		const start = new UIPanel().setId('start');
+		const opener = new UIInput('button').setId('btn-s');
+		const openerStr = strings.get('toolbar/opener');
+		opener.dom.title = openerStr;
+		opener.dom.onclick = () => {
 
-            reader.emit('sidebaropener', !isOpen);
+			const isOpen = opener.dom.classList.length > 0;
 
-            if (!isOpen) {
-                opener.addClass('open');
-            } else {
-                opener.removeClass('open');
-            }
-        };
+			reader.emit('sidebaropener', !isOpen);
 
-        start.add(opener);
+			if (!isOpen) {
+				opener.addClass('open');
+			} else {
+				opener.removeClass('open');
+			}
+		};
 
-        const center = new MetadataPanel(reader);
+		start.add(opener);
 
-        const end = new UIPanel().setId('end');
-        const open = new UIInput('file').setId('btn-o');
-        const uploadStr = strings.get('toolbar/openbook');
-        const storage = window.storage;
-        open.dom.title = uploadStr;
-        open.dom.accept = 'application/epub+zip';
-        open.dom.addEventListener('change', function (e) {
+		const center = new MetadataPanel(reader);
 
-            if (e.target.files.length === 0)
-                return;
+		const end = new UIPanel().setId('end');
+		const open = new UIInput('file').setId('btn-o');
+		const uploadStr = strings.get('toolbar/openbook');
+		const storage = window.storage;
+		open.dom.title = uploadStr;
+		open.dom.accept = 'application/epub+zip';
+		open.dom.addEventListener('change', function (e) {
 
-            if (window.FileReader) {
+			if (e.target.files.length === 0)
+				return;
 
-                const fr = new FileReader();
-                fr.onload = function (e) {
-                    storage.clear();
-                    storage.set(e.target.result, () => {
-                        reader.unload();
-                        reader.init(e.target.result, { restore: true });
-                    });
-                };
-                fr.readAsArrayBuffer(e.target.files[0]);
-                fr.onerror = function (e) {
-                    console.error(e);
-                };
+			if (window.FileReader) {
 
-                if (window.location.href.includes("?bookPath=")) {
-                    window.location.href = window.location.origin + window.location.pathname;
-                }
+				const fr = new FileReader();
+				fr.onload = function (e) {
+					storage.clear();
+					storage.set(e.target.result, () => {
+						reader.unload();
+						reader.init(e.target.result, { restore: true });
+					});
+				};
+				fr.readAsArrayBuffer(e.target.files[0]);
+				fr.onerror = function (e) {
+					console.error(e);
+				};
 
-            } else {
-                alert(strings.get('toolbar/openbook/error'));
-            }
-        }, false);
+				if (window.location.href.includes("?bookPath=")) {
+					window.location.href = window.location.origin + window.location.pathname;
+				}
 
-        end.add(open);
+			} else {
+				alert(strings.get('toolbar/openbook/error'));
+			}
+		}, false);
 
-        const bookmark = new UIInput('button').setId('btn-b');
-        const bookmarkStr = strings.get('toolbar/bookmark');
-        bookmark.dom.title = bookmarkStr;
-        bookmark.dom.addEventListener('click', () => {
+		end.add(open);
 
-            const cfi = reader.rendition.currentLocation().start.cfi;
-            reader.emit('bookmarked', reader.isBookmarked(cfi) === -1);
-        });
+		const bookmark = new UIInput('button').setId('btn-b');
+		const bookmarkStr = strings.get('toolbar/bookmark');
+		bookmark.dom.title = bookmarkStr;
+		bookmark.dom.addEventListener('click', () => {
 
-        end.add(bookmark);
+			const cfi = reader.rendition.currentLocation().start.cfi;
+			reader.emit('bookmarked', reader.isBookmarked(cfi) === -1);
+		});
 
-        if (document.fullscreenEnabled) {
-            
-            const fullscreen = new UIInput('button').setId('btn-f');
-            const fullscreenStr = strings.get('toolbar/fullsceen');
-            fullscreen.dom.title = fullscreenStr;
-            fullscreen.dom.addEventListener('click', () => {
-                
-                this.toggleFullScreen();
-            });
+		end.add(bookmark);
 
-            document.addEventListener('keydown', (e) => {
-            
-                if (e.key === 'F11') {
-                    e.preventDefault();
-                    this.toggleFullScreen();
-                }
-            }, false);
+		if (document.fullscreenEnabled) {
 
-            document.addEventListener('fullscreenchange', (e) => {
+			const fullscreen = new UIInput('button').setId('btn-f');
+			const fullscreenStr = strings.get('toolbar/fullsceen');
+			fullscreen.dom.title = fullscreenStr;
+			fullscreen.dom.addEventListener('click', () => {
 
-                const w = window.screen.width === e.path[2].innerWidth;
-                const h = window.screen.height === e.path[2].innerHeight;
-                
-                if (w && h) {
-                    fullscreen.addClass('resize-small');
-                } else {
-                    fullscreen.removeClass('resize-small');
-                }
-            }, false);
+				this.toggleFullScreen();
+			});
 
-            end.add(fullscreen);
-        }
+			document.addEventListener('keydown', (e) => {
 
-        container.add([start, center, end]);
-        document.body.appendChild(container.dom);
+				if (e.key === 'F11') {
+					e.preventDefault();
+					this.toggleFullScreen();
+				}
+			}, false);
 
-        //-- events --//
+			document.addEventListener('fullscreenchange', (e) => {
 
-        reader.on('relocated', (location) => {
+				const w = window.screen.width === e.path[2].innerWidth;
+				const h = window.screen.height === e.path[2].innerHeight;
 
-            const cfi = location.start.cfi;
+				if (w && h) {
+					fullscreen.addClass('resize-small');
+				} else {
+					fullscreen.removeClass('resize-small');
+				}
+			}, false);
 
-            if (reader.isBookmarked(cfi) === -1) {
-                bookmark.removeClass('bookmarked');
-            } else {
-                bookmark.addClass('bookmarked');
-            }
-        });
+			end.add(fullscreen);
+		}
 
-        reader.on('bookmarked', (value) => {
+		container.add([start, center, end]);
+		document.body.appendChild(container.dom);
 
-            if (value) {
-                bookmark.addClass('bookmarked');
-            } else {
-                bookmark.removeClass('bookmarked');
-            }
-        });
-    }
+		//-- events --//
 
-    toggleFullScreen() {
-        
-        document.activeElement.blur();
-        
-        if (document.fullscreenElement === null) {
-            document.documentElement.requestFullscreen();
-        } else if (document.exitFullscreen) {
-            document.exitFullscreen();
-        }
-    }
+		reader.on('relocated', (location) => {
+
+			const cfi = location.start.cfi;
+
+			if (reader.isBookmarked(cfi) === -1) {
+				bookmark.removeClass('bookmarked');
+			} else {
+				bookmark.addClass('bookmarked');
+			}
+		});
+
+		reader.on('bookmarked', (value) => {
+
+			if (value) {
+				bookmark.addClass('bookmarked');
+			} else {
+				bookmark.removeClass('bookmarked');
+			}
+		});
+	}
+
+	toggleFullScreen() {
+
+		document.activeElement.blur();
+
+		if (document.fullscreenElement === null) {
+			document.documentElement.requestFullscreen();
+		} else if (document.exitFullscreen) {
+			document.exitFullscreen();
+		}
+	}
 }

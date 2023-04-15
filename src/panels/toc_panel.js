@@ -1,63 +1,63 @@
 import { UIPanel, UITreeView, UITreeViewItem, UILink } from '../ui.js';
 
 export class TocPanel extends UIPanel {
-    
-    constructor(reader) {
-        
-        super();
-        super.setId('contents');
 
-        this.reader = reader;
-        this.selector = undefined; // save reference to selected tree item
+	constructor(reader) {
 
-        //-- events --//
+		super();
+		super.setId('contents');
 
-        reader.on('navigation', (toc) => {
+		this.reader = reader;
+		this.selector = undefined; // save reference to selected tree item
 
-            this.init(toc);
-        });
-    }
+		//-- events --//
 
-    init(toc) {
+		reader.on('navigation', (toc) => {
 
-        super.clear();
-        super.add(this.generateToc(toc));
-    }
+			this.init(toc);
+		});
+	}
 
-    generateToc(toc, parent) {
+	init(toc) {
 
-        const container = new UITreeView();
+		super.clear();
+		super.add(this.generateToc(toc));
+	}
 
-        toc.forEach((chapter) => {
+	generateToc(toc, parent) {
 
-            const link = new UILink(chapter.href, chapter.label);
-            const treeItem = new UITreeViewItem(chapter.id, link, parent);
+		const container = new UITreeView();
 
-            link.dom.onclick = () => {
+		toc.forEach((chapter) => {
 
-                this.reader.rendition.display(chapter.href);
-                if (this.selector && this.selector !== treeItem) {
-                    this.selector.unselect();
-                }
-                treeItem.select();
-                this.selector = treeItem;
-                this.reader.emit('tocselected', chapter.id);
-                return false;
-            };
+			const link = new UILink(chapter.href, chapter.label);
+			const treeItem = new UITreeViewItem(chapter.id, link, parent);
 
-            if (this.reader.settings.sectionId === chapter.id) {
-                treeItem.select();
-                this.selector = treeItem;
-            }
+			link.dom.onclick = () => {
 
-            if (chapter.subitems && chapter.subitems.length > 0) {
-                
-                treeItem.setItems(this.generateToc(chapter.subitems, treeItem));
-            }
+				this.reader.rendition.display(chapter.href);
+				if (this.selector && this.selector !== treeItem) {
+					this.selector.unselect();
+				}
+				treeItem.select();
+				this.selector = treeItem;
+				this.reader.emit('tocselected', chapter.id);
+				return false;
+			};
 
-            container.add(treeItem);
-        });
+			if (this.reader.settings.sectionId === chapter.id) {
+				treeItem.select();
+				this.selector = treeItem;
+			}
 
-        return container;
-    }
+			if (chapter.subitems && chapter.subitems.length > 0) {
+
+				treeItem.setItems(this.generateToc(chapter.subitems, treeItem));
+			}
+
+			container.add(treeItem);
+		});
+
+		return container;
+	}
 }

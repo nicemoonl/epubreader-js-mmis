@@ -6,15 +6,15 @@ export class SettingsPanel extends UIPanel {
 
 		super();
 		super.setId('settings');
-		
+
 		const strings = reader.strings;
 
 		const languageStr = strings.get('sidebar/settings/language');
 		const languageRow = new UIRow();
 		const language = new UISelect().setOptions({
-			en: 'English', 
-			fr: 'French', 
-			ja: 'Japanese', 
+			en: 'English',
+			fr: 'French',
+			ja: 'Japanese',
 			ru: 'Russian'
 		});
 		language.dom.addEventListener('change', (e) => {

@@ -2,81 +2,81 @@ import { UIPanel, UIRow, UIInput } from '../ui.js';
 
 export class SearchPanel extends UIPanel {
 
-    constructor(reader) {
+	constructor(reader) {
 
-        super();
-        super.setId('search');
-        
-        const strings = reader.strings;
+		super();
+		super.setId('search');
 
-        let searchQuery = undefined;
-        const searchBox = new UIInput('search');
-        searchBox.dom.placeholder = strings.get('sidebar/search/placeholder');
-        searchBox.dom.onsearch = () => {
+		const strings = reader.strings;
 
-            const value = searchBox.getValue();
-            
-            if (value.length === 0) {
-                this.clear();
-            } else if (searchQuery !== value) {
-                this.clear();
-                this.doSearch(value).then(results => {
+		let searchQuery = undefined;
+		const searchBox = new UIInput('search');
+		searchBox.dom.placeholder = strings.get('sidebar/search/placeholder');
+		searchBox.dom.onsearch = () => {
 
-                    results.forEach(item => {
-                        this.set(item);
-                    });
-                });
-            }
-            searchQuery = value;
-        };
+			const value = searchBox.getValue();
 
-        const ctrlRow = new UIRow();
-        ctrlRow.add(searchBox);
-        super.add(ctrlRow);
+			if (value.length === 0) {
+				this.clear();
+			} else if (searchQuery !== value) {
+				this.clear();
+				this.doSearch(value).then(results => {
 
-        this.items = document.createElement('ul');
-        this.dom.appendChild(this.items);
-        this.reader = reader;
-        //
-        // improvement of the highlighting of keywords is required...
-        //
-    }
+					results.forEach(item => {
+						this.set(item);
+					});
+				});
+			}
+			searchQuery = value;
+		};
 
-    /**
-     * Searching the entire book
-     * @param {*} q Query keyword
-     * @returns The search result array.
-     */
-    async doSearch(q) {
+		const ctrlRow = new UIRow();
+		ctrlRow.add(searchBox);
+		super.add(ctrlRow);
 
-        const book = this.reader.book;
-        const results = await Promise.all(
-            book.spine.spineItems.map(item => item.load(book.load.bind(book))
-            .then(item.find.bind(item, q)).finally(item.unload.bind(item))));
-        return await Promise.resolve([].concat.apply([], results));
-    }
+		this.items = document.createElement('ul');
+		this.dom.appendChild(this.items);
+		this.reader = reader;
+		//
+		// improvement of the highlighting of keywords is required...
+		//
+	}
 
-    set(data) {
+	/**
+	 * Searching the entire book
+	 * @param {*} q Query keyword
+	 * @returns The search result array.
+	 */
+	async doSearch(q) {
 
-        const item = document.createElement('li');
-        const link = document.createElement('a');
+		const book = this.reader.book;
+		const results = await Promise.all(
+			book.spine.spineItems.map(item => item.load(book.load.bind(book))
+				.then(item.find.bind(item, q)).finally(item.unload.bind(item))));
+		return await Promise.resolve([].concat.apply([], results));
+	}
 
-        link.href = "#" + data.cfi;
-        link.textContent = data.excerpt;
-        link.onclick = () => {
+	set(data) {
 
-            this.reader.rendition.display(data.cfi);
-            return false;
-        };
+		const item = document.createElement('li');
+		const link = document.createElement('a');
 
-        item.appendChild(link);
-        this.items.appendChild(item);
-    }
+		link.href = "#" + data.cfi;
+		link.textContent = data.excerpt;
+		link.onclick = () => {
 
-    clear() {
+			this.reader.rendition.display(data.cfi);
+			return false;
+		};
 
-        while (this.items.hasChildNodes()) {
-            this.items.removeChild(this.items.lastChild);
-        }
-    }
+		item.appendChild(link);
+		this.items.appendChild(item);
+	}
+
+	clear() {
+
+		while (this.items.hasChildNodes()) {
+			this.items.removeChild(this.items.lastChild);
+		}
+	}
 }

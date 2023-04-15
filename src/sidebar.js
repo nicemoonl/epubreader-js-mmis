@@ -6,34 +6,34 @@ import { SearchPanel } from './panels/search_panel.js';
 import { SettingsPanel } from './panels/settings_panel.js';
 
 export class Sidebar {
-    
-    constructor(reader) {
-        
-        const strings = reader.strings;
-        const tabs = [
-            strings.get('sidebar/contents'),
-            strings.get('sidebar/bookmarks'),
-            strings.get('sidebar/annotations'),
-            strings.get('sidebar/search'),
-            strings.get('sidebar/settings')
-        ];
 
-        this.toc = new TocPanel(reader);
-        this.bookmarks = new BookmarksPanel(reader);
-        this.annotations = new AnnotationsPanel(reader);
-        this.search = new SearchPanel(reader);
-        this.settings = new SettingsPanel(reader);
+	constructor(reader) {
 
-        this.container = new UITabbedPanel('vertical').setId('sidebar');
+		const strings = reader.strings;
+		const tabs = [
+			strings.get('sidebar/contents'),
+			strings.get('sidebar/bookmarks'),
+			strings.get('sidebar/annotations'),
+			strings.get('sidebar/search'),
+			strings.get('sidebar/settings')
+		];
 
-        this.container.addTab('tab-t', tabs[0], this.toc);
-        this.container.addTab('tab-b', tabs[1], this.bookmarks);
-        this.container.addTab('tab-n', tabs[2], this.annotations);
-        this.container.addTab('tab-s', tabs[3], this.search);
-        this.container.addTab('tab-c', tabs[4], this.settings);
+		this.toc = new TocPanel(reader);
+		this.bookmarks = new BookmarksPanel(reader);
+		this.annotations = new AnnotationsPanel(reader);
+		this.search = new SearchPanel(reader);
+		this.settings = new SettingsPanel(reader);
 
-        this.container.select('tab-t');
+		this.container = new UITabbedPanel('vertical').setId('sidebar');
 
-        document.body.appendChild(this.container.dom);
-    }
+		this.container.addTab('tab-t', tabs[0], this.toc);
+		this.container.addTab('tab-b', tabs[1], this.bookmarks);
+		this.container.addTab('tab-n', tabs[2], this.annotations);
+		this.container.addTab('tab-s', tabs[3], this.search);
+		this.container.addTab('tab-c', tabs[4], this.settings);
+
+		this.container.select('tab-t');
+
+		document.body.appendChild(this.container.dom);
+	}
 }

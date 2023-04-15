@@ -3,7 +3,7 @@ import { UIPanel, UIRow, UITextArea, UIInput } from '../ui.js';
 export class AnnotationsPanel extends UIPanel {
 
 	constructor(reader) {
-		
+
 		super();
 		super.setId('annotations');
 
@@ -111,8 +111,8 @@ export class AnnotationsPanel extends UIPanel {
 		const item = document.createElement('li');
 		const link = document.createElement('a');
 		const btnr = document.createElement('span');
-		const call = () => {};
-		
+		const call = () => { };
+
 		link.href = "#" + note.href;
 		link.textContent = note.text;
 		link.onclick = () => {
@@ -126,11 +126,11 @@ export class AnnotationsPanel extends UIPanel {
 
 		btnr.className = 'btn-remove';
 		btnr.onclick = () => {
-			
+
 			this.remove(note);
 			return false;
 		};
-		
+
 		item.appendChild(btnr);
 
 		this.notes.appendChild(item);
@@ -154,7 +154,7 @@ export class AnnotationsPanel extends UIPanel {
 	clearNotes() {
 
 		const len = this.reader.settings.annotations.length;
-		for(let i = 0; i < len; i++) {
+		for (let i = 0; i < len; i++) {
 
 			this.remove(this.reader.settings.annotations[i]);
 		}

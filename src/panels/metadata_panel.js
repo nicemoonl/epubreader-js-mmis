@@ -1,9 +1,9 @@
 import { UIPanel, UIText } from '../ui.js';
 
 export class MetadataPanel extends UIPanel {
-	
+
 	constructor(reader) {
-		
+
 		super();
 		super.setId('metadata');
 
@@ -22,7 +22,7 @@ export class MetadataPanel extends UIPanel {
 	}
 
 	init(meta) {
-		
+
 		document.title = meta.title + " – " + meta.creator;
 
 		this.title.setValue(meta.title);
