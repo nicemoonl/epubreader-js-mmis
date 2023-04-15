@@ -1,7 +1,7 @@
 Epub.js Reader
 ================================
 
-![UI](http://github.com/intity/epubjs-reader/demo-ui.png)
+![UI](demo-ui.png)
 
 [Try it while reading Moby Dick](https://futurepress.github.io/epubjs-reader/)
 
