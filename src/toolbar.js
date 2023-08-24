@@ -97,9 +97,9 @@ export class Toolbar {
 			}, false);
 
 			document.addEventListener('fullscreenchange', (e) => {
-
-				const w = window.screen.width === e.path[2].innerWidth;
-				const h = window.screen.height === e.path[2].innerHeight;
+				
+				const w = window.screen.width === e.target.clientWidth;
+				const h = window.screen.height === e.target.clientHeight;
 
 				if (w && h) {
 					fullscreen.addClass('resize-small');
