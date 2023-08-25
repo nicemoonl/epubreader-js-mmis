@@ -25,13 +25,15 @@ export class SettingsPanel extends UIPanel {
 		languageRow.add(new UILabel(languageStr));
 		languageRow.add(language);
 
-		const fontSizeStr = strings.get('sidebar/settings/fontsize');
+		const fontSizeStr = strings.get("sidebar/settings/fontsize");
 		const fontSizeRow = new UIRow();
 		const fontSize = new UIInteger(100, 1);
-		fontSize.dom.addEventListener('change', (e) => {
+		fontSize.dom.onchange = (e) => {
 
-			reader.emit('fontresize', e.target.value);
-		});
+			reader.emit("styleschanged", {
+				fontSize: parseInt(e.target.value)
+			});
+		};
 
 		fontSizeRow.add(new UILabel(fontSizeStr));
 		fontSizeRow.add(fontSize);
@@ -113,10 +115,10 @@ export class SettingsPanel extends UIPanel {
 			language.setValue(reader.settings.language);
 		});
 
-		reader.on('fontresize', (value) => {
+		reader.on("styleschanged", (value) => {
 
-			if (fontSize.getValue() !== value) {
-				fontSize.setValue(value);
+			if (fontSize.getValue() !== value["fontSize"]) {
+				fontSize.setValue(value["fontSize"]);
 			}
 		});
 

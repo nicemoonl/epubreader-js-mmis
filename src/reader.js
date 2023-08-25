@@ -69,8 +69,8 @@ export class Reader {
 				this.generatePagination();
 			}
 			this.emit('bookready');
-			this.emit('fontresize', parseInt(this.settings.styles.fontSize));
 			this.emit("spreadchanged", this.settings.spread);
+			this.emit("styleschanged", this.settings.styles);
 		}.bind(this)).then(function () {
 			this.emit('bookloaded');
 		}.bind(this));
@@ -105,12 +105,6 @@ export class Reader {
 			this.emit('relocated', location);
 		});
 
-		this.on('fontresize', (value) => {
-			const fontSize = value + "%";
-			this.settings.styles.fontSize = fontSize;
-			this.rendition.themes.fontSize(fontSize);
-		});
-
 		this.on('prev', () => {
 			if (this.book.package.metadata.direction === 'rtl') {
 				this.rendition.next();
@@ -135,7 +129,12 @@ export class Reader {
 			this.settings.spread["mod"] = value["mod"];
 			this.settings.spread["min"] = value["min"];
 			this.rendition.spread(value["mod"], value["min"]);
-			console.log(value);
+		});
+
+		this.on("styleschanged", (value) => {
+			const fontSize = value["fontSize"];
+			this.settings.styles.fontSize = fontSize;
+			this.rendition.themes.fontSize(fontSize + "%");
 		});
 	}
 
@@ -230,7 +229,7 @@ export class Reader {
 
 		if (this.settings.styles === undefined) {
 			this.settings.styles = {
-				fontSize: "100%"
+				fontSize: 100
 			};
 		}
 
@@ -305,7 +304,6 @@ export class Reader {
 			if (stored.spread) {
 				this.settings.spread = this.defaults(this.settings.spread || {}, 
 					stored.spread);
-				console.log(stored.spread);
 			}
 			// Merge styles
 			if (stored.styles) {
@@ -383,24 +381,24 @@ export class Reader {
 		if (MOD) {
 
 			const step = 2;
-			let value = parseInt(this.settings.styles.fontSize);
+			let value = this.settings.styles.fontSize;
 
 			switch (e.key) {
 
 				case '=':
 					e.preventDefault();
 					value += step;
-					this.emit('fontresize', value);
+					this.emit("styleschanged", { fontSize: value });
 					break;
 				case '-':
 					e.preventDefault();
 					value -= step;
-					this.emit('fontresize', value);
+					this.emit("styleschanged", { fontSize: value });
 					break;
 				case '0':
 					e.preventDefault();
 					value = 100;
-					this.emit('fontresize', value);
+					this.emit("styleschanged", { fontSize: value });
 					break;
 			}
 		} else {
