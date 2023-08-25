@@ -70,6 +70,7 @@ export class Reader {
 			}
 			this.emit('bookready');
 			this.emit('fontresize', parseInt(this.settings.styles.fontSize));
+			this.emit("spreadchanged", this.settings.spread);
 		}.bind(this)).then(function () {
 			this.emit('bookloaded');
 		}.bind(this));
@@ -128,6 +129,13 @@ export class Reader {
 
 		this.on('tocselected', (sectionId) => {
 			this.settings.sectionId = sectionId;
+		});
+
+		this.on("spreadchanged", (value) => {
+			this.settings.spread["mod"] = value["mod"];
+			this.settings.spread["min"] = value["min"];
+			this.rendition.spread(value["mod"], value["min"]);
+			console.log(value);
 		});
 	}
 
@@ -194,6 +202,7 @@ export class Reader {
 			annotations: undefined,
 			contained: undefined,
 			sectionId: undefined,
+			spread: undefined,
 			styles: undefined,
 			reflowText: false, // ??
 			pagination: false, // ??
@@ -212,8 +221,17 @@ export class Reader {
 			this.settings.annotations = [];
 		}
 
+		if (this.settings.spread === undefined) {
+			this.settings.spread = {
+				mod: "auto",
+				min: 800
+			};
+		}
+
 		if (this.settings.styles === undefined) {
-			this.settings.styles = { fontSize: '100%' };
+			this.settings.styles = {
+				fontSize: "100%"
+			};
 		}
 
 		if (this.settings.language === undefined) {
@@ -283,6 +301,12 @@ export class Reader {
 		}
 
 		if (stored) {
+			// Merge spread
+			if (stored.spread) {
+				this.settings.spread = this.defaults(this.settings.spread || {}, 
+					stored.spread);
+				console.log(stored.spread);
+			}
 			// Merge styles
 			if (stored.styles) {
 				this.settings.styles = this.defaults(this.settings.styles || {},

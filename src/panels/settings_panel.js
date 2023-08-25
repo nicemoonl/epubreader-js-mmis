@@ -36,6 +36,39 @@ export class SettingsPanel extends UIPanel {
 		fontSizeRow.add(new UILabel(fontSizeStr));
 		fontSizeRow.add(fontSize);
 
+		// -- spdead configure -- //
+
+		const spreadStr = strings.get("sidebar/settings/spread");
+		const spreadRow = new UIRow();
+		const spread = new UISelect().setOptions({
+			none: "None",
+			auto: "Auto"
+		});
+		spread.dom.onchange = (e) => {
+
+			reader.emit("spreadchanged", {
+				mod: e.target.value,
+				min: reader.settings.spread["min"]
+			});
+		};
+
+		spreadRow.add(new UILabel(spreadStr));
+		spreadRow.add(spread);
+
+		const minSpreadWidthStr = strings.get("sidebar/settings/spread/pagewidth");
+		const minSpreadWidthRow = new UIRow();
+		const minSpreadWidth = new UIInteger(800, 1);
+		minSpreadWidth.dom.onchange = (e) => {
+
+			reader.emit("spreadchanged", {
+				mod: reader.settings.spread["mod"],
+				min: e.target.value
+			});
+		};
+
+		minSpreadWidthRow.add(new UILabel(minSpreadWidthStr));
+		minSpreadWidthRow.add(minSpreadWidth);
+
 		const reflowTextStr = strings.get('sidabar/settings/reflowtext');
 		const reflowTextRow = new UIRow();
 		const reflowText = new UIInput('checkbox', false, reflowTextStr[1]);
@@ -45,6 +78,8 @@ export class SettingsPanel extends UIPanel {
 			reader.settings.reflowText = e.target.checked;
 			reader.rendition.resize();
 		});
+
+		// -- //
 
 		reflowTextRow.add(new UILabel(reflowTextStr[0], 'reflowtext'));
 		reflowTextRow.add(reflowText);
@@ -65,6 +100,8 @@ export class SettingsPanel extends UIPanel {
 		super.add([
 			languageRow,
 			fontSizeRow,
+			spreadRow,
+			minSpreadWidthRow,
 			//reflowTextRow,
 			//paginationRow
 		]);
@@ -80,6 +117,17 @@ export class SettingsPanel extends UIPanel {
 
 			if (fontSize.getValue() !== value) {
 				fontSize.setValue(value);
+			}
+		});
+
+		reader.on("spreadchanged", (value) => {
+
+			if (spread.getValue() !== value["mod"]) {
+				spread.setValue(value["mod"]);
+			}
+
+			if (minSpreadWidth.getValue() !== value["min"]) {
+				minSpreadWidth.setValue(value["min"]);
 			}
 		});
 	}

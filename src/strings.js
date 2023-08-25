@@ -27,7 +27,9 @@ export class Strings {
 				'sidebar/settings/language': 'Language',
 				'sidebar/settings/fontsize': 'Font size (%)',
 				'sidabar/settings/reflowtext': ['Reflow text', 'Reflow text when sidebars are open'],
-				'sidebar/settings/pagination': ['Pagination', 'Generate pagination']
+				'sidebar/settings/pagination': ['Pagination', 'Generate pagination'],
+				'sidebar/settings/spread': 'Spread',
+				'sidebar/settings/spread/pagewidth': 'Page width'
 			},
 			fr: {
 				'toolbar/opener': 'Barre latérale',
@@ -52,7 +54,9 @@ export class Strings {
 				'sidebar/settings/language': 'Langue',
 				'sidebar/settings/fontsize': '???',
 				'sidabar/settings/reflowtext': ['Réagencer', 'Réagencer les lignes lorsque le panneau latéral est ouvert'],
-				'sidebar/settings/pagination': ['Pagination', 'Établir une pagination']
+				'sidebar/settings/pagination': ['Pagination', 'Établir une pagination'],
+				'sidebar/settings/spread': '???',
+				'sidebar/settings/spread/pagewidth': '???'
 			},
 			ja: {
 				'toolbar/opener': 'サイドバー',
@@ -77,7 +81,9 @@ export class Strings {
 				'sidebar/settings/language': '表示言語',
 				'sidebar/settings/fontsize': '???',
 				'sidabar/settings/reflowtext': ['再配置', 'サイドバーを開いた時に、テキストを再配置します。'],
-				'sidebar/settings/pagination': ['ページネーション', 'ページネーションを生成します。']
+				'sidebar/settings/pagination': ['ページネーション', 'ページネーションを生成します。'],
+				'sidebar/settings/spread': '???',
+				'sidebar/settings/spread/pagewidth': '???'
 			},
 			ru: {
 				'toolbar/opener': 'Боковая панель',
@@ -102,7 +108,9 @@ export class Strings {
 				'sidebar/settings/language': 'Язык',
 				'sidebar/settings/fontsize': 'Размер шрифта',
 				'sidabar/settings/reflowtext': ['Перекомпоновать текст', 'Перекомпоновать текст при открытых боковых панелях'],
-				'sidebar/settings/pagination': ['Нумерация страниц', 'Генерировать нумерацию страниц']
+				'sidebar/settings/pagination': ['Нумерация страниц', 'Генерировать нумерацию страниц'],
+				'sidebar/settings/spread': 'Разворот',
+				'sidebar/settings/spread/pagewidth': 'Ширина страницы'
 			}
 		};
 	}
