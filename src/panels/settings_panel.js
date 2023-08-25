@@ -71,20 +71,7 @@ export class SettingsPanel extends UIPanel {
 		minSpreadWidthRow.add(new UILabel(minSpreadWidthStr));
 		minSpreadWidthRow.add(minSpreadWidth);
 
-		const reflowTextStr = strings.get('sidabar/settings/reflowtext');
-		const reflowTextRow = new UIRow();
-		const reflowText = new UIInput('checkbox', false, reflowTextStr[1]);
-		reflowText.setId('reflowtext');
-		reflowText.dom.addEventListener('click', (e) => {
-
-			reader.settings.reflowText = e.target.checked;
-			reader.rendition.resize();
-		});
-
-		// -- //
-
-		reflowTextRow.add(new UILabel(reflowTextStr[0], 'reflowtext'));
-		reflowTextRow.add(reflowText);
+		// -- pagination -- //
 
 		const paginationStr = strings.get('sidebar/settings/pagination');
 		const paginationRow = new UIRow();
@@ -104,7 +91,6 @@ export class SettingsPanel extends UIPanel {
 			fontSizeRow,
 			spreadRow,
 			minSpreadWidthRow,
-			//reflowTextRow,
 			//paginationRow
 		]);
 

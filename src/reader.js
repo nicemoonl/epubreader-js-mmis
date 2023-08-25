@@ -203,7 +203,6 @@ export class Reader {
 			sectionId: undefined,
 			spread: undefined,
 			styles: undefined,
-			reflowText: false, // ??
 			pagination: false, // ??
 			language: undefined
 		});
