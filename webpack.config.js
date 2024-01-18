@@ -19,6 +19,8 @@ const config = {
 		static: {
 			directory: path.join(__dirname, 'dist')
 		},
+		hot: false,
+		liveReload: true,
 		compress: true,
 		port: 8080
 	},
