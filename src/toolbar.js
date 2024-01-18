@@ -1,5 +1,5 @@
 import { UIPanel, UIDiv, UIInput } from './ui.js';
-import { MetadataPanel } from './panels/metadata_panel.js';
+import { MetadataPanel } from './sidebar/metadata.js';
 
 export class Toolbar {
 
