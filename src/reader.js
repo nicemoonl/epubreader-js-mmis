@@ -49,8 +49,9 @@ export class Reader {
 
 		this.book = ePub(this.settings.bookPath);
 		this.rendition = this.book.renderTo('viewer', {
-			width: '100%',
-			height: '100%'
+			flow: this.settings.flow || "paginated",
+			width: "100%",
+			height: "100%"
 		});
 
 		const cfi = this.settings.previousLocationCfi;
@@ -65,10 +66,8 @@ export class Reader {
 		});
 
 		this.book.ready.then(function () {
-			if (this.settings.pagination) {
-				this.generatePagination();
-			}
-			this.emit('bookready');
+			this.emit("bookready");
+			this.emit("layoutchanged", this.settings.flow);
 			this.emit("spreadchanged", this.settings.spread);
 			this.emit("styleschanged", this.settings.styles);
 		}.bind(this)).then(function () {
@@ -125,10 +124,17 @@ export class Reader {
 			this.settings.sectionId = sectionId;
 		});
 
+		this.on("layoutchanged", (value) => {
+			this.settings.flow = value;
+			this.rendition.flow(value);
+		});
+		
 		this.on("spreadchanged", (value) => {
-			this.settings.spread["mod"] = value["mod"];
-			this.settings.spread["min"] = value["min"];
-			this.rendition.spread(value["mod"], value["min"]);
+			const mod = value["mod"];
+			const min = value["min"];
+			this.settings.spread["mod"] = mod;
+			this.settings.spread["min"] = min;
+			this.rendition.spread(mod, min);
 		});
 
 		this.on("styleschanged", (value) => {
@@ -194,6 +200,7 @@ export class Reader {
 		this.settings = this.defaults(_options || {}, {
 			bookKey: this.getBookKey(bookPath),
 			bookPath: bookPath,
+			flow: undefined,
 			restore: false,
 			history: true,
 			reload: false, // ??
@@ -217,6 +224,10 @@ export class Reader {
 
 		if (this.settings.annotations === undefined) {
 			this.settings.annotations = [];
+		}
+
+		if (this.settings.flow === undefined) {
+			this.settings.flow = "paginated";
 		}
 
 		if (this.settings.spread === undefined) {

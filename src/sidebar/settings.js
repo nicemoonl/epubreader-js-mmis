@@ -17,10 +17,10 @@ export class SettingsPanel extends UIPanel {
 			ja: 'Japanese',
 			ru: 'Russian'
 		});
-		language.dom.addEventListener('change', (e) => {
+		language.dom.onchange = (e) => {
 
 			reader.settings.language = e.target.value;
-		});
+		};
 
 		languageRow.add(new UILabel(languageStr));
 		languageRow.add(language);
@@ -37,6 +37,34 @@ export class SettingsPanel extends UIPanel {
 
 		fontSizeRow.add(new UILabel(fontSizeStr));
 		fontSizeRow.add(fontSize);
+
+		// -- layout configure -- //
+
+		const layoutStr = strings.get("sidebar/settings/layout");
+		const layoutRow = new UIRow();
+		const layout = new UISelect().setOptions({
+			paginated: "Paginated",
+			scrolled: "Scrolled"
+		});
+		layout.dom.onchange = (e) => {
+
+			reader.emit("layoutchanged", e.target.value);
+
+			if (e.target.value === "scrolled") {
+				reader.emit("spreadchanged", {
+					mod: "none",
+					min: reader.settings.spread["min"]
+				});
+			} else {
+				reader.emit("spreadchanged", {
+					mod: reader.settings.spread["mod"],
+					min: reader.settings.spread["min"]
+				});
+			}
+		};
+
+		layoutRow.add(new UILabel(layoutStr));
+		layoutRow.add(layout);
 
 		// -- spdead configure -- //
 
@@ -89,6 +117,7 @@ export class SettingsPanel extends UIPanel {
 		super.add([
 			languageRow,
 			fontSizeRow,
+			layoutRow,
 			spreadRow,
 			minSpreadWidthRow,
 			//paginationRow
@@ -96,9 +125,22 @@ export class SettingsPanel extends UIPanel {
 
 		//-- events --//
 
-		reader.on('bookready', () => {
+		reader.on("bookready", () => {
 
 			language.setValue(reader.settings.language);
+		});
+
+		reader.on("layout", (props) => {
+
+			const value = props["flow"] === "scrolled";
+			spread.dom.disabled = value;
+		});
+
+		reader.on("layoutchanged", (value) => {
+
+			if (layout.getValue() !== value) {
+				layout.setValue(value);
+			}
 		});
 
 		reader.on("styleschanged", (value) => {

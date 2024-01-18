@@ -26,6 +26,7 @@ export class Strings {
 				'sidebar/settings': 'Settings',
 				'sidebar/settings/language': 'Language',
 				'sidebar/settings/fontsize': 'Font size (%)',
+				'sidebar/settings/layout': 'Layout',
 				'sidebar/settings/pagination': ['Pagination', 'Generate pagination'],
 				'sidebar/settings/spread': 'Spread',
 				'sidebar/settings/spread/pagewidth': 'Page width'
@@ -52,6 +53,7 @@ export class Strings {
 				'sidebar/settings': 'Réglages',
 				'sidebar/settings/language': 'Langue',
 				'sidebar/settings/fontsize': '???',
+				'sidebar/settings/layout': '???',
 				'sidebar/settings/pagination': ['Pagination', 'Établir une pagination'],
 				'sidebar/settings/spread': '???',
 				'sidebar/settings/spread/pagewidth': '???'
@@ -78,6 +80,7 @@ export class Strings {
 				'sidebar/settings': '設定',
 				'sidebar/settings/language': '表示言語',
 				'sidebar/settings/fontsize': '???',
+				'sidebar/settings/layout': '???',
 				'sidebar/settings/pagination': ['ページネーション', 'ページネーションを生成します。'],
 				'sidebar/settings/spread': '???',
 				'sidebar/settings/spread/pagewidth': '???'
@@ -104,6 +107,7 @@ export class Strings {
 				'sidebar/settings': 'Настройки',
 				'sidebar/settings/language': 'Язык',
 				'sidebar/settings/fontsize': 'Размер шрифта',
+				'sidebar/settings/layout': 'Макет',
 				'sidebar/settings/pagination': ['Нумерация страниц', 'Генерировать нумерацию страниц'],
 				'sidebar/settings/spread': 'Разворот',
 				'sidebar/settings/spread/pagewidth': 'Ширина страницы'
