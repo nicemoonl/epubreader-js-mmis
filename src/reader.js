@@ -10,7 +10,6 @@ export class Reader {
 	constructor(bookPath, _options) {
 
 		this.settings = undefined;
-		this.entryKey = md5(bookPath).toString();
 		this.cfgInit(bookPath, _options);
 
 		this.strings = new Strings(this);
@@ -206,6 +205,7 @@ export class Reader {
 	 */
 	cfgInit(bookPath, _options) {
 
+		this.entryKey = md5(bookPath).toString();
 		this.settings = this.defaults(_options || {}, {
 			bookPath: bookPath,
 			flow: undefined,
@@ -319,19 +319,8 @@ export class Reader {
 	 */
 	saveSettings() {
 
-		if (this.book) {
-
-			if (this.rendition.location) {
-				const curLocation = this.rendition.currentLocation();
-				this.settings.previousLocationCfi = curLocation.start.cfi;
-			}
-		}
-
-		if (!localStorage)
-			return false;
-
+		this.settings.previousLocationCfi = this.rendition.location.start.cfi;
 		localStorage.setItem(this.entryKey, JSON.stringify(this.settings));
-		return true;
 	}
 
 	setLocation(cfi) {

@@ -34,14 +34,25 @@ export class Toolbar {
 
 		start.add(opener);
 
-		const center = new MetadataPanel(reader);
+		const onload = (e) => {
 
+			storage.clear();
+			storage.set(e.target.result, () => {
+				reader.unload();
+				reader.init(e.target.result, { restore: true });
+				const url = new URL(window.location.origin);
+				window.history.pushState({}, "", url);
+			});
+		};
+		const onerror = (e) => {
+			console.error(e);
+		};
 		const storage = window.storage;
 		const end = new UIPanel().setId("end");
 		const openbook = new UIInput("file").setId("btn-o");
 		openbook.dom.title = strings.get(keys[1]);
 		openbook.dom.accept = "application/epub+zip";
-		openbook.dom.addEventListener('change', function (e) {
+		openbook.dom.onchange = (e) => {
 
 			if (e.target.files.length === 0)
 				return;
@@ -49,26 +60,13 @@ export class Toolbar {
 			if (window.FileReader) {
 
 				const fr = new FileReader();
-				fr.onload = function (e) {
-					storage.clear();
-					storage.set(e.target.result, () => {
-						reader.unload();
-						reader.init(e.target.result, { restore: true });
-					});
-				};
+				fr.onload = onload;
 				fr.readAsArrayBuffer(e.target.files[0]);
-				fr.onerror = function (e) {
-					console.error(e);
-				};
-
-				if (window.location.href.includes("?bookPath=")) {
-					window.location.href = window.location.origin + window.location.pathname;
-				}
-
+				fr.onerror = onerror;
 			} else {
 				alert(strings.get(keys[2]));
 			}
-		}, false);
+		};
 
 		end.add(openbook);
 
@@ -115,7 +113,7 @@ export class Toolbar {
 			end.add(fullscreen);
 		}
 
-		container.add([start, center, end]);
+		container.add([start, new MetadataPanel(reader), end]);
 		document.body.appendChild(container.dom);
 
 		//-- events --//
