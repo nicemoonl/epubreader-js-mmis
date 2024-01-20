@@ -120,6 +120,11 @@ export class Reader {
 			}
 		});
 
+		this.on("sidebarreflow", () => {
+			// no implementation sidebarReflow setting
+			//this.rendition.resize();
+		});
+
 		this.on("tocselected", (sectionId) => {
 			this.settings.sectionId = sectionId;
 		});
