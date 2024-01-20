@@ -1,15 +1,16 @@
 import EventEmitter from "event-emitter";
 
-import { Toolbar } from './toolbar.js';
-import { Sidebar } from './sidebar.js';
-import { Content } from './content.js';
-import { Strings } from './strings.js';
+import { Toolbar } from "./toolbar.js";
+import { Sidebar } from "./sidebar.js";
+import { Content } from "./content.js";
+import { Strings } from "./strings.js";
 
 export class Reader {
 
 	constructor(bookPath, _options) {
 
 		this.settings = undefined;
+		this.entryKey = md5(bookPath).toString();
 		this.cfgInit(bookPath, _options);
 
 		this.strings = new Strings(this);
@@ -23,14 +24,14 @@ export class Reader {
 
 		this.init();
 
-		window.addEventListener('beforeunload', this.unload.bind(this), false);
-		window.addEventListener('hashchange', this.hashChanged.bind(this), false);
-		window.addEventListener('keydown', this.keyboardHandler.bind(this), false);
-		window.addEventListener('wheel', (e) => {
+		window.onbeforeunload = this.unload.bind(this);
+		window.onhashchange = this.hashChanged.bind(this);
+		window.onkeydown = this.keyboardHandler.bind(this);
+		window.onwheel = (e) => {
 			if (e.ctrlKey) {
 				e.preventDefault();
 			}
-		}, { passive: false });
+		};
 	}
 
 	/**
@@ -40,7 +41,7 @@ export class Reader {
 	 */
 	init(bookPath, _options) {
 
-		this.emit('viewercleanup');
+		this.emit("viewercleanup");
 
 		if (arguments.length > 0) {
 
@@ -48,8 +49,10 @@ export class Reader {
 		}
 
 		this.book = ePub(this.settings.bookPath);
-		this.rendition = this.book.renderTo('viewer', {
-			flow: this.settings.flow || "paginated",
+		this.rendition = this.book.renderTo("viewer", {
+			flow: this.settings.flow,
+			spread: this.settings.spread.mod,
+			minSpreadWidth: this.settings.spread.min,
 			width: "100%",
 			height: "100%"
 		});
@@ -62,49 +65,46 @@ export class Reader {
 		}
 
 		this.displayed.then((renderer) => {
-			this.emit('renderered', renderer);
+			this.emit("renderered", renderer);
 		});
 
 		this.book.ready.then(function () {
-			this.emit("bookready");
-			this.emit("layoutchanged", this.settings.flow);
-			this.emit("spreadchanged", this.settings.spread);
-			this.emit("styleschanged", this.settings.styles);
+			this.emit("bookready", this.settings);
 		}.bind(this)).then(function () {
-			this.emit('bookloaded');
+			this.emit("bookloaded");
 		}.bind(this));
 
 		this.book.loaded.metadata.then((meta) => {
-			this.emit('metadata', meta);
+			this.emit("metadata", meta);
 		});
 
 		this.book.loaded.navigation.then((toc) => {
-			this.emit('navigation', toc);
+			this.emit("navigation", toc);
 		});
 
-		this.rendition.on('click', (e) => {
+		this.rendition.on("click", (e) => {
 			const selection = e.view.document.getSelection();
 			const range = selection.getRangeAt(0);
 			if (range.startOffset === range.endOffset) {
-				this.emit('unselected');
+				this.emit("unselected");
 			}
 		});
 
-		this.rendition.on('layout', (props) => {
-			this.emit('layout', props);
+		this.rendition.on("layout", (props) => {
+			this.emit("layout", props);
 		});
 
-		this.rendition.on('selected', (cfiRange, contents) => {
+		this.rendition.on("selected", (cfiRange, contents) => {
 			this.setLocation(cfiRange);
-			this.emit('selected', cfiRange, contents);
+			this.emit("selected", cfiRange, contents);
 		});
 
-		this.rendition.on('relocated', (location) => {
+		this.rendition.on("relocated", (location) => {
 			this.setLocation(location.start.cfi);
-			this.emit('relocated', location);
+			this.emit("relocated", location);
 		});
 
-		this.on('prev', () => {
+		this.on("prev", () => {
 			if (this.book.package.metadata.direction === 'rtl') {
 				this.rendition.next();
 			} else {
@@ -112,7 +112,7 @@ export class Reader {
 			}
 		});
 
-		this.on('next', () => {
+		this.on("next", () => {
 			if (this.book.package.metadata.direction === 'rtl') {
 				this.rendition.prev();
 			} else {
@@ -120,25 +120,29 @@ export class Reader {
 			}
 		});
 
-		this.on('tocselected', (sectionId) => {
+		this.on("tocselected", (sectionId) => {
 			this.settings.sectionId = sectionId;
 		});
 
-		this.on("layoutchanged", (value) => {
+		this.on("languagechanged", (value) => {
+			this.settings.language = value;
+		});
+
+		this.on("flowchanged", (value) => {
 			this.settings.flow = value;
 			this.rendition.flow(value);
 		});
 		
 		this.on("spreadchanged", (value) => {
-			const mod = value["mod"];
-			const min = value["min"];
-			this.settings.spread["mod"] = mod;
-			this.settings.spread["min"] = min;
+			const mod = value.mod || this.settings.spread.mod;
+			const min = value.min || this.settings.spread.min;
+			this.settings.spread.mod = mod;
+			this.settings.spread.min = min;
 			this.rendition.spread(mod, min);
 		});
 
 		this.on("styleschanged", (value) => {
-			const fontSize = value["fontSize"];
+			const fontSize = value.fontSize;
 			this.settings.styles.fontSize = fontSize;
 			this.rendition.themes.fontSize(fontSize + "%");
 		});
@@ -198,7 +202,6 @@ export class Reader {
 	cfgInit(bookPath, _options) {
 
 		this.settings = this.defaults(_options || {}, {
-			bookKey: this.getBookKey(bookPath),
 			bookPath: bookPath,
 			flow: undefined,
 			restore: false,
@@ -244,31 +247,8 @@ export class Reader {
 		}
 
 		if (this.settings.language === undefined) {
-			this.settings.language = 'en';
+			this.settings.language = "en";
 		}
-	}
-
-	/**
-	 * Get book key.
-	 * @param {*} identifier (url | blob)
-	 * @returns Book key (MD5).
-	 */
-	getBookKey(identifier) {
-
-		return 'epubjs-reader:' + md5(identifier);
-	}
-
-	/**
-	 * Set book key in settings.
-	 * @param {*} identifier (url | blob)
-	 * @returns Current book key.
-	 */
-	setBookKey(identifier) {
-
-		if (this.settings.bookKey === undefined) {
-			this.settings.bookKey = this.getBookKey(identifier);
-		}
-		return this.settings.bookKey;
 	}
 
 	/**
@@ -280,7 +260,7 @@ export class Reader {
 		if (!localStorage)
 			return false;
 
-		return localStorage.getItem(this.settings.bookKey) !== null;
+		return localStorage.getItem(this.entryKey) !== null;
 	}
 
 	/**
@@ -293,7 +273,7 @@ export class Reader {
 		if (!this.isSaved())
 			return false;
 
-		localStorage.removeItem(this.settings.bookKey);
+		localStorage.removeItem(this.entryKey);
 		return true;
 	}
 
@@ -304,7 +284,7 @@ export class Reader {
 
 		let stored;
 		try {
-			stored = JSON.parse(localStorage.getItem(this.settings.bookKey));
+			stored = JSON.parse(localStorage.getItem(this.entryKey));
 		} catch (e) { // parsing error of localStorage
 			console.exception(e);
 		}
@@ -345,21 +325,8 @@ export class Reader {
 		if (!localStorage)
 			return false;
 
-		localStorage.setItem(this.settings.bookKey, JSON.stringify(this.settings));
+		localStorage.setItem(this.entryKey, JSON.stringify(this.settings));
 		return true;
-	}
-
-	unload() {
-
-		if (this.settings.restore && localStorage) {
-			this.saveSettings();
-		}
-	}
-
-	hashChanged() {
-
-		const hash = window.location.hash.slice(1);
-		this.rendition.display(hash);
 	}
 
 	setLocation(cfi) {
@@ -376,12 +343,19 @@ export class Reader {
 		}
 	}
 
-	generatePagination() {
-		//
-		// no implemented
-		//
-		//const rect = this.content.viewer.getRect();
-		//this.book.generatePagination(rect.width, rect.height);
+	//-- event handlers --//
+
+	unload() {
+
+		if (this.settings.restore && localStorage) {
+			this.saveSettings();
+		}
+	}
+
+	hashChanged() {
+
+		const hash = window.location.hash.slice(1);
+		this.rendition.display(hash);
 	}
 
 	keyboardHandler(e) {

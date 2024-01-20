@@ -113,6 +113,10 @@ export class Strings {
 				'sidebar/settings/spread/pagewidth': 'Ширина страницы'
 			}
 		};
+
+		reader.on("languagechanged", (value) => {
+			this.language = value;
+		});
 	}
 
 	get(key) { return this.values[this.language][key] || '???'; }
