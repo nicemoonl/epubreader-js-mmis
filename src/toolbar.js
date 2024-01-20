@@ -1,5 +1,5 @@
-import { UIPanel, UIDiv, UIInput } from './ui.js';
-import { MetadataPanel } from './sidebar/metadata.js';
+import { UIPanel, UIDiv, UIInput } from "./ui.js";
+import { MetadataPanel } from "./toolbar/metadata.js";
 
 export class Toolbar {
 
@@ -7,22 +7,28 @@ export class Toolbar {
 
 		const strings = reader.strings;
 
-		const container = new UIDiv().setId('toolbar');
+		const container = new UIDiv().setId("toolbar");
+		const keys = [
+			"toolbar/opener",
+			"toolbar/openbook",
+			"toolbar/openbook/error",
+			"toolbar/bookmark",
+			"toolbar/fullsceen"
+		];
 
-		const start = new UIPanel().setId('start');
-		const opener = new UIInput('button').setId('btn-s');
-		const openerStr = strings.get('toolbar/opener');
-		opener.dom.title = openerStr;
+		const start = new UIPanel().setId("start");
+		const opener = new UIInput("button").setId("btn-s");
+		opener.dom.title = strings.get(keys[0]);
 		opener.dom.onclick = () => {
 
 			const isOpen = opener.dom.classList.length > 0;
 
-			reader.emit('sidebaropener', !isOpen);
+			reader.emit("sidebaropener", !isOpen);
 
 			if (!isOpen) {
-				opener.addClass('open');
+				opener.addClass("open");
 			} else {
-				opener.removeClass('open');
+				opener.removeClass("open");
 			}
 		};
 
@@ -30,13 +36,12 @@ export class Toolbar {
 
 		const center = new MetadataPanel(reader);
 
-		const end = new UIPanel().setId('end');
-		const open = new UIInput('file').setId('btn-o');
-		const uploadStr = strings.get('toolbar/openbook');
 		const storage = window.storage;
-		open.dom.title = uploadStr;
-		open.dom.accept = 'application/epub+zip';
-		open.dom.addEventListener('change', function (e) {
+		const end = new UIPanel().setId("end");
+		const openbook = new UIInput("file").setId("btn-o");
+		openbook.dom.title = strings.get(keys[1]);
+		openbook.dom.accept = "application/epub+zip";
+		openbook.dom.addEventListener('change', function (e) {
 
 			if (e.target.files.length === 0)
 				return;
@@ -61,52 +66,51 @@ export class Toolbar {
 				}
 
 			} else {
-				alert(strings.get('toolbar/openbook/error'));
+				alert(strings.get(keys[2]));
 			}
 		}, false);
 
-		end.add(open);
+		end.add(openbook);
 
-		const bookmark = new UIInput('button').setId('btn-b');
-		const bookmarkStr = strings.get('toolbar/bookmark');
-		bookmark.dom.title = bookmarkStr;
-		bookmark.dom.addEventListener('click', () => {
+		const bookmark = new UIInput("button").setId("btn-b");
+		bookmark.dom.title = strings.get(keys[3]);
+		bookmark.dom.onclick = (e) => {
 
 			const cfi = reader.rendition.currentLocation().start.cfi;
-			reader.emit('bookmarked', reader.isBookmarked(cfi) === -1);
-		});
+			reader.emit("bookmarked", reader.isBookmarked(cfi) === -1);
+		};
 
 		end.add(bookmark);
 
+		let fullscreen = null;
 		if (document.fullscreenEnabled) {
 
-			const fullscreen = new UIInput('button').setId('btn-f');
-			const fullscreenStr = strings.get('toolbar/fullsceen');
-			fullscreen.dom.title = fullscreenStr;
-			fullscreen.dom.addEventListener('click', () => {
+			fullscreen = new UIInput("button").setId("btn-f");
+			fullscreen.dom.title = strings.get(keys[4]);
+			fullscreen.dom.onclick = (e) => {
 
 				this.toggleFullScreen();
-			});
+			};
 
-			document.addEventListener('keydown', (e) => {
+			document.onkeydown = (e) => {
 
-				if (e.key === 'F11') {
+				if (e.key === "F11") {
 					e.preventDefault();
 					this.toggleFullScreen();
 				}
-			}, false);
+			};
 
-			document.addEventListener('fullscreenchange', (e) => {
+			document.onfullscreenchange = (e) => {
 				
 				const w = window.screen.width === e.target.clientWidth;
 				const h = window.screen.height === e.target.clientHeight;
 
 				if (w && h) {
-					fullscreen.addClass('resize-small');
+					fullscreen.addClass("resize-small");
 				} else {
-					fullscreen.removeClass('resize-small');
+					fullscreen.removeClass("resize-small");
 				}
-			}, false);
+			};
 
 			end.add(fullscreen);
 		}
@@ -116,23 +120,34 @@ export class Toolbar {
 
 		//-- events --//
 
-		reader.on('relocated', (location) => {
+		reader.on("relocated", (location) => {
 
 			const cfi = location.start.cfi;
 
 			if (reader.isBookmarked(cfi) === -1) {
-				bookmark.removeClass('bookmarked');
+				bookmark.removeClass("bookmarked");
 			} else {
-				bookmark.addClass('bookmarked');
+				bookmark.addClass("bookmarked");
 			}
 		});
 
-		reader.on('bookmarked', (value) => {
+		reader.on("bookmarked", (value) => {
 
 			if (value) {
-				bookmark.addClass('bookmarked');
+				bookmark.addClass("bookmarked");
 			} else {
-				bookmark.removeClass('bookmarked');
+				bookmark.removeClass("bookmarked");
+			}
+		});
+
+		reader.on("languagechanged", (value) => {
+
+			opener.dom.title = strings.get(keys[0]);
+			openbook.dom.title = strings.get(keys[1]);
+			bookmark.dom.title = strings.get(keys[3]);
+
+			if (fullscreen) {
+				fullscreen.dom.title = strings.get(keys[4]);
 			}
 		});
 	}
