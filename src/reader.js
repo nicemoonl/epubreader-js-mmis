@@ -124,8 +124,9 @@ export class Reader {
 			//this.rendition.resize();
 		});
 
-		this.on("tocselected", (sectionId) => {
-			this.settings.sectionId = sectionId;
+		this.on("tocselected", (chapter) => {
+			this.settings.sectionId = chapter.id;
+			this.rendition.display(chapter.href);
 		});
 
 		this.on("languagechanged", (value) => {

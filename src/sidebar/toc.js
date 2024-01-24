@@ -1,61 +1,55 @@
-import { UIPanel, UITreeView, UITreeViewItem, UILink } from '../ui.js';
+import { UIPanel, UITreeView, UITreeViewItem, UILink } from "../ui.js";
 
 export class TocPanel extends UIPanel {
 
 	constructor(reader) {
 
 		super();
-		super.setId('contents');
+		super.setId("contents");
 
 		this.reader = reader;
 		this.selector = undefined; // save reference to selected tree item
 
 		//-- events --//
 
-		reader.on('navigation', (toc) => {
+		reader.on("navigation", (toc) => {
 
-			this.init(toc);
+			this.clear();
+			this.add(this.generateToc(toc));
 		});
 	}
 
-	init(toc) {
-
-		super.clear();
-		super.add(this.generateToc(toc));
-	}
-
-	generateToc(toc, parent) {
+	generateToc(toc) {
 
 		const container = new UITreeView();
 
 		toc.forEach((chapter) => {
 
 			const link = new UILink(chapter.href, chapter.label);
-			const treeItem = new UITreeViewItem(chapter.id, link, parent);
+			const item = new UITreeViewItem(chapter.id, link);
 
 			link.dom.onclick = () => {
 
-				this.reader.rendition.display(chapter.href);
-				if (this.selector && this.selector !== treeItem) {
+				if (this.selector && this.selector !== item) {
 					this.selector.unselect();
 				}
-				treeItem.select();
-				this.selector = treeItem;
-				this.reader.emit('tocselected', chapter.id);
+				item.select();
+				this.selector = item;
+				this.reader.emit("tocselected", chapter);
 				return false;
 			};
 
 			if (this.reader.settings.sectionId === chapter.id) {
-				treeItem.select();
-				this.selector = treeItem;
+				item.select();
+				this.selector = item;
 			}
 
 			if (chapter.subitems && chapter.subitems.length > 0) {
 
-				treeItem.setItems(this.generateToc(chapter.subitems, treeItem));
+				item.setItem(this.generateToc(chapter.subitems));
 			}
 
-			container.add(treeItem);
+			container.add(item);
 		});
 
 		return container;
