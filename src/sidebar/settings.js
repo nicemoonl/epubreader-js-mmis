@@ -142,7 +142,12 @@ export class SettingsPanel extends UIPanel {
 
 		reader.on("layout", (props) => {
 
-			spread.dom.disabled = props.flow === "scrolled";
+			if (props.flow === "scrolled") {
+				spread.dom.disabled = true;
+				spread.setValue("none");
+			} else {
+				spread.dom.disabled = false;
+			}
 		});
 
 		reader.on("languagechanged", (value) => {
