@@ -1,4 +1,4 @@
-import { UIPanel, UIRow, UISelect, UIInput, UILabel, UIInteger } from "../ui.js";
+import { UIPanel, UIRow, UISelect, UIInput, UILabel, UINumber } from "../ui.js";
 
 export class SettingsPanel extends UIPanel {
 
@@ -16,7 +16,7 @@ export class SettingsPanel extends UIPanel {
 			"sidebar/settings/spread/pagewidth"
 		];
 
-		const languageLabel = new UILabel(strings.get(keys[0]));
+		const languageLabel = new UILabel(strings.get(keys[0]), "language-ui");
 		const languageRow = new UIRow();
 		const language = new UISelect().setOptions({
 			en: "English",
@@ -28,26 +28,28 @@ export class SettingsPanel extends UIPanel {
 
 			reader.emit("languagechanged", e.target.value);
 		};
+		language.setId("language-ui");
 
 		languageRow.add(languageLabel);
 		languageRow.add(language);
 
-		const fontSizeLabel = new UILabel(strings.get(keys[1]));
+		const fontSizeLabel = new UILabel(strings.get(keys[1]), "fontsize");
 		const fontSizeRow = new UIRow();
-		const fontSize = new UIInteger(100, 1);
+		const fontSize = new UINumber(100, 1);
 		fontSize.dom.onchange = (e) => {
 
 			reader.emit("styleschanged", {
 				fontSize: parseInt(e.target.value)
 			});
 		};
+		fontSize.setId("fontsize")
 
 		fontSizeRow.add(fontSizeLabel);
 		fontSizeRow.add(fontSize);
 
 		//-- layout configure --//
 
-		const layoutLabel = new UILabel(strings.get(keys[2]));
+		const layoutLabel = new UILabel(strings.get(keys[2]), "layout");
 		const layoutRow = new UIRow();
 		const layout = new UISelect().setOptions({
 			paginated: "Paginated",
@@ -69,13 +71,14 @@ export class SettingsPanel extends UIPanel {
 				});
 			}
 		};
+		layout.setId("layout");
 
 		layoutRow.add(layoutLabel);
 		layoutRow.add(layout);
 
 		//-- spdead configure --//
 
-		const spreadLabel = new UILabel(strings.get(keys[3]));
+		const spreadLabel = new UILabel(strings.get(keys[3]), "spread");
 		const spreadRow = new UIRow();
 		const spread = new UISelect().setOptions({
 			none: "None",
@@ -88,13 +91,14 @@ export class SettingsPanel extends UIPanel {
 				min: undefined
 			});
 		};
+		spread.setId("spread");
 
 		spreadRow.add(spreadLabel);
 		spreadRow.add(spread);
 
-		const minSpreadWidthLabel = new UILabel(strings.get(keys[4]));
+		const minSpreadWidthLabel = new UILabel(strings.get(keys[4]), "min-spread-width");
 		const minSpreadWidthRow = new UIRow();
-		const minSpreadWidth = new UIInteger(800, 1);
+		const minSpreadWidth = new UINumber(800, 1);
 		minSpreadWidth.dom.onchange = (e) => {
 
 			reader.emit("spreadchanged", {
@@ -102,6 +106,7 @@ export class SettingsPanel extends UIPanel {
 				min: parseInt(e.target.value)
 			});
 		};
+		minSpreadWidth.setId("min-spread-width");
 
 		minSpreadWidthRow.add(minSpreadWidthLabel);
 		minSpreadWidthRow.add(minSpreadWidth);
