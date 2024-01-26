@@ -2,17 +2,17 @@
  * @author mrdoob https://github.com/mrdoob/ui.js
  */
 
-const errormsg = 'is not an instance of UIElement.';
+const ERROR_MSG = "is not an instance of UIElement.";
 
 /**
  * UIElement
- * @param {object} dom
+ * @param {string} tag
  */
-class UIElement {
+export class UIElement {
+	
+	constructor(tag) {
 
-	constructor(dom) {
-
-		this.dom = dom;
+		this.dom = document.createElement(tag); 
 	}
 
 	add() {
@@ -34,19 +34,16 @@ class UIElement {
 					if (element instanceof UIElement) {
 
 						this.dom.appendChild(element.dom);
-
 					} else {
 
-						console.error('UIElement:', element, errormsg);
+						console.error("UIElement:", element, ERROR_MSG);
 					}
 				}
-
 			} else {
 
-				console.error('UIElement:', argument, errormsg);
+				console.error("UIElement:", argument, ERROR_MSG);
 			}
 		}
-
 		return this;
 	}
 
@@ -60,12 +57,14 @@ class UIElement {
 
 				this.dom.removeChild(argument.dom);
 
+			} else if (Number.isInteger(argument)) {
+
+				this.dom.removeChild(this.dom.childNodes[argument]);
 			} else {
 
-				console.error('UIElement:', argument, errormsg);
+				console.error("UIElement:", argument, ERROR_MSG);
 			}
 		}
-
 		return this;
 	}
 
@@ -75,6 +74,7 @@ class UIElement {
 
 			this.dom.removeChild(this.dom.lastChild);
 		}
+		return this;
 	}
 
 	setId(id) {
@@ -106,180 +106,121 @@ class UIElement {
 		return this;
 	}
 
-	setStyle(style, array) {
+	setStyle(key, value) {
 
-		for (let i = 0; i < array.length; i++) {
-
-			this.dom.style[style] = array[i];
-		}
-
+		this.dom.style[key] = value;
 		return this;
 	}
 
-	setDisabled(value) {
+	setTextContent(text) {
 
-		this.dom.disabled = value;
+		this.dom.textContent = text;
 		return this;
 	}
 
-	setTextContent(value) {
+	getBoundingClientRect() {
 
-		this.dom.textContent = value;
-		return this;
-	}
-
-	getRect() {
-
-		this.dom.getBoundingClientRect();
-		return this;
+		return this.dom.getBoundingClientRect();
 	}
 }
-
-// properties
-
-const properties = [
-	'position',
-	'left',
-	'top',
-	'right',
-	'bottom',
-	'width',
-	'height',
-	'border',
-	'borderLeft',
-	'borderTop',
-	'borderRight',
-	'borderBottom',
-	'borderColor',
-	'display',
-	'overflow',
-	'margin',
-	'marginLeft',
-	'marginTop',
-	'marginRight',
-	'marginBottom',
-	'padding',
-	'paddingLeft',
-	'paddingTop',
-	'paddingRight',
-	'paddingBottom',
-	'color',
-	'background',
-	'backgroundColor',
-	'opacity',
-	'fontSize',
-	'fontWeight',
-	'textAlign',
-	'textDecoration',
-	'textTransform',
-	'cursor',
-	'zIndex'
-];
-
-properties.forEach(function (property) {
-
-	const method = 'set' +
-		property.substr(0, 1).toUpperCase() +
-		property.substr(1, property.length);
-
-	UIElement.prototype[method] = function () {
-
-		this.setStyle(property, arguments);
-
-		return this;
-	};
-});
-
-// events
-
-const events = [
-	'KeyUp',
-	'KeyDown',
-	'MouseOver',
-	'MouseOut',
-	'Click',
-	'DblClick',
-	'Change',
-	'Input'
-];
-
-events.forEach(function (event) {
-
-	const method = 'on' + event;
-
-	UIElement.prototype[method] = function (callback) {
-
-		this.dom.addEventListener(event.toLowerCase(), callback.bind(this), false);
-		return this;
-	};
-});
 
 /**
  * UISpan
  */
-class UISpan extends UIElement {
+export class UISpan extends UIElement {
 
 	constructor() {
 
-		super(document.createElement('span'));
+		super("span");
 	}
 }
 
 /**
  * UIDiv
  */
-class UIDiv extends UIElement {
+export class UIDiv extends UIElement {
 
 	constructor() {
 
-		super(document.createElement('div'));
+		super("div");
 	}
 }
 
 /**
  * UIRow
  */
-class UIRow extends UIDiv {
+export class UIRow extends UIDiv {
 
 	constructor() {
 
 		super();
-		this.dom.className = 'row';
+
+		this.dom.className = "row";
 	}
 }
 
 /**
  * UIPanel
  */
-class UIPanel extends UIDiv {
+export class UIPanel extends UIDiv {
 
 	constructor() {
 
 		super();
-		this.dom.className = 'panel';
+
+		this.dom.className = "panel";
 	}
 }
 
-class UILabel extends UIElement {
+/**
+ * UILabel
+ * @param {string} text
+ * @param {string} id
+ */
+export class UILabel extends UIElement {
 
 	constructor(text, id) {
 
-		super(document.createElement('label'));
+		super("label");
+
 		this.dom.textContent = text;
 		if (id) this.dom.htmlFor = id;
 	}
 }
 
 /**
- * UIText
- * @param {any} text
+ * UILink
+ * @param {string} href
+ * @param {string} text
  */
-class UIText extends UISpan {
+export class UILink extends UIElement {
+
+	constructor(href, text) {
+
+		super("a");
+
+		this.dom.href = href || "#";
+		this.dom.textContent = text || "";
+	}
+
+	setHref(url) {
+
+		this.dom.href = url;
+		return this;
+	}
+}
+
+/**
+ * UIText
+ * @param {string} text
+ */
+export class UIText extends UISpan {
 
 	constructor(text) {
 
 		super();
-		this.setValue(text);
+
+		this.dom.textContent = text;
 	}
 
 	getValue() {
@@ -287,49 +228,114 @@ class UIText extends UISpan {
 		return this.dom.textContent;
 	}
 
-	setValue(value) {
+	setValue(text) {
 
-		if (value !== undefined) {
-
-			this.dom.textContent = value;
-		}
-
+		this.dom.textContent = text;
 		return this;
 	}
 }
 
 /**
- * UILink
- * @param {*} uri
- * @param {*} label
+ * UITextArea
  */
-class UILink extends UIElement {
+export class UITextArea extends UIElement {
 
-	constructor(uri, label) {
+	constructor() {
 
-		super(document.createElement('a'));
-		this.dom.href = uri;
-		this.dom.textContent = label;
+		super("textarea");
+
+		this.dom.spellcheck = false;
+		this.dom.onkeydown = (e) => {
+
+			e.stopPropagation();
+
+			if (e.key === "Tab") {
+
+				const cursor = this.dom.selectionStart;
+				this.dom.value = this.dom.value.substring(0, cursor) + "\t" + this.dom.value.substring(cursor);
+				this.dom.selectionStart = cursor + 1;
+				this.dom.selectionEnd = this.dom.selectionStart;
+				e.preventDefault();
+			}
+		};
+	}
+
+	getValue() {
+
+		return this.dom.value;
+	}
+
+	setValue(value) {
+
+		this.dom.value = value;
+		return this;
+	}
+}
+
+/**
+ * UISelect
+ */
+export class UISelect extends UIElement {
+
+	constructor() {
+
+		super("select");
+	}
+
+	setMultiple(boolean) {
+
+		this.dom.multiple = boolean || false;
+		return this;
+	}
+
+	setOptions(options) {
+
+		const selected = this.dom.value;
+		this.clear();
+
+		for (const key in options) {
+
+			const option = document.createElement("option");
+			option.value = key;
+			option.text = options[key];
+			this.dom.appendChild(option);
+		}
+		this.dom.value = selected;
+		return this;
+	}
+
+	getValue() {
+
+		return this.dom.value;
+	}
+
+	setValue(value) {
+
+		value = String(value);
+
+		if (this.dom.value !== value)
+			this.dom.value = value;
+		return this;
 	}
 }
 
 /**
  * UIInput
- * @param {any} value
+ * @param {*} type
+ * @param {*} value
+ * @param {*} title
  */
-class UIInput extends UIElement {
+export class UIInput extends UIElement {
 
 	constructor(type, value, title) {
 
-		super(document.createElement('input'));
+		super("input");
 
 		this.dom.type = type;
-		this.dom.addEventListener('keydown', function (event) {
+		this.dom.onkeydown = (e) => {
 
-			event.stopPropagation();
-
-		}, false);
-
+			e.stopPropagation();
+		};
 		this.setValue(value);
 		this.setTitle(title);
 	}
@@ -342,6 +348,18 @@ class UIInput extends UIElement {
 	setName(name) {
 
 		this.dom.name = name;
+		return this;
+	}
+
+	getTitle() {
+
+		return this.dom.title;
+	}
+
+	setTitle(title) {
+
+		if (this.dom.title !== title && title)
+			this.dom.title = title;
 		return this;
 	}
 
@@ -363,164 +381,8 @@ class UIInput extends UIElement {
 
 	setValue(value) {
 
-		if (value !== undefined) {
+		if (this.dom.value !== value && value)
 			this.dom.value = value;
-		}
-		return this;
-	}
-
-	getTitle() {
-
-		return this.dom.title;
-	}
-
-	setTitle(text) {
-
-		if (text !== undefined) {
-			this.dom.title = text;
-		}
-		return this;
-	}
-
-	readonly(value) {
-
-		this.dom.readOnly = value;
-		return this;
-	}
-}
-
-/**
- * UITextArea
- */
-class UITextArea extends UIElement {
-
-	constructor() {
-
-		super(document.createElement('textarea'));
-
-		this.dom.spellcheck = false;
-		this.dom.addEventListener('keydown', function (event) {
-
-			event.stopPropagation();
-
-			if (event.keyCode === 9) {
-
-				event.preventDefault();
-
-				const cursor = dom.selectionStart;
-
-				this.dom.value = this.dom.value.substring(0, cursor) + '\t' + this.dom.value.substring(cursor);
-				this.dom.selectionStart = cursor + 1;
-				this.dom.selectionEnd = this.dom.selectionStart;
-			}
-
-		}, false);
-	}
-
-	getValue() {
-
-		return this.dom.value;
-	}
-
-	setValue(value) {
-
-		this.dom.value = value;
-		return this;
-	}
-}
-
-/**
- * The <select> element is used to create a drop-down list.
- */
-class UISelect extends UIElement {
-
-	constructor() {
-
-		super(document.createElement('select'));
-	}
-
-	setMultiple(boolean) {
-
-		this.dom.multiple = boolean || false;
-		return this;
-	}
-
-	setOptions(options) {
-
-		const selected = this.dom.value;
-
-		while (this.dom.children.length > 0) {
-
-			this.dom.removeChild(this.dom.firstChild);
-		}
-
-		for (const key in options) {
-
-			const option = document.createElement('option');
-			option.value = key;
-			option.innerHTML = options[key];
-			this.dom.appendChild(option);
-		}
-
-		this.dom.value = selected;
-
-		return this;
-	}
-
-	getValue() {
-
-		return this.dom.value;
-	}
-
-	setValue(value) {
-
-		value = String(value);
-
-		if (this.dom.value !== value) {
-
-			this.dom.value = value;
-		}
-
-		return this;
-	}
-}
-
-/**
- * UICheckbox
- * @param {boolean} value
- */
-class UICheckbox extends UIElement {
-
-	constructor(value) {
-
-		super(document.createElement('input'));
-
-		this.dom.type = 'checkbox';
-		this.setValue(value);
-	}
-
-	getName() {
-
-		return this.dom.name;
-	}
-
-	setName(name) {
-
-		this.dom.name = name;
-		return this;
-	}
-
-	getValue() {
-
-		return this.dom.checked;
-	}
-
-	setValue(value) {
-
-		if (value !== undefined) {
-
-			this.dom.checked = value;
-		}
 		return this;
 	}
 }
@@ -528,16 +390,16 @@ class UICheckbox extends UIElement {
 /**
  * UIColor
  */
-class UIColor extends UIElement {
+export class UIColor extends UIElement {
 
 	constructor() {
 
-		super(document.createElement('input'));
+		super("input");
 
 		try {
 
-			this.dom.type = 'color';
-			this.dom.value = '#ffffff';
+			this.dom.type = "color";
+			this.dom.value = "#ffffff";
 
 		} catch (e) {
 
@@ -563,187 +425,42 @@ class UIColor extends UIElement {
 
 	setHexValue(hex) {
 
-		this.dom.value = '#' + ('000000' + hex.toString(16)).slice(-6);
+		this.dom.value = "#" + ("000000" + hex.toString(16)).slice(-6);
 		return this;
 	}
 }
 
 /**
  * UINumber
- * @param {any} number
+ * @param {number} value
+ * @param {number} step
+ * @param {number} min
+ * @param {number} max
+ * @param {number} precision
+ * @param {number} unit
  */
-class UINumber extends UIElement {
+export class UINumber extends UIElement {
 
-	constructor(number) {
+	constructor(value, step, min, max, precision, unit) {
 
-		super(document.createElement('input'));
+		super("input");
 
+		this.dom.type = "number";
+		this.dom.step = step || 1;
+		this.dom.onkeydown = (e) => {
 
-		this.dom.type = 'number';
-		this.dom.value = '0.00';
+			e.stopPropagation();
+		};
+		this.value = value || 0;
+		this.min = min || -Infinity;
+		this.max = max || +Infinity;
+		this.precision = precision || 0;
+		this.unit = unit;
+		this.setValue(value);
+		this.dom.onchange = (e) => {
 
-		this.value = 0;
-
-		this.min = - Infinity;
-		this.max = + Infinity;
-
-		this.precision = 2;
-		this.step = 1;
-		this.unit = '';
-		this.nudge = 0.01;
-
-		this.setValue(number);
-
-		const scope = this;
-
-		const changeEvent = document.createEvent('HTMLEvents');
-		changeEvent.initEvent('change', true, true);
-
-		let distance = 0;
-		let onMouseDownValue = 0;
-
-		const pointer = { x: 0, y: 0 };
-		const prevPointer = { x: 0, y: 0 };
-
-		function onMouseDown(event) {
-
-			event.preventDefault();
-
-			distance = 0;
-
-			onMouseDownValue = scope.value;
-
-			prevPointer.x = event.clientX;
-			prevPointer.y = event.clientY;
-
-			document.addEventListener('mousemove', onMouseMove, false);
-			document.addEventListener('mouseup', onMouseUp, false);
-		}
-
-		function onMouseMove(event) {
-
-			const currentValue = scope.value;
-
-			pointer.x = event.clientX;
-			pointer.y = event.clientY;
-
-			distance += (pointer.x - prevPointer.x) - (pointer.y - prevPointer.y);
-
-			let value = onMouseDownValue + (distance / (event.shiftKey ? 5 : 50)) * scope.step;
-			value = Math.min(scope.max, Math.max(scope.min, value));
-
-			if (currentValue !== value) {
-
-				scope.setValue(value);
-				scope.dom.dispatchEvent(changeEvent);
-			}
-
-			prevPointer.x = event.clientX;
-			prevPointer.y = event.clientY;
-		}
-
-		function onMouseUp() {
-
-			document.removeEventListener('mousemove', onMouseMove, false);
-			document.removeEventListener('mouseup', onMouseUp, false);
-
-			if (Math.abs(distance) < 2) {
-
-				scope.dom.focus();
-				scope.dom.select();
-			}
-		}
-
-		function onTouchStart(event) {
-
-			if (event.touches.length === 1) {
-
-				distance = 0;
-
-				onMouseDownValue = scope.value;
-
-				prevPointer.x = event.touches[0].pageX;
-				prevPointer.y = event.touches[0].pageY;
-
-				document.addEventListener('touchmove', onTouchMove, false);
-				document.addEventListener('touchend', onTouchEnd, false);
-			}
-		}
-
-		function onTouchMove(event) {
-
-			const currentValue = scope.value;
-
-			pointer.x = event.touches[0].pageX;
-			pointer.y = event.touches[0].pageY;
-
-			distance += (pointer.x - prevPointer.x) - (pointer.y - prevPointer.y);
-
-			let value = onMouseDownValue + (distance / (event.shiftKey ? 5 : 50)) * scope.step;
-			value = Math.min(scope.max, Math.max(scope.min, value));
-
-			if (currentValue !== value) {
-
-				scope.setValue(value);
-				scope.dom.dispatchEvent(changeEvent);
-			}
-
-			prevPointer.x = event.touches[0].pageX;
-			prevPointer.y = event.touches[0].pageY;
-		}
-
-		function onTouchEnd(event) {
-
-			if (event.touches.length === 0) {
-
-				document.removeEventListener('touchmove', onTouchMove, false);
-				document.removeEventListener('touchend', onTouchEnd, false);
-			}
-		}
-
-		function onChange() {
-
-			scope.setValue(this.value);
-		}
-
-		//function onFocus() {
-		//    dom.style.backgroundColor = '';
-		//    dom.style.cursor = '';
-		//}
-		//function onBlur() {
-		//    dom.style.backgroundColor = 'transparent';
-		//    dom.style.cursor = 'ns-resize';
-		//}
-
-		function onKeyDown(event) {
-
-			event.stopPropagation();
-
-			switch (event.keyCode) {
-
-				//case 13: // enter
-				//    dom.blur();
-				//    break;
-				case 38: // up
-					event.preventDefault();
-					scope.setValue(scope.getValue() + scope.nudge);
-					scope.dom.dispatchEvent(changeEvent);
-					break;
-				case 40: // down
-					event.preventDefault();
-					scope.setValue(scope.getValue() - scope.nudge);
-					scope.dom.dispatchEvent(changeEvent);
-					break;
-			}
-		}
-
-		//onBlur();
-		this.dom.addEventListener('keydown', onKeyDown, false);
-		this.dom.addEventListener('mousedown', onMouseDown, false);
-		this.dom.addEventListener('touchstart', onTouchStart, false);
-		this.dom.addEventListener('change', onChange, false);
-		//dom.addEventListener('focus', onFocus, false);
-		//dom.addEventListener('blur', onBlur, false);
+			this.setValue(this.value);
+		};
 	}
 
 	getName() {
@@ -757,6 +474,34 @@ class UINumber extends UIElement {
 		return this;
 	}
 
+	setPrecision(precision) {
+
+		this.precision = precision;
+		this.setValue(this.value);
+		return this;
+	}
+
+	setRange(min, max) {
+
+		this.min = min;
+		this.max = max;
+		this.dom.min = min;
+		this.dom.max = max;
+		return this;
+	}
+
+	setStep(step) {
+
+		this.dom.step = step;
+		return this;
+	}
+
+	setTitle(text) {
+
+		this.dom.title = text;
+		return this;
+	}
+
 	getValue() {
 
 		return parseFloat(this.dom.value);
@@ -765,7 +510,6 @@ class UINumber extends UIElement {
 	setValue(value) {
 
 		if (value !== undefined) {
-
 			value = parseFloat(value);
 
 			if (value < this.min)
@@ -776,48 +520,16 @@ class UINumber extends UIElement {
 			this.value = value;
 			this.dom.value = value.toFixed(this.precision);
 
-			if (this.unit !== '')
-				this.dom.value += ' ' + this.unit;
+			if (this.unit)
+				this.dom.value += this.unit;
 		}
-
-		return this;
-	}
-
-	setPrecision(precision) {
-
-		this.precision = precision;
-		return this;
-	}
-
-	setStep(step) {
-
-		this.step = step;
-		return this;
-	}
-
-	setNudge(nudge) {
-
-		this.nudge = nudge;
-		return this;
-	}
-
-	setRange(min, max) {
-
-		this.min = min;
-		this.max = max;
-
 		return this;
 	}
 
 	setUnit(unit) {
 
 		this.unit = unit;
-		return this;
-	}
-
-	setTitle(text) {
-
-		this.dom.title = text;
+		this.setValue(this.value);
 		return this;
 	}
 }
@@ -829,14 +541,18 @@ class UINumber extends UIElement {
  * @param {number} min
  * @param {number} max
  */
-class UIInteger extends UIElement {
+export class UIInteger extends UIElement {
 
 	constructor(value, step, min, max) {
 
-		super(document.createElement('input'));
+		super("input");
 
-		this.dom.type = 'number';
+		this.dom.type = "number";
 		this.dom.value = value;
+		this.dom.onkeydown = (e) => {
+
+			e.stopPropagation();
+		}
 
 		if (step != undefined) {
 			this.dom.step = step;
@@ -869,61 +585,34 @@ class UIInteger extends UIElement {
 /**
  * UIBreak
  */
-class UIBreak extends UIElement {
+export class UIBreak extends UIElement {
 
 	constructor() {
 
-		super(document.createElement('br'));
-
-		this.dom.className = 'Break';
+		super("br");
 	}
 }
 
 /**
  * UIHorizontalRule
  */
-class UIHorizontalRule extends UIElement {
+export class UIHorizontalRule extends UIElement {
 
 	constructor() {
 
-		super(document.createElement('hr'));
-
-		this.dom.className = 'HorizontalRule';
+		super("hr");
 	}
 }
 
 /**
- * UIButton
- * @param {any} value
+ * UIProgress
+ * @param {*} value
  */
-class UIButton extends UIElement {
+export class UIProgress extends UIElement {
 
 	constructor(value) {
 
-		super(document.createElement('input'));
-
-		this.dom.type = 'button';
-
-		if (value !== undefined) {
-
-			this.dom.value = value;
-		}
-
-		return this;
-	}
-
-	setValue(value) {
-
-		this.dom.value = value;
-		return this;
-	}
-}
-
-class UIProgress extends UIElement {
-
-	constructor(value) {
-
-		super(document.createElement('progress'));
+		super("progress");
 
 		this.dom.value = value;
 	}
@@ -931,264 +620,162 @@ class UIProgress extends UIElement {
 	setValue(value) {
 
 		this.dom.value = value;
+		return this;
 	}
 }
 
 /**
  * UITabbedPanel
+ * @param {string} align (horizontal | vertical)
  */
-class UITabbedPanel extends UIDiv {
+export class UITabbedPanel extends UIDiv {
 
-	/**
-	 * Constructor
-	 * @param {*} align (horizontal | vertical)
-	 */
 	constructor(align) {
 
 		super();
 
+		this.align = align || "horizontal";
 		this.tabs = [];
 		this.panels = [];
-		this.selector = new UISpan().setClass('tab-selector');
-
-		this.tabsDiv = new UIDiv();
-		this.tabsDiv.dom.className = 'tabs';
+		this.selector = new UISpan().setClass("tab-selector");
+		this.tabsDiv = new UIDiv().setClass("tabs");
 		this.tabsDiv.add(this.selector);
-
-		this.panelsDiv = new UIDiv();
-		this.panelsDiv.dom.className = 'panels';
-
+		this.panelsDiv = new UIDiv().setClass("panels");
+		this.selected = "";
 		this.add(this.tabsDiv);
 		this.add(this.panelsDiv);
-
-		this.align = align || 'horizontal';
-		this.selected = '';
-	}
-
-	select(id) {
-
-		let tab;
-		let panel;
-
-		// Deselect current selection
-		if (this.selected && this.selected.length) {
-
-			tab = this.tabs.find((item) => {
-
-				return item.dom.id === this.selected;
-			});
-
-			panel = this.panels.find((item) => {
-
-				return item.dom.id === this.selected;
-			});
-
-			if (tab) {
-
-				tab.removeClass('selected');
-			}
-
-			if (panel) {
-
-				panel.setDisplay('none');
-			}
-		}
-
-		tab = this.tabs.find(function (item) {
-
-			return item.dom.id === id;
-		});
-
-		panel = this.panels.find(function (item) {
-
-			return item.dom.id === id;
-		});
-
-		if (tab) {
-
-			tab.addClass('selected');
-			//
-			// transforming the tab-selector element
-			//
-			let size;
-			const rect = tab.dom.getBoundingClientRect();
-			if (this.align === 'horizontal') {
-				size = rect.width * this.tabs.indexOf(tab);
-				this.selector.dom.style.transform = `translateX(${size}px)`;
-			} else {
-				size = rect.height * this.tabs.indexOf(tab);
-				this.selector.dom.style.transform = `translateY(${size}px)`;
-			}
-		}
-
-		if (panel) {
-
-			panel.setDisplay('');
-		}
-
-		this.selected = id;
-
-		return this;
 	}
 
 	addTab(id, label, items) {
 
 		const tab = new UITab(label, this);
 		tab.setId(id);
-		tab.setClass('tab');
+		tab.setClass("tab");
 		this.tabs.push(tab);
 		this.tabsDiv.add(tab);
 
 		const panel = new UIDiv();
 		panel.setId(id);
 		panel.add(items);
-		panel.setDisplay('none');
 		this.panels.push(panel);
 		this.panelsDiv.add(panel);
-
 		this.select(id);
+	}
+
+	select(id) {
+
+		for (let tab of this.tabs) {
+			if (tab.dom.id === id) {
+				tab.addClass("selected");
+				this.transformSelector(tab);
+			} else if (tab.dom.id === this.selected) {
+				tab.removeClass("selected");
+			}
+		}
+
+		for (let panel of this.panels) {
+			if (panel.dom.id === id) {
+				panel.dom.style.display = "block";
+			} else if (panel.dom.id === this.selected) {
+				panel.dom.style.display = "none";
+			}
+		}
+
+		this.selected = id;
+		return this;
+	}
+
+	transformSelector(tab) {
+
+		let size;
+		const rect = tab.getBoundingClientRect();
+		if (this.align === "horizontal") {
+			size = rect.width * this.tabs.indexOf(tab);
+			this.selector.dom.style.transform = `translateX(${size}px)`;
+		} else {
+			size = rect.height * this.tabs.indexOf(tab);
+			this.selector.dom.style.transform = `translateY(${size}px)`;
+		}
 	}
 }
 
 /**
  * UITab
+ * @param {*} label
+ * @param {*} parent
  */
-class UITab extends UIDiv {
+export class UITab extends UIDiv {
 
-	constructor(text, parent) {
+	constructor(label, parent) {
 
-		super(text);
+		super();
+		const button = new UIInput("button");
+		button.dom.title = label;
+		this.dom.onclick = (e) => {
 
-		this.button = new UIInput('button');
-		this.button.dom.title = text;
-		this.parent = parent;
-		this.dom.addEventListener('click', () => {
-
-			this.parent.select(this.dom.id);
-
-		});
-		this.add(this.button);
+			parent.select(this.dom.id);
+			e.preventDefault();
+		};
+		this.add(button);
 	}
 }
 
 /**
- * UIListbox
+ * UIList
  */
-class UIListbox extends UIElement {
+export class UIList extends UIElement {
 
 	constructor() {
 
-		super(document.createElement('select'));
-
-		this.dom.multiple = true;
-
-		this.items = [];
-		this.listItems = [];
-		this.selectedIndex = -1;
-		this.selectedValue = null;
-
-		return this;
+		super("ul");
 	}
+}
 
-	setItems(items) {
+/**
+ * UIListItem
+ */
+export class UIListItem extends UIElement {
 
-		this.items = items;
-		this.dom.options.length = 0;
+	constructor() {
 
-		for (let i = 0; i < items.length; i++) {
-
-			this.setItem(items[i]);
-		}
-	}
-
-	selectIndex(index) {
-
-		this.selectValue(index);
-	}
-
-	selectValue(index) {
-
-		let value = null;
-
-		for (let i = 0; i < this.dom.options.length; i++) {
-
-			const option = this.dom.options[i];
-
-			if (index === i) {
-
-				option.selected = true;
-				option.className = 'selected';
-				value = parseInt(option.value);
-
-			} else {
-
-				option.selected = false;
-				option.className = '';
-			}
-		}
-
-		this.selectedValue = value;
-		this.selectedIndex = index;
-	}
-
-	getValue() {
-
-		return this.selectedValue;
-	}
-
-	setItem(item) {
-
-		const option = document.createElement('option');
-		option.value = item.id;
-		option.text = item.type;
-		option.addEventListener('click', (event) => {
-
-			this.selectValue(event.target.index);
-
-		}, false);
-
-		this.dom.appendChild(option);
-		this.listItems.push(item);
-
-		return this;
+		super("li");
 	}
 }
 
 /**
  * UITreeView
  */
-class UITreeView extends UIElement {
+export class UITreeView extends UIElement {
 
 	constructor() {
 
-		super(document.createElement('ul'));
+		super("ul");
 	}
 }
 
 /**
  * UITreeViewItem
- * @param {*} id
- * @param {*} link
- * @param {*} parent
+ * @param {string} id
+ * @param {UILink} link
  */
-class UITreeViewItem extends UIElement {
+export class UITreeViewItem extends UIElement {
 
-	constructor(id, link, parent) {
+	constructor(id, link) {
 
-		super(document.createElement('li'));
+		super("li");
+
 		this.dom.id = id;
 		this.link = link;
-		this.parent = parent;
-		this.toggle = new UISpan().setClass('toggle-collapsed');
-		this.expander = new UIDiv().setId('expander');
+		this.toggle = new UISpan().setClass("toggle-collapsed");
+		this.expander = new UIDiv().setId("expander");
 		this.expanded = false;
 		this.selected = false;
 		this.add([this.expander, this.link]);
 	}
 
-	setItems(subItems) {
+	setItem(subItem) {
 
-		this.add(subItems);
+		this.add(subItem);
 		this.toggle.dom.onclick = () => {
 
 			if (this.expanded) {
@@ -1202,9 +789,9 @@ class UITreeViewItem extends UIElement {
 
 		if (!this.expanded) {
 
-			const items = subItems.dom.getElementsByTagName('li');
+			const items = subItem.dom.getElementsByTagName("li");
 			for (let item of items) {
-				if (item.className === 'selected') {
+				if (item.className === "selected") {
 					this.expand();
 					break;
 				}
@@ -1215,53 +802,26 @@ class UITreeViewItem extends UIElement {
 	select() {
 
 		this.selected = true;
-		this.setClass('selected');
+		this.setClass("selected");
 	}
 
 	unselect() {
 
 		this.selected = false;
-		this.dom.removeAttribute('class');
+		this.dom.removeAttribute("class");
 	}
 
 	expand() {
 
-		this.toggle.setClass('toggle-expanded');
-		this.dom.children[2].style.display = 'block';
+		this.toggle.setClass("toggle-expanded");
+		this.dom.children[2].style.display = "block";
 		this.expanded = true;
 	}
 
 	collaps() {
 
-		this.toggle.setClass('toggle-collapsed');
-		this.dom.children[2].style.display = 'none';
+		this.toggle.setClass("toggle-collapsed");
+		this.dom.children[2].style.display = "none";
 		this.expanded = false;
 	}
 }
-
-export {
-	UIElement,
-	UISpan,
-	UIDiv,
-	UIRow,
-	UIPanel,
-	UILabel,
-	UIText,
-	UILink,
-	UIInput,
-	UITextArea,
-	UISelect,
-	UICheckbox,
-	UIColor,
-	UINumber,
-	UIInteger,
-	UIBreak,
-	UIHorizontalRule,
-	UIButton,
-	UIProgress,
-	UITabbedPanel,
-	UITab,
-	UIListbox,
-	UITreeView,
-	UITreeViewItem
-};
