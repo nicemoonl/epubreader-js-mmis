@@ -74,8 +74,9 @@ export class Toolbar {
 		bookmark.dom.title = strings.get(keys[3]);
 		bookmark.dom.onclick = (e) => {
 
-			const cfi = reader.rendition.currentLocation().start.cfi;
-			reader.emit("bookmarked", reader.isBookmarked(cfi) === -1);
+			const cfi = this.locationCfi;
+			const val = reader.isBookmarked(cfi) === -1;
+			reader.emit("bookmarked", val);
 		};
 
 		end.add(bookmark);
@@ -121,17 +122,18 @@ export class Toolbar {
 		reader.on("relocated", (location) => {
 
 			const cfi = location.start.cfi;
-
-			if (reader.isBookmarked(cfi) === -1) {
+			const val = reader.isBookmarked(cfi) === -1;
+			if (val) {
 				bookmark.removeClass("bookmarked");
 			} else {
 				bookmark.addClass("bookmarked");
 			}
+			this.locationCfi = cfi; // save location cfi
 		});
 
-		reader.on("bookmarked", (value) => {
+		reader.on("bookmarked", (boolean) => {
 
-			if (value) {
+			if (boolean) {
 				bookmark.addClass("bookmarked");
 			} else {
 				bookmark.removeClass("bookmarked");
