@@ -8,6 +8,11 @@
 	padding-top: 58px;
 }
 
+#sidebar .list-container {
+	height: 100%;
+	overflow: auto;
+}
+
 /* sidebar tabs */
 
 #sidebar .tabs {
@@ -97,7 +102,6 @@
 	height: calc(100vh - 86px);
 	margin: 0;
 	padding: 15px 0;
-	overflow: auto;
 	font-size: small;
 	font-family: Roboto, 'Segoe UI', Tahoma, sans-serif;
 }

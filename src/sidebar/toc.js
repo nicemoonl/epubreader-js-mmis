@@ -1,21 +1,23 @@
-import { UIPanel, UITreeView, UITreeViewItem, UILink } from "../ui.js";
+import { UIPanel, UITreeView, UITreeViewItem, UILink, UIDiv } from "../ui.js";
 
 export class TocPanel extends UIPanel {
 
 	constructor(reader) {
 
 		super();
-		super.setId("contents");
 
+		this.setId("contents");
 		this.reader = reader;
 		this.selector = undefined; // save reference to selected tree item
+		const container = new UIDiv().setClass("list-container");
 
 		//-- events --//
 
 		reader.on("navigation", (toc) => {
 
-			this.clear();
-			this.add(this.generateToc(toc));
+			container.clear();
+			container.add(this.generateToc(toc));
+			this.add(container);
 		});
 	}
 

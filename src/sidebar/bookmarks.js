@@ -1,11 +1,10 @@
-import { UIPanel, UIRow, UIInput, UILink, UIList, UIListItem } from "../ui.js";
+import { UIPanel, UIRow, UIInput, UILink, UIList } from "../ui.js";
 
 export class BookmarksPanel extends UIPanel {
 
 	constructor(reader) {
 
 		super();
-		this.setId("bookmarks");
 
 		const strings = reader.strings;
 
@@ -42,6 +41,7 @@ export class BookmarksPanel extends UIPanel {
 
 		this.reader = reader;
 		this.bookmarks = new UIList();
+		this.setId("bookmarks");
 		this.add(ctrlRow);
 		this.add(this.bookmarks);
 
@@ -57,8 +57,7 @@ export class BookmarksPanel extends UIPanel {
 
 			cfg.bookmarks.forEach((cfi) => {
 
-				const bookmark = this.createBookmark(cfi);
-				this.bookmarks.add(bookmark);
+				this.setBookmark(cfi);
 			});
 			update();
 		});
@@ -91,8 +90,7 @@ export class BookmarksPanel extends UIPanel {
 		if (this.reader.isBookmarked(cfi) > -1) {
 			return;
 		}
-		const bookmark = this.createBookmark(cfi);
-		this.bookmarks.add(bookmark);
+		this.setBookmark(cfi);
 		this.reader.settings.bookmarks.push(cfi);
 	}
 
@@ -113,19 +111,19 @@ export class BookmarksPanel extends UIPanel {
 		this.reader.settings.bookmarks = [];
 	}
 
-	createBookmark(cfi) {
+	setBookmark(cfi) {
 
-		const item = new UIListItem();
 		const link = new UILink();
 		const book = this.reader.book;
 		const spineItem = book.spine.get(cfi);
 		const navItem = book.navigation.get(spineItem.href);
+		let itemId;
 
 		if (navItem === undefined) {
-			item.setId(spineItem.idref);
+			itemId = spineItem.idref;
 			link.setTextContent(spineItem.idref);
 		} else {
-			item.setId(navItem.id);
+			itemId = navItem.id;
 			link.setTextContent(navItem.label);
 		}
 
@@ -136,7 +134,6 @@ export class BookmarksPanel extends UIPanel {
 			return false;
 		};
 
-		item.add(link);
-		return item;
+		this.bookmarks.add(link, itemId);
 	}
 }

@@ -1,29 +1,27 @@
-import { UIPanel, UIRow, UIInput } from '../ui.js';
+import { UIPanel, UIRow, UIInput, UILink, UIList } from "../ui.js";
 
 export class SearchPanel extends UIPanel {
 
 	constructor(reader) {
 
 		super();
-		super.setId('search');
-
 		const strings = reader.strings;
 
 		let searchQuery = undefined;
-		const searchBox = new UIInput('search');
-		searchBox.dom.placeholder = strings.get('sidebar/search/placeholder');
+		const searchBox = new UIInput("search");
+		searchBox.dom.placeholder = strings.get("sidebar/search/placeholder");
 		searchBox.dom.onsearch = () => {
 
 			const value = searchBox.getValue();
 
 			if (value.length === 0) {
-				this.clear();
+				this.items.clear();
 			} else if (searchQuery !== value) {
-				this.clear();
+				this.items.clear();
 				this.doSearch(value).then(results => {
 
-					results.forEach(item => {
-						this.set(item);
+					results.forEach(data => {
+						this.set(data);
 					});
 				});
 			}
@@ -34,8 +32,10 @@ export class SearchPanel extends UIPanel {
 		ctrlRow.add(searchBox);
 		super.add(ctrlRow);
 
-		this.items = document.createElement('ul');
-		this.dom.appendChild(this.items);
+		this.setId("search");
+		this.items = new UIList();
+		this.add(this.items);
+		console.log(this.items)
 		this.reader = reader;
 		//
 		// improvement of the highlighting of keywords is required...
@@ -58,25 +58,12 @@ export class SearchPanel extends UIPanel {
 
 	set(data) {
 
-		const item = document.createElement('li');
-		const link = document.createElement('a');
-
-		link.href = "#" + data.cfi;
-		link.textContent = data.excerpt;
-		link.onclick = () => {
+		const link = new UILink("#" + data.cfi, data.excerpt);
+		link.dom.onclick = () => {
 
 			this.reader.rendition.display(data.cfi);
 			return false;
 		};
-
-		item.appendChild(link);
-		this.items.appendChild(item);
-	}
-
-	clear() {
-
-		while (this.items.hasChildNodes()) {
-			this.items.removeChild(this.items.lastChild);
-		}
+		this.items.add(link);
 	}
 }

@@ -667,18 +667,45 @@ export class UIList extends UIElement {
 
 	constructor() {
 
-		super("ul");
+		super("div");
+		this.setClass("list-container");
+		this.list = document.createElement("ul");
+		this.dom.appendChild(this.list);
 	}
-}
 
-/**
- * UIListItem
- */
-export class UIListItem extends UIElement {
+	add(item, id) {
 
-	constructor() {
+		const listItem = document.createElement("li");
+		listItem.id = id;
+		if (Array.isArray(item)) {
+			item.forEach((i) => { listItem.appendChild(i.dom) });
+		} else {
+			listItem.appendChild(item.dom);
+		}
+		this.list.appendChild(listItem);
+		return this;
+	}
 
-		super("li");
+	remove() {
+
+		for (let i = 0; i < arguments.length; i++) {
+			const argument = arguments[i];
+			if (argument instanceof UIElement) {
+				this.list.removeChild(argument.dom);
+			} else if (Number.isInteger(argument)) {
+				this.list.removeChild(this.list.childNodes[argument]);
+			} else {
+				console.error("UIList:", argument, ERROR_MSG);
+			}
+		}
+		return this;
+	}
+
+	clear() {
+
+		while (this.list.children.length)
+			this.list.removeChild(this.list.lastChild);
+		return this;
 	}
 }
 
