@@ -535,54 +535,6 @@ export class UINumber extends UIElement {
 }
 
 /**
- * UIInteger
- * @param {number} value
- * @param {number} step
- * @param {number} min
- * @param {number} max
- */
-export class UIInteger extends UIElement {
-
-	constructor(value, step, min, max) {
-
-		super("input");
-
-		this.dom.type = "number";
-		this.dom.value = value;
-		this.dom.onkeydown = (e) => {
-
-			e.stopPropagation();
-		}
-
-		if (step != undefined) {
-			this.dom.step = step;
-		}
-
-		if (min !== undefined) {
-			this.dom.min = min;
-		}
-
-		if (max !== undefined) {
-			this.dom.max = max;
-		}
-	}
-
-	getValue() {
-
-		return this.dom.value;
-	}
-
-	setValue(value) {
-
-		if (value !== undefined) {
-
-			this.dom.value = value;
-		}
-		return this;
-	}
-}
-
-/**
  * UIBreak
  */
 export class UIBreak extends UIElement {
