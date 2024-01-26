@@ -35,7 +35,6 @@ export class SearchPanel extends UIPanel {
 		this.setId("search");
 		this.items = new UIList();
 		this.add(this.items);
-		console.log(this.items)
 		this.reader = reader;
 		//
 		// improvement of the highlighting of keywords is required...
