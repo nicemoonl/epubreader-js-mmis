@@ -1,50 +1,49 @@
-import { UIPanel, UIRow, UIInput } from '../ui.js';
+import { UIPanel, UIRow, UIInput, UILink, UIList, UIListItem } from "../ui.js";
 
 export class BookmarksPanel extends UIPanel {
 
 	constructor(reader) {
 
 		super();
-		super.setId('bookmarks');
+		this.setId("bookmarks");
 
 		const strings = reader.strings;
 
 		const ctrlRow = new UIRow();
 		const ctrlStr = [
-			strings.get('sidebar/bookmarks/add'),
-			strings.get('sidebar/bookmarks/remove'),
-			strings.get('sidebar/bookmarks/clear'),
+			strings.get("sidebar/bookmarks/add"),
+			strings.get("sidebar/bookmarks/remove"),
+			strings.get("sidebar/bookmarks/clear"),
 		];
-		const btn_a = new UIInput('button', ctrlStr[0]).addClass('btn-start');
-		const btn_r = new UIInput('button', ctrlStr[1]).addClass('btn-medium');
-		const btn_c = new UIInput('button', ctrlStr[2]).addClass('btn-end');
+		const btn_a = new UIInput("button", ctrlStr[0]).addClass("btn-start");
+		const btn_r = new UIInput("button", ctrlStr[1]).addClass("btn-medium");
+		const btn_c = new UIInput("button", ctrlStr[2]).addClass("btn-end");
 
 		btn_a.dom.onclick = () => {
 
-			reader.emit('bookmarked', true);
+			reader.emit("bookmarked", true);
 			return false;
 		};
 
 		btn_r.dom.onclick = () => {
 
-			reader.emit('bookmarked', false);
+			reader.emit("bookmarked", false);
 			return false;
 		};
 
 		btn_c.dom.onclick = () => {
 
 			this.clearBookmarks();
-			reader.emit('bookmarked', false);
+			reader.emit("bookmarked", false);
 			return false;
 		};
 
 		ctrlRow.add([btn_a, btn_r, btn_c]);
 
 		this.reader = reader;
-		this.bookmarks = document.createElement('ul');
-
-		super.add(ctrlRow);
-		this.dom.appendChild(this.bookmarks);
+		this.bookmarks = new UIList();
+		this.add(ctrlRow);
+		this.add(this.bookmarks);
 
 		const update = () => {
 
@@ -54,93 +53,90 @@ export class BookmarksPanel extends UIPanel {
 
 		//-- events --//
 
-		reader.on('bookready', () => {
+		reader.on("bookready", (cfg) => {
 
-			reader.settings.bookmarks.forEach((cfi) => {
+			cfg.bookmarks.forEach((cfi) => {
 
-				const bookmark = this.createBookmarkItem(cfi);
-				this.bookmarks.appendChild(bookmark);
+				const bookmark = this.createBookmark(cfi);
+				this.bookmarks.add(bookmark);
 			});
-
 			update();
 		});
 
-		reader.on('relocated', (location) => {
+		reader.on("relocated", (location) => {
 
 			const cfi = location.start.cfi;
 			const val = reader.isBookmarked(cfi) === -1;
 			btn_a.dom.disabled = !val;
 			btn_r.dom.disabled = val;
+			this.locationCfi = cfi; // save location cfi
 		});
 
-		reader.on('bookmarked', (value) => {
+		reader.on("bookmarked", (boolean) => {
 
-			const cfi = reader.rendition.currentLocation().start.cfi;
-
-			if (value) {
-				this.addBookmark(cfi);
+			if (boolean) {
+				this.appendBookmark();
 				btn_a.dom.disabled = true;
 			} else {
-				this.removeBookmark(cfi);
+				this.removeBookmark();
 				btn_a.dom.disabled = false;
 			}
-
 			update();
 		});
 	}
 
-	addBookmark(cfi) {
+	appendBookmark() {
 
-		if (this.reader.isBookmarked(cfi) > -1)
+		const cfi = this.locationCfi;
+		if (this.reader.isBookmarked(cfi) > -1) {
 			return;
-
-		const bookmark = this.createBookmarkItem(cfi);
-		this.bookmarks.appendChild(bookmark);
+		}
+		const bookmark = this.createBookmark(cfi);
+		this.bookmarks.add(bookmark);
 		this.reader.settings.bookmarks.push(cfi);
 	}
 
-	removeBookmark(cfi) {
+	removeBookmark() {
 
+		const cfi = this.locationCfi;
 		const index = this.reader.isBookmarked(cfi);
-		if (index === -1)
+		if (index === -1) {
 			return;
-
-		this.bookmarks.removeChild(this.bookmarks.childNodes[index]);
+		}
+		this.bookmarks.remove(index);
 		this.reader.settings.bookmarks.splice(index, 1);
 	}
 
 	clearBookmarks() {
 
+		this.bookmarks.clear();
 		this.reader.settings.bookmarks = [];
-		while (this.bookmarks.hasChildNodes()) {
-			this.bookmarks.removeChild(this.bookmarks.lastChild);
-		}
 	}
 
-	createBookmarkItem(cfi) {
+	createBookmark(cfi) {
 
-		const item = document.createElement('li');
-		const link = document.createElement('a');
-
+		const item = new UIListItem();
+		const link = new UILink();
 		const book = this.reader.book;
 		const spineItem = book.spine.get(cfi);
+		const navItem = book.navigation.get(spineItem.href);
 
-		if (spineItem.index in book.navigation.toc) {
-			const tocItem = book.navigation.toc[spineItem.index];
-			item.id = tocItem.id;
-			link.textContent = tocItem.label;
+		if (navItem === undefined) {
+			item.setId(spineItem.idref);
+			link.setTextContent(spineItem.idref);
 		} else {
-			link.textContent = cfi;
+			item.setId(navItem.id);
+			link.setTextContent(navItem.label);
 		}
 
-		link.href = "#" + cfi;
-		link.onclick = () => {
+		link.setHref("#" + cfi);
+		link.dom.onclick = () => {
 
 			this.reader.rendition.display(cfi);
 			return false;
 		};
 
-		item.appendChild(link);
+		item.add(link);
 		return item;
 	}
 }
