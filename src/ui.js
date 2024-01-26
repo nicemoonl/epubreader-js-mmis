@@ -437,11 +437,10 @@ export class UIColor extends UIElement {
  * @param {number} min
  * @param {number} max
  * @param {number} precision
- * @param {number} unit
  */
 export class UINumber extends UIElement {
 
-	constructor(value, step, min, max, precision, unit) {
+	constructor(value, step, min, max, precision) {
 
 		super("input");
 
@@ -455,7 +454,6 @@ export class UINumber extends UIElement {
 		this.min = min || -Infinity;
 		this.max = max || +Infinity;
 		this.precision = precision || 0;
-		this.unit = unit;
 		this.setValue(value);
 		this.dom.onchange = (e) => {
 
@@ -519,17 +517,7 @@ export class UINumber extends UIElement {
 
 			this.value = value;
 			this.dom.value = value.toFixed(this.precision);
-
-			if (this.unit)
-				this.dom.value += this.unit;
 		}
-		return this;
-	}
-
-	setUnit(unit) {
-
-		this.unit = unit;
-		this.setValue(this.value);
 		return this;
 	}
 }
