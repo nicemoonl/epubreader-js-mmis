@@ -126,12 +126,14 @@ export class UIElement {
 
 /**
  * UISpan
+ * @param {string} text
  */
 export class UISpan extends UIElement {
 
-	constructor() {
+	constructor(text) {
 
 		super("span");
+		this.setTextContent(text);
 	}
 }
 

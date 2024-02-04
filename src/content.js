@@ -1,4 +1,4 @@
-import { UIDiv, UILabel } from "./ui.js";
+import { UIDiv, UISpan } from "./ui.js";
 
 export class Content {
 
@@ -17,7 +17,7 @@ export class Content {
 			reader.emit("prev");
 			e.preventDefault();
 		};
-		prev.add(new UILabel("<"));
+		prev.add(new UISpan("<"));
 
 		const next = new UIDiv().setId("next").setClass("arrow");
 		next.dom.onclick = (e) => {
@@ -25,7 +25,7 @@ export class Content {
 			reader.emit("next");
 			e.preventDefault();
 		};
-		next.add(new UILabel(">"));
+		next.add(new UISpan(">"));
 
 		const viewer = new UIDiv().setId("viewer");
 		const divider = new UIDiv().setId("divider");
