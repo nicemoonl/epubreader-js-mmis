@@ -669,44 +669,19 @@ export class UIList extends UIElement {
 
 	constructor() {
 
-		super("div");
-		this.setClass("list-container");
-		this.list = document.createElement("ul");
-		this.dom.appendChild(this.list);
+		super("ul");
 	}
 
 	add(item, id) {
 
 		const listItem = document.createElement("li");
-		listItem.id = id;
+		if (id) listItem.id = id;
 		if (Array.isArray(item)) {
 			item.forEach((i) => { listItem.appendChild(i.dom) });
 		} else {
 			listItem.appendChild(item.dom);
 		}
-		this.list.appendChild(listItem);
-		return this;
-	}
-
-	remove() {
-
-		for (let i = 0; i < arguments.length; i++) {
-			const argument = arguments[i];
-			if (argument instanceof UIElement) {
-				this.list.removeChild(argument.dom);
-			} else if (Number.isInteger(argument)) {
-				this.list.removeChild(this.list.childNodes[argument]);
-			} else {
-				console.error("UIList:", argument, ERROR_MSG);
-			}
-		}
-		return this;
-	}
-
-	clear() {
-
-		while (this.list.children.length)
-			this.list.removeChild(this.list.lastChild);
+		this.dom.appendChild(listItem);
 		return this;
 	}
 }

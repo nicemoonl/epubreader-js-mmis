@@ -1,12 +1,14 @@
-import { UIPanel, UIRow, UITextArea, UIInput, UILink, UIList, UISpan } from "../ui.js";
+import { UIPanel, UIDiv, UIRow, UITextArea, UIInput, UILink, UIList, UISpan } from "../ui.js";
 
 export class AnnotationsPanel extends UIPanel {
 
 	constructor(reader) {
 
 		super();
-
+		const container = new UIDiv().setClass("list-container");
 		const strings = reader.strings;
+		const textRow = new UIRow();
+		const ctrlRow = new UIRow();
 		const ctrlStr = [
 			strings.get("sidebar/annotations/add"),
 			strings.get("sidebar/annotations/clear")
@@ -26,9 +28,6 @@ export class AnnotationsPanel extends UIPanel {
 			range: undefined,
 			cfiRange: undefined
 		};
-
-		const textRow = new UIRow();
-		const ctrlRow = new UIRow();
 
 		const btn_a = new UIInput("button", ctrlStr[0]).addClass("btn-start");
 		btn_a.dom.disabled = true;
@@ -61,11 +60,11 @@ export class AnnotationsPanel extends UIPanel {
 		textRow.add(textBox);
 		ctrlRow.add([btn_a, btn_c]);
 
-		this.reader = reader;
 		this.notes = new UIList();
+		container.add(this.notes);
 		this.setId("annotations");
-		this.add([textRow, ctrlRow]);
-		this.add(this.notes);
+		this.add([textRow, ctrlRow, container]);
+		this.reader = reader;
 		this.update = () => {
 
 			btn_c.dom.disabled = reader.settings.annotations.length === 0;

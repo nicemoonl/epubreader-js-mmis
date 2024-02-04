@@ -1,13 +1,12 @@
-import { UIPanel, UIRow, UIInput, UILink, UIList } from "../ui.js";
+import { UIPanel, UIDiv, UIRow, UIInput, UILink, UIList } from "../ui.js";
 
 export class BookmarksPanel extends UIPanel {
 
 	constructor(reader) {
 
 		super();
-
+		const container = new UIDiv().setClass("list-container");
 		const strings = reader.strings;
-
 		const ctrlRow = new UIRow();
 		const ctrlStr = [
 			strings.get("sidebar/bookmarks/add"),
@@ -39,11 +38,11 @@ export class BookmarksPanel extends UIPanel {
 
 		ctrlRow.add([btn_a, btn_r, btn_c]);
 
-		this.reader = reader;
 		this.bookmarks = new UIList();
+		container.add(this.bookmarks);
 		this.setId("bookmarks");
-		this.add(ctrlRow);
-		this.add(this.bookmarks);
+		this.add([ctrlRow, container]);
+		this.reader = reader;
 
 		const update = () => {
 

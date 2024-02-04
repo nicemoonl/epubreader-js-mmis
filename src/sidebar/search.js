@@ -1,10 +1,11 @@
-import { UIPanel, UIRow, UIInput, UILink, UIList } from "../ui.js";
+import { UIPanel, UIDiv, UIRow, UIInput, UILink, UIList } from "../ui.js";
 
 export class SearchPanel extends UIPanel {
 
 	constructor(reader) {
 
 		super();
+		const container = new UIDiv().setClass("list-container");
 		const strings = reader.strings;
 
 		let searchQuery = undefined;
@@ -30,11 +31,11 @@ export class SearchPanel extends UIPanel {
 
 		const ctrlRow = new UIRow();
 		ctrlRow.add(searchBox);
-		super.add(ctrlRow);
 
 		this.setId("search");
 		this.items = new UIList();
-		this.add(this.items);
+		container.add(this.items);
+		this.add([ctrlRow, container]);
 		this.reader = reader;
 		//
 		// improvement of the highlighting of keywords is required...
