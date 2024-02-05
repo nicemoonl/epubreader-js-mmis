@@ -37,7 +37,8 @@ export class TocPanel extends UIPanel {
 
 				item.select();
 				this.selector = item;
-				this.reader.emit("tocselected", chapter);
+				this.reader.settings.sectionId = chapter.id;
+				this.reader.rendition.display(chapter.href);
 				return false;
 			};
 			item.add([tbox, link]);
