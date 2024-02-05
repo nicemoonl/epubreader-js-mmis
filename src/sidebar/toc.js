@@ -1,15 +1,14 @@
-import { UIPanel, UITreeView, UITreeViewItem, UILink, UIDiv } from "../ui.js";
+import { UIPanel, UIDiv, UIItem, UIList, UILink, UISpan } from "../ui.js";
 
 export class TocPanel extends UIPanel {
 
 	constructor(reader) {
 
 		super();
-
+		const container = new UIDiv().setClass("list-container");
 		this.setId("contents");
 		this.reader = reader;
 		this.selector = undefined; // save reference to selected tree item
-		const container = new UIDiv().setClass("list-container");
 
 		//-- events --//
 
@@ -23,23 +22,25 @@ export class TocPanel extends UIPanel {
 
 	generateToc(toc) {
 
-		const container = new UITreeView();
+		const list = new UIList();
 
 		toc.forEach((chapter) => {
 
 			const link = new UILink(chapter.href, chapter.label);
-			const item = new UITreeViewItem(chapter.id, link);
+			const item = new UIItem().setId(chapter.id);
+			const tbox = new UIDiv().setId("expander");
 
 			link.dom.onclick = () => {
 
-				if (this.selector && this.selector !== item) {
+				if (this.selector && this.selector !== item)
 					this.selector.unselect();
-				}
+
 				item.select();
 				this.selector = item;
 				this.reader.emit("tocselected", chapter);
 				return false;
 			};
+			item.add([tbox, link]);
 
 			if (this.reader.settings.sectionId === chapter.id) {
 				item.select();
@@ -48,12 +49,26 @@ export class TocPanel extends UIPanel {
 
 			if (chapter.subitems && chapter.subitems.length > 0) {
 
-				item.setItem(this.generateToc(chapter.subitems));
+				const subItems = this.generateToc(chapter.subitems);
+				const tbtn = new UISpan().setClass("toggle-collapsed");
+				tbtn.dom.onclick = () => {
+
+					if (subItems.expanded) {
+						subItems.collaps();
+						tbtn.setClass("toggle-collapsed");
+					} else {
+						subItems.expand();
+						tbtn.setClass("toggle-expanded");
+					}
+					return false;
+				};
+				tbox.add(tbtn);
+				item.add(subItems);
 			}
 
-			container.add(item);
+			list.add(item);
 		});
 
-		return container;
+		return list;
 	}
 }

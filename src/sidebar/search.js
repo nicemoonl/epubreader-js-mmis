@@ -1,4 +1,4 @@
-import { UIPanel, UIDiv, UIRow, UIInput, UILink, UIList } from "../ui.js";
+import { UIPanel, UIDiv, UIRow, UIInput, UILink, UIList, UIItem } from "../ui.js";
 
 export class SearchPanel extends UIPanel {
 
@@ -59,11 +59,13 @@ export class SearchPanel extends UIPanel {
 	set(data) {
 
 		const link = new UILink("#" + data.cfi, data.excerpt);
+		const item = new UIItem();
 		link.dom.onclick = () => {
 
 			this.reader.rendition.display(data.cfi);
 			return false;
 		};
-		this.items.add(link);
+		item.add(link);
+		this.items.add(item);
 	}
 }

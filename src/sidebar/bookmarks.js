@@ -1,4 +1,4 @@
-import { UIPanel, UIDiv, UIRow, UIInput, UILink, UIList } from "../ui.js";
+import { UIPanel, UIDiv, UIRow, UIInput, UILink, UIList, UIItem } from "../ui.js";
 
 export class BookmarksPanel extends UIPanel {
 
@@ -113,6 +113,7 @@ export class BookmarksPanel extends UIPanel {
 	setBookmark(cfi) {
 
 		const link = new UILink();
+		const item = new UIItem();
 		const book = this.reader.book;
 		const spineItem = book.spine.get(cfi);
 		const navItem = book.navigation.get(spineItem.href);
@@ -133,6 +134,8 @@ export class BookmarksPanel extends UIPanel {
 			return false;
 		};
 
-		this.bookmarks.add(link, itemId);
+		item.add(link);
+		item.setId(itemId);
+		this.bookmarks.add(item);
 	}
 }

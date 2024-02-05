@@ -670,102 +670,46 @@ export class UIList extends UIElement {
 	constructor() {
 
 		super("ul");
+		this.expanded = false;
 	}
 
-	add(item, id) {
+	expand() {
 
-		const listItem = document.createElement("li");
-		if (id) listItem.id = id;
-		if (Array.isArray(item)) {
-			item.forEach((i) => { listItem.appendChild(i.dom) });
-		} else {
-			listItem.appendChild(item.dom);
-		}
-		this.dom.appendChild(listItem);
+		this.expanded = true;
+		this.dom.style.display = "block";
+		return this;
+	}
+
+	collaps() {
+
+		this.expanded = false;
+		this.dom.style.display = "none";
 		return this;
 	}
 }
 
 /**
- * UITreeView
+ * UIItem
  */
-export class UITreeView extends UIElement {
+export class UIItem extends UIElement {
 
 	constructor() {
 
-		super("ul");
-	}
-}
-
-/**
- * UITreeViewItem
- * @param {string} id
- * @param {UILink} link
- */
-export class UITreeViewItem extends UIElement {
-
-	constructor(id, link) {
-
 		super("li");
-
-		this.dom.id = id;
-		this.link = link;
-		this.toggle = new UISpan().setClass("toggle-collapsed");
-		this.expander = new UIDiv().setId("expander");
-		this.expanded = false;
 		this.selected = false;
-		this.add([this.expander, this.link]);
-	}
-
-	setItem(subItem) {
-
-		this.add(subItem);
-		this.toggle.dom.onclick = () => {
-
-			if (this.expanded) {
-				this.collaps();
-			} else {
-				this.expand();
-			}
-			return false;
-		};
-		this.expander.add(this.toggle);
-
-		if (!this.expanded) {
-
-			const items = subItem.dom.getElementsByTagName("li");
-			for (let item of items) {
-				if (item.className === "selected") {
-					this.expand();
-					break;
-				}
-			}
-		}
 	}
 
 	select() {
 
 		this.selected = true;
 		this.setClass("selected");
+		return this;
 	}
 
 	unselect() {
 
 		this.selected = false;
 		this.dom.removeAttribute("class");
-	}
-
-	expand() {
-
-		this.toggle.setClass("toggle-expanded");
-		this.dom.children[2].style.display = "block";
-		this.expanded = true;
-	}
-
-	collaps() {
-
-		this.toggle.setClass("toggle-collapsed");
-		this.dom.children[2].style.display = "none";
-		this.expanded = false;
+		return this;
 	}
 }

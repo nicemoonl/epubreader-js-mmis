@@ -1,4 +1,4 @@
-import { UIPanel, UIDiv, UIRow, UITextArea, UIInput, UILink, UIList, UISpan } from "../ui.js";
+import { UIPanel, UIDiv, UIRow, UITextArea, UIInput, UILink, UIList, UIItem, UISpan } from "../ui.js";
 
 export class AnnotationsPanel extends UIPanel {
 
@@ -106,6 +106,7 @@ export class AnnotationsPanel extends UIPanel {
 	set(note) {
 
 		const link = new UILink("#" + note.href, note.text);
+		const item = new UIItem().setId("note-" + note.uuid);
 		const btnr = new UISpan().setClass("btn-remove");
 		const call = () => { };
 
@@ -121,7 +122,8 @@ export class AnnotationsPanel extends UIPanel {
 			return false;
 		};
 
-		this.notes.add([link, btnr], "note-" + note.uuid);
+		item.add([link, btnr]);
+		this.notes.add(item);
 		this.reader.rendition.annotations.add(
 			"highlight", note.href, {}, call, "note-highlight", {});
 		this.update();
@@ -141,6 +143,11 @@ export class AnnotationsPanel extends UIPanel {
 
 	clearNotes() {
 
+		const links = this.notes.dom.getElementsByTagName("a");
+		for (const link of links) {
+			const cfi = link.href.replace(window.location.origin + "/#", "");
+			this.reader.rendition.annotations.remove(cfi, "highlight");
+		}
 		this.notes.clear();
 		this.reader.settings.annotations = [];
 	}
