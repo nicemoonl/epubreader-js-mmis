@@ -143,11 +143,9 @@ export class AnnotationsPanel extends UIPanel {
 
 	clearNotes() {
 
-		const links = this.notes.dom.getElementsByTagName("a");
-		for (const link of links) {
-			const cfi = link.href.replace(window.location.origin + "/#", "");
-			this.reader.rendition.annotations.remove(cfi, "highlight");
-		}
+		this.reader.settings.annotations.forEach(note => {
+			this.reader.rendition.annotations.remove(note.href, "highlight");
+		});
 		this.notes.clear();
 		this.reader.settings.annotations = [];
 	}
