@@ -664,12 +664,14 @@ export class UITab extends UIDiv {
 
 /**
  * UIList
+ * @param {UIItem} parent
  */
 export class UIList extends UIElement {
 
-	constructor() {
+	constructor(parent) {
 
 		super("ul");
+		this.parent = parent && parent.parent; // LI->UL
 		this.expanded = false;
 	}
 
@@ -677,6 +679,8 @@ export class UIList extends UIElement {
 
 		this.expanded = true;
 		this.dom.style.display = "block";
+		if (this.parent)
+			this.parent.expand();
 		return this;
 	}
 
@@ -690,12 +694,14 @@ export class UIList extends UIElement {
 
 /**
  * UIItem
+ * @param {UIList} parent
  */
 export class UIItem extends UIElement {
 
-	constructor() {
+	constructor(parent) {
 
 		super("li");
+		this.parent = parent; // UL
 		this.selected = false;
 	}
 

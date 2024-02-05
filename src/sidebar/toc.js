@@ -20,14 +20,14 @@ export class TocPanel extends UIPanel {
 		});
 	}
 
-	generateToc(toc) {
+	generateToc(toc, parent) {
 
-		const list = new UIList();
+		const list = new UIList(parent);
 
 		toc.forEach((chapter) => {
 
 			const link = new UILink(chapter.href, chapter.label);
-			const item = new UIItem().setId(chapter.id);
+			const item = new UIItem(list).setId(chapter.id);
 			const tbox = new UIDiv().setId("expander");
 
 			link.dom.onclick = () => {
@@ -51,7 +51,7 @@ export class TocPanel extends UIPanel {
 
 			if (chapter.subitems && chapter.subitems.length > 0) {
 
-				const subItems = this.generateToc(chapter.subitems);
+				const subItems = this.generateToc(chapter.subitems, item);
 				const tbtn = new UISpan().setClass("toggle-collapsed");
 				tbtn.dom.onclick = () => {
 
