@@ -250,15 +250,6 @@ export class UITextArea extends UIElement {
 		this.dom.onkeydown = (e) => {
 
 			e.stopPropagation();
-
-			if (e.key === "Tab") {
-
-				const cursor = this.dom.selectionStart;
-				this.dom.value = this.dom.value.substring(0, cursor) + "\t" + this.dom.value.substring(cursor);
-				this.dom.selectionStart = cursor + 1;
-				this.dom.selectionEnd = this.dom.selectionStart;
-				e.preventDefault();
-			}
 		};
 	}
 
