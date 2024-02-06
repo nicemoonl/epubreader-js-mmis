@@ -41,6 +41,7 @@ export class Reader {
 	init(bookPath, _options) {
 
 		this.emit("viewercleanup");
+		this.navItems = {};
 
 		if (arguments.length > 0) {
 
@@ -64,14 +65,14 @@ export class Reader {
 		}
 
 		this.displayed.then((renderer) => {
-			this.emit("renderered", renderer);
+			this.emit("renderered", renderer, this.settings);
 		});
 
-		this.book.ready.then(function () {
+		this.book.ready.then(() => {
 			this.emit("bookready", this.settings);
-		}.bind(this)).then(function () {
+		}).then(() => {
 			this.emit("bookloaded");
-		}.bind(this));
+		});
 
 		this.book.loaded.metadata.then((meta) => {
 			this.emit("metadata", meta);
@@ -171,6 +172,19 @@ export class Reader {
 			return (c === 'x' ? r : (r & 0x7 | 0x8)).toString(16);
 		});
 		return uuid;
+	}
+
+	navItemFromCfi(cfi) {
+
+		const match = cfi.match(/\[(.*?)\]/);
+		const hash = match ? "#" + match[1] : null;
+		const location = this.rendition.currentLocation();
+		let navItem = undefined;
+		if (hash !== null) {
+			navItem = this.navItems[location.start.href + hash] || 
+			          this.navItems[location.start.href];
+		}
+		return navItem;
 	}
 
 	/* ------------------------------ Bookmarks ----------------------------- */

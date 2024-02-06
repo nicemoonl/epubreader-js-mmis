@@ -52,7 +52,7 @@ export class BookmarksPanel extends UIPanel {
 
 		//-- events --//
 
-		reader.on("bookready", (cfg) => {
+		reader.on("renderered", (renderer, cfg) => {
 
 			cfg.bookmarks.forEach((cfi) => {
 
@@ -116,15 +116,16 @@ export class BookmarksPanel extends UIPanel {
 		const item = new UIItem();
 		const book = this.reader.book;
 		const spineItem = book.spine.get(cfi);
-		const navItem = book.navigation.get(spineItem.href);
-		let itemId;
+		const navItem = this.reader.navItemFromCfi(cfi);
+		let idref;
+		let label;
 
 		if (navItem === undefined) {
-			itemId = spineItem.idref;
-			link.setTextContent(spineItem.idref);
+			idref = spineItem.idref;
+			label = spineItem.idref
 		} else {
-			itemId = navItem.id;
-			link.setTextContent(navItem.label);
+			idref = navItem.id;
+			label = navItem.label;
 		}
 
 		link.setHref("#" + cfi);
@@ -133,9 +134,10 @@ export class BookmarksPanel extends UIPanel {
 			this.reader.rendition.display(cfi);
 			return false;
 		};
+		link.setTextContent(label);
 
 		item.add(link);
-		item.setId(itemId);
+		item.setId(idref);
 		this.bookmarks.add(item);
 	}
 }
