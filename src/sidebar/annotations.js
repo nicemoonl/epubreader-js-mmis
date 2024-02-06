@@ -17,16 +17,7 @@ export class AnnotationsPanel extends UIPanel {
 		const textBox = new UITextArea();
 		textBox.dom.oninput = (e) => {
 
-			if (isSelected() && e.target.value.length > 0) {
-				btn_a.dom.disabled = false;
-			} else {
-				btn_a.dom.disabled = true;
-			}
-		};
-
-		const selector = {
-			range: undefined,
-			cfiRange: undefined
+			this.update();
 		};
 
 		const btn_a = new UIInput("button", ctrlStr[0]).addClass("btn-start");
@@ -34,18 +25,16 @@ export class AnnotationsPanel extends UIPanel {
 		btn_a.dom.onclick = () => {
 
 			const note = {
+				cfi: this.cfiRange,
 				date: new Date(),
 				text: textBox.getValue(),
-				href: selector.cfiRange,
 				uuid: reader.uuid()
 			};
 
 			reader.settings.annotations.push(note);
 
+			textBox.setValue("");
 			this.set(note);
-
-			textBox.setValue('');
-			btn_a.dom.disabled = true;
 			return false;
 		};
 
@@ -67,12 +56,8 @@ export class AnnotationsPanel extends UIPanel {
 		this.reader = reader;
 		this.update = () => {
 
+			btn_a.dom.disabled = !this.range || textBox.getValue().length === 0;
 			btn_c.dom.disabled = reader.settings.annotations.length === 0;
-		};
-
-		const isSelected = () => {
-
-			return selector.range && selector.range.startOffset !== selector.range.endOffset;
 		};
 
 		//-- events --//
@@ -87,32 +72,28 @@ export class AnnotationsPanel extends UIPanel {
 
 		reader.on("selected", (cfiRange, contents) => {
 
-			selector.range = contents.range(cfiRange);
-			selector.cfiRange = cfiRange;
-
-			if (isSelected() && textBox.getValue().length > 0) {
-				btn_a.dom.disabled = false;
-			} else {
-				btn_a.dom.disabled = true;
-			}
+			this.cfiRange = cfiRange;
+			this.range = contents.range(cfiRange);
+			this.update();
 		});
 
 		reader.on("unselected", () => {
 
-			btn_a.dom.disabled = true;
+			this.range = undefined;
+			this.update();
 		});
 	}
 
 	set(note) {
 
-		const link = new UILink("#" + note.href, note.text);
+		const link = new UILink("#" + note.cfi, note.text);
 		const item = new UIItem().setId("note-" + note.uuid);
 		const btnr = new UISpan().setClass("btn-remove");
 		const call = () => { };
 
 		link.onclick = () => {
 
-			this.reader.rendition.display(note.href);
+			this.reader.rendition.display(note.cfi);
 			return false;
 		};
 
@@ -125,7 +106,7 @@ export class AnnotationsPanel extends UIPanel {
 		item.add([link, btnr]);
 		this.notes.add(item);
 		this.reader.rendition.annotations.add(
-			"highlight", note.href, {}, call, "note-highlight", {});
+			"highlight", note.cfi, {}, call, "note-highlight", {});
 		this.update();
 	}
 
@@ -137,16 +118,17 @@ export class AnnotationsPanel extends UIPanel {
 
 		this.notes.remove(index);
 		this.reader.settings.annotations.splice(index, 1);
-		this.reader.rendition.annotations.remove(note.href, "highlight");
+		this.reader.rendition.annotations.remove(note.cfi, "highlight");
 		this.update();
 	}
 
 	clearNotes() {
 
 		this.reader.settings.annotations.forEach(note => {
-			this.reader.rendition.annotations.remove(note.href, "highlight");
+			this.reader.rendition.annotations.remove(note.cfi, "highlight");
 		});
 		this.notes.clear();
 		this.reader.settings.annotations = [];
+		this.update();
 	}
 }

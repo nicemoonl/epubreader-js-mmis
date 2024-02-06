@@ -84,8 +84,7 @@ export class Reader {
 
 		this.rendition.on("click", (e) => {
 			const selection = e.view.document.getSelection();
-			const range = selection.getRangeAt(0);
-			if (range.startOffset === range.endOffset) {
+			if (selection.type !== "Range") {
 				this.emit("unselected");
 			}
 		});
