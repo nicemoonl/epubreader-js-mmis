@@ -65,7 +65,7 @@ export class Reader {
 		}
 
 		this.displayed.then((renderer) => {
-			this.emit("renderered", renderer, this.settings);
+			this.emit("displayed", renderer, this.settings);
 		});
 
 		this.book.ready.then(() => {

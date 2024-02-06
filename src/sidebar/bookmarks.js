@@ -52,7 +52,7 @@ export class BookmarksPanel extends UIPanel {
 
 		//-- events --//
 
-		reader.on("renderered", (renderer, cfg) => {
+		reader.on("displayed", (renderer, cfg) => {
 
 			cfg.bookmarks.forEach((cfi) => {
 
