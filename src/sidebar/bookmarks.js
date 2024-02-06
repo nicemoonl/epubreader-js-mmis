@@ -115,12 +115,12 @@ export class BookmarksPanel extends UIPanel {
 		const link = new UILink();
 		const item = new UIItem();
 		const book = this.reader.book;
-		const spineItem = book.spine.get(cfi);
 		const navItem = this.reader.navItemFromCfi(cfi);
 		let idref;
 		let label;
 
 		if (navItem === undefined) {
+			const spineItem = book.spine.get(cfi);
 			idref = spineItem.idref;
 			label = spineItem.idref
 		} else {
