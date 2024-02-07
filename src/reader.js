@@ -175,15 +175,11 @@ export class Reader {
 
 	navItemFromCfi(cfi) {
 
-		const match = cfi.match(/\[(.*?)\]/);
-		const hash = match ? "#" + match[1] : null;
+		const range = this.rendition.getRange(cfi);
+		const idref = range.startContainer.parentNode.id;
 		const location = this.rendition.currentLocation();
-		let navItem = undefined;
-		if (hash !== null) {
-			navItem = this.navItems[location.start.href + hash] || 
-			          this.navItems[location.start.href];
-		}
-		return navItem;
+		const href = location.start.href;
+		return this.navItems[href + "#" + idref] || this.navItems[href];
 	}
 
 	/* ------------------------------ Bookmarks ----------------------------- */

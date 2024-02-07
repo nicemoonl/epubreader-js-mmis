@@ -42,7 +42,10 @@ export class TocPanel extends UIPanel {
 				return false;
 			};
 			item.add([tbox, link]);
-			this.reader.navItems[chapter.href] = chapter;
+			this.reader.navItems[chapter.href] = {
+				id: chapter.id,
+				label: chapter.label
+			};
 
 			if (this.reader.settings.sectionId === chapter.id) {
 				list.expand();
