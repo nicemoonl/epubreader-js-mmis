@@ -18,7 +18,7 @@ export class MetadataPanel extends UIPanel {
 		reader.on("metadata", (meta) => {
 
 			document.title = meta.title;
-			document.title = meta.creator ? " - " + meta.creator : "";
+			document.title += meta.creator ? " - " + meta.creator : "";
 			title.setValue(meta.title);
 			if (meta.creator) {
 				creator.setValue(meta.creator);
