@@ -117,8 +117,6 @@ export class MetadataPanel extends UIPanel {
 			} else {
 				titleValue.setValue("-");
 			}
-
-			console.log(meta);
 		});
 
 		reader.on("languagechanged", (value) => {
