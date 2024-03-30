@@ -5,11 +5,6 @@ export class Content {
 	constructor(reader) {
 
 		const container = new UIDiv().setId("content");
-		container.dom.ontransitionend = (e) => {
-
-			reader.emit("sidebarreflow");
-			e.preventDefault();
-		};
 
 		const prev = new UIDiv().setId("prev").setClass("arrow");
 		prev.dom.onclick = (e) => {
@@ -28,8 +23,8 @@ export class Content {
 		next.add(new UISpan(">"));
 
 		const viewer = new UIDiv().setId("viewer");
-		const divider = new UIDiv().setId("divider");
 		const loader = new UIDiv().setId("loader");
+		const divider = new UIDiv().setId("divider");
 
 		container.add([prev, viewer, next, divider, loader]);
 		document.body.appendChild(container.dom);
@@ -38,21 +33,13 @@ export class Content {
 
 		reader.on("bookready", (cfg) => {
 
+			viewer.setClass(cfg.flow);
 			loader.dom.style.display = "block";
 		});
 
 		reader.on("bookloaded", () => {
 
 			loader.dom.style.display = "none";
-		});
-
-		reader.on("sidebaropener", (value) => {
-
-			if (value) {
-				container.addClass("closed");
-			} else {
-				container.removeClass("closed");
-			}
 		});
 
 		reader.on("layout", (props) => {
@@ -62,6 +49,11 @@ export class Content {
 			} else {
 				divider.dom.style.display = "none";
 			}
+		});
+
+		reader.on("flowchanged", (value) => {
+			
+			viewer.setClass(value);
 		});
 
 		reader.on("relocated", (location) => {

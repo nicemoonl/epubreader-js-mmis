@@ -1,9 +1,10 @@
 import EventEmitter from "event-emitter";
 
-import { Toolbar } from "./toolbar.js";
-import { Sidebar } from "./sidebar.js";
-import { Content } from "./content.js";
 import { Strings } from "./strings.js";
+import { Toolbar } from "./toolbar.js";
+import { Content } from "./content.js";
+import { Sidebar } from "./sidebar.js";
+import { NoteDlg } from "./notedlg.js";
 
 export class Reader {
 
@@ -14,8 +15,9 @@ export class Reader {
 
 		this.strings = new Strings(this);
 		this.toolbar = new Toolbar(this);
-		this.sidebar = new Sidebar(this);
 		this.content = new Content(this);
+		this.sidebar = new Sidebar(this);
+		this.notedlg = new NoteDlg(this);
 
 		this.book = undefined;
 		this.rendition = undefined;
@@ -104,7 +106,7 @@ export class Reader {
 		});
 
 		this.on("prev", () => {
-			if (this.book.package.metadata.direction === 'rtl') {
+			if (this.book.package.metadata.direction === "rtl") {
 				this.rendition.next();
 			} else {
 				this.rendition.prev();
@@ -112,16 +114,11 @@ export class Reader {
 		});
 
 		this.on("next", () => {
-			if (this.book.package.metadata.direction === 'rtl') {
+			if (this.book.package.metadata.direction === "rtl") {
 				this.rendition.prev();
 			} else {
 				this.rendition.next();
 			}
-		});
-
-		this.on("sidebarreflow", () => {
-			// no implementation sidebarReflow setting
-			//this.rendition.resize();
 		});
 
 		this.on("languagechanged", (value) => {

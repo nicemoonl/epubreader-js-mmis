@@ -1,4 +1,4 @@
-import { UITabbedPanel } from "./ui.js";
+import { UITabbedPanel, UIInput, UIDiv } from "./ui.js";
 import { TocPanel } from "./sidebar/toc.js";
 import { BookmarksPanel } from "./sidebar/bookmarks.js";
 import { AnnotationsPanel } from "./sidebar/annotations.js";
@@ -12,6 +12,7 @@ export class Sidebar {
 
 		const strings = reader.strings;
 		const keys = [
+			"sidebar/close",
 			"sidebar/contents",
 			"sidebar/bookmarks",
 			"sidebar/annotations",
@@ -22,26 +23,47 @@ export class Sidebar {
 
 		const container = new UITabbedPanel("vertical").setId("sidebar");
 
-		container.addTab("tab-t", strings.get(keys[0]), new TocPanel(reader));
-		container.addTab("tab-b", strings.get(keys[1]), new BookmarksPanel(reader));
-		container.addTab("tab-n", strings.get(keys[2]), new AnnotationsPanel(reader));
-		container.addTab("tab-s", strings.get(keys[3]), new SearchPanel(reader));
-		container.addTab("tab-c", strings.get(keys[4]), new SettingsPanel(reader));
-		container.addTab("tab-i", strings.get(keys[5]), new MetadataPanel(reader));
-		container.select("tab-t");
+		const openerBox = new UIDiv().setId("btn-p").addClass("box");
+		const openerBtn = new UIInput("button");
+		openerBtn.setTitle(strings.get(keys[0]));
+		openerBtn.dom.onclick = (e) => {
+
+			reader.emit("sidebaropener", false);
+			e.preventDefault();
+		};
+		openerBox.add(openerBtn);
+		container.addMenu(openerBox);
+
+		container.addTab("btn-t", strings.get(keys[1]), new TocPanel(reader));
+		container.addTab("btn-d", strings.get(keys[2]), new BookmarksPanel(reader));
+		container.addTab("btn-a", strings.get(keys[3]), new AnnotationsPanel(reader));
+		container.addTab("btn-s", strings.get(keys[4]), new SearchPanel(reader));
+		container.addTab("btn-c", strings.get(keys[5]), new SettingsPanel(reader));
+		container.addTab("btn-i", strings.get(keys[6]), new MetadataPanel(reader));
+		container.select("btn-t");
 
 		document.body.appendChild(container.dom);
 
 		//-- events --//
 
+		reader.on("sidebaropener", (value) => {
+
+			if (value) {
+				container.setClass("open");
+			} else {
+				container.removeAttribute("class");
+			}
+		});
+
 		reader.on("languagechanged", (value) => {
 
-			container.setLabel("tab-t", strings.get(keys[0]));
-			container.setLabel("tab-b", strings.get(keys[1]));
-			container.setLabel("tab-n", strings.get(keys[2]));
-			container.setLabel("tab-s", strings.get(keys[3]));
-			container.setLabel("tab-c", strings.get(keys[4]));
-			container.setLabel("tab-i", strings.get(keys[5]));
+			openerBtn.setTitle(strings.get(keys[0]));
+			container.setLabel("btn-t", strings.get(keys[1]));
+			container.setLabel("btn-d", strings.get(keys[2]));
+			container.setLabel("btn-a", strings.get(keys[3]));
+			container.setLabel("btn-s", strings.get(keys[4]));
+			container.setLabel("btn-c", strings.get(keys[5]));
+			container.setLabel("btn-i", strings.get(keys[6]));
 		});
 	}
 }

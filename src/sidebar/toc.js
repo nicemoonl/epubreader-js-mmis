@@ -1,4 +1,4 @@
-import { UIPanel, UIDiv, UIItem, UIList, UILink, UISpan } from "../ui.js";
+import { UIPanel, UIDiv, UIItem, UIList, UILink, UISpan, UIText, UIBox } from "../ui.js";
 
 export class TocPanel extends UIPanel {
 
@@ -6,9 +6,15 @@ export class TocPanel extends UIPanel {
 
 		super();
 		const container = new UIDiv().setClass("list-container");
-		this.setId("contents");
+		const strings = reader.strings;
+		const keys = [
+			"sidebar/contents"
+		];
+		const label = new UIText(strings.get(keys[0])).setClass("label");
 		this.reader = reader;
 		this.selector = undefined; // save reference to selected tree item
+		this.setId("contents");
+		this.add(new UIBox(label).addClass("header"));
 
 		//-- events --//
 
@@ -17,6 +23,11 @@ export class TocPanel extends UIPanel {
 			container.clear();
 			container.add(this.generateToc(toc));
 			this.add(container);
+		});
+
+		reader.on("languagechanged", (value) => {
+
+			label.setValue(strings.get(keys[0]));
 		});
 	}
 
@@ -30,7 +41,7 @@ export class TocPanel extends UIPanel {
 			const item = new UIItem(list).setId(chapter.id);
 			const tbox = new UIDiv().setId("expander");
 
-			link.dom.onclick = () => {
+			link.dom.onclick = (e) => {
 
 				if (this.selector && this.selector !== item)
 					this.selector.unselect();
@@ -39,7 +50,7 @@ export class TocPanel extends UIPanel {
 				this.selector = item;
 				this.reader.settings.sectionId = chapter.id;
 				this.reader.rendition.display(chapter.href);
-				return false;
+				e.preventDefault();
 			};
 			item.add([tbox, link]);
 			this.reader.navItems[chapter.href] = {
