@@ -105,6 +105,8 @@ export class Reader {
 			this.emit("relocated", location);
 		});
 
+		this.rendition.on("keydown", this.keyboardHandler.bind(this));
+
 		this.on("prev", () => {
 			if (this.book.package.metadata.direction === "rtl") {
 				this.rendition.next();
@@ -356,43 +358,30 @@ export class Reader {
 
 	keyboardHandler(e) {
 
-		const MOD = (e.ctrlKey || e.metaKey);
+		const step = 2;
+		let value = this.settings.styles.fontSize;
 
-		if (MOD) {
+		switch (e.key) {
 
-			const step = 2;
-			let value = this.settings.styles.fontSize;
-
-			switch (e.key) {
-
-				case '=':
-					e.preventDefault();
-					value += step;
-					this.emit("styleschanged", { fontSize: value });
-					break;
-				case '-':
-					e.preventDefault();
-					value -= step;
-					this.emit("styleschanged", { fontSize: value });
-					break;
-				case '0':
-					e.preventDefault();
-					value = 100;
-					this.emit("styleschanged", { fontSize: value });
-					break;
-			}
-		} else {
-
-			switch (e.key) {
-				case 'ArrowLeft':
-					this.emit('prev');
-					e.preventDefault();
-					break;
-				case 'ArrowRight':
-					this.emit('next');
-					e.preventDefault();
-					break;
-			}
+			case "=":
+			case "+":
+				value += step;
+				this.emit("styleschanged", { fontSize: value });
+				break;
+			case "-":
+				value -= step;
+				this.emit("styleschanged", { fontSize: value });
+				break;
+			case "0":
+				value = 100;
+				this.emit("styleschanged", { fontSize: value });
+				break;
+			case "ArrowLeft":
+				this.emit("prev");
+				break;
+			case "ArrowRight":
+				this.emit("next");
+				break;
 		}
 	}
 }
