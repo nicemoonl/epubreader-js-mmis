@@ -30,6 +30,7 @@ export class Sidebar {
 
 			reader.emit("sidebaropener", false);
 			e.preventDefault();
+			openerBtn.dom.blur();
 		};
 		openerBox.add(openerBtn);
 		container.addMenu(openerBox);
@@ -52,7 +53,6 @@ export class Sidebar {
 				container.setClass("open");
 			} else {
 				container.removeAttribute("class");
-				document.activeElement.blur();
 			}
 		});
 

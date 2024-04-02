@@ -35,19 +35,21 @@ export class Toolbar {
 
 			reader.emit("prev");
 			e.preventDefault();
+			prevBtn.dom.blur();
 		};
 		prevBox.add(prevBtn);
 		menu1.add(prevBox);
 
 		const nextBox = new UIDiv().setId("btn-n").setClass("box");
-		const next = new UIInput("button");
-		next.dom.title = strings.get(keys[2]);
-		next.dom.onclick = (e) => {
+		const nextBtn = new UIInput("button");
+		nextBtn.dom.title = strings.get(keys[2]);
+		nextBtn.dom.onclick = (e) => {
 
 			reader.emit("next");
 			e.preventDefault();
+			nextBtn.dom.blur();
 		};
-		nextBox.add(next);
+		nextBox.add(nextBtn);
 		menu1.add(nextBox);
 
 		const menu2 = new UIDiv().setClass("menu-2");
@@ -83,6 +85,11 @@ export class Toolbar {
 			} else {
 				alert(strings.get(keys[4]));
 			}
+			
+		};
+		openbookBtn.dom.onclick = (e) => {
+
+			openbookBtn.dom.blur();
 		};
 		openbookBox.add(openbookBtn);
 		menu2.add(openbookBox);
@@ -96,6 +103,7 @@ export class Toolbar {
 			const val = reader.isBookmarked(cfi) === -1;
 			reader.emit("bookmarked", val);
 			e.preventDefault();
+			bookmarkBtn.dom.blur();
 		};
 		bookmarkBox.add(bookmarkBtn);
 		menu2.add(bookmarkBox);
