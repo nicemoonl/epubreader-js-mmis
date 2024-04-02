@@ -177,7 +177,7 @@ export class Reader {
 
 	detectMobile() {
 
-		const math = [
+		const matches = [
 			/Android/i,
 			/BlackBerry/i,
 			/iPhone/i,
@@ -186,7 +186,7 @@ export class Reader {
 			/Windows Phone/i,
 			/webOS/i
 		];
-		return math.some((i) => navigator.userAgent.match(i));
+		return matches.some((i) => navigator.userAgent.match(i));
 	}
 
 	navItemFromCfi(cfi) {
