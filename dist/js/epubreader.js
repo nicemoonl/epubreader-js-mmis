@@ -2678,6 +2678,7 @@ class Reader {
 	constructor(bookPath, _options) {
 
 		this.settings = undefined;
+		this.isMobile = this.detectMobile();
 		this.cfgInit(bookPath, _options);
 
 		this.strings = new Strings(this);
@@ -2719,11 +2720,13 @@ class Reader {
 
 		this.book = ePub(this.settings.bookPath);
 		this.rendition = this.book.renderTo("viewer", {
+			manager: this.isMobile ? "continuous" : "default",
 			flow: this.settings.flow,
 			spread: this.settings.spread.mod,
 			minSpreadWidth: this.settings.spread.min,
 			width: "100%",
-			height: "100%"
+			height: "100%",
+			snap: true
 		});
 
 		const cfi = this.settings.previousLocationCfi;
@@ -2837,6 +2840,20 @@ class Reader {
 			return (c === 'x' ? r : (r & 0x7 | 0x8)).toString(16);
 		});
 		return uuid;
+	}
+
+	detectMobile() {
+
+		const math = [
+			/Android/i,
+			/BlackBerry/i,
+			/iPhone/i,
+			/iPad/i,
+			/iPod/i,
+			/Windows Phone/i,
+			/webOS/i
+		];
+		return math.some((i) => navigator.userAgent.match(i));
 	}
 
 	navItemFromCfi(cfi) {
