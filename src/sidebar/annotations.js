@@ -45,6 +45,7 @@ export class AnnotationsPanel extends UIPanel {
 
 			this.set(note);
 			this.update();
+			document.activeElement.blur();
 		});
 
 		reader.on("languagechanged", (value) => {
