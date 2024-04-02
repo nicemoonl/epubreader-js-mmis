@@ -52,6 +52,7 @@ export class Sidebar {
 				container.setClass("open");
 			} else {
 				container.removeAttribute("class");
+				document.activeElement.blur();
 			}
 		});
 
