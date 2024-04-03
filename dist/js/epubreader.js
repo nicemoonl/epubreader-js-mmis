@@ -1,3 +1,4 @@
+var epubreader;
 /******/ (() => { // webpackBootstrap
 /******/ 	"use strict";
 /******/ 	var __webpack_modules__ = ({
@@ -575,10 +576,28 @@ module.exports = function (value) { return value !== _undefined && value !== nul
 /******/ 		__webpack_require__.o = (obj, prop) => (Object.prototype.hasOwnProperty.call(obj, prop))
 /******/ 	})();
 /******/ 	
+/******/ 	/* webpack/runtime/make namespace object */
+/******/ 	(() => {
+/******/ 		// define __esModule on exports
+/******/ 		__webpack_require__.r = (exports) => {
+/******/ 			if(typeof Symbol !== 'undefined' && Symbol.toStringTag) {
+/******/ 				Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
+/******/ 			}
+/******/ 			Object.defineProperty(exports, '__esModule', { value: true });
+/******/ 		};
+/******/ 	})();
+/******/ 	
 /************************************************************************/
 var __webpack_exports__ = {};
 // This entry need to be wrapped in an IIFE because it need to be isolated against other modules in the chunk.
 (() => {
+// ESM COMPAT FLAG
+__webpack_require__.r(__webpack_exports__);
+
+// EXPORTS
+__webpack_require__.d(__webpack_exports__, {
+  main: () => (/* binding */ main)
+});
 
 // EXTERNAL MODULE: ./node_modules/event-emitter/index.js
 var event_emitter = __webpack_require__(68);
@@ -1611,7 +1630,9 @@ class Toolbar {
 			openbookBtn.dom.blur();
 		};
 		openbookBox.add(openbookBtn);
-		menu2.add(openbookBox);
+		if (reader.settings.openbook) {
+			menu2.add(openbookBox);
+		}
 
 		const bookmarkBox = new UIDiv().setId("btn-b").setClass("box");
 		const bookmarkBtn = new UIInput("button");
@@ -2907,7 +2928,8 @@ class Reader {
 			spread: undefined,
 			styles: undefined,
 			pagination: false, // ??
-			language: undefined
+			language: undefined,
+			openbook: true
 		});
 
 		if (this.settings.restore && this.isSaved()) {
@@ -3185,9 +3207,7 @@ window.onload = function () {
 
 	const storage = new Storage();
 	const url = new URL(window.location);
-	const path = url.search.length > 0
-		? url.searchParams.get("bookPath")
-		: "https://s3.amazonaws.com/moby-dick/";
+	const path = url.searchParams.get("bookPath") || "https://s3.amazonaws.com/moby-dick/";
 
 	storage.init(function () {
 
@@ -3207,8 +3227,10 @@ window.onload = function () {
 	window.storage = storage;
 };
 
+const main = (path, options) => new Reader(path, options || {});
 })();
 
+epubreader = __webpack_exports__;
 /******/ })()
 ;
 //# sourceMappingURL=epubreader.js.map
