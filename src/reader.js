@@ -240,7 +240,8 @@ export class Reader {
 			spread: undefined,
 			styles: undefined,
 			pagination: false, // ??
-			language: undefined
+			language: undefined,
+			openbook: true
 		});
 
 		if (this.settings.restore && this.isSaved()) {

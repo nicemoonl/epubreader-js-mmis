@@ -92,7 +92,9 @@ export class Toolbar {
 			openbookBtn.dom.blur();
 		};
 		openbookBox.add(openbookBtn);
-		menu2.add(openbookBox);
+		if (reader.settings.openbook) {
+			menu2.add(openbookBox);
+		}
 
 		const bookmarkBox = new UIDiv().setId("btn-b").setClass("box");
 		const bookmarkBtn = new UIInput("button");
