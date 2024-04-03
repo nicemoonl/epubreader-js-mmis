@@ -1,5 +1,5 @@
-import { Reader } from './reader.js';
-import { Storage } from './storage.js';
+import { Reader } from "./reader.js";
+import { Storage } from "./storage.js";
 
 "use strict";
 
@@ -8,9 +8,7 @@ window.onload = function () {
 
 	const storage = new Storage();
 	const url = new URL(window.location);
-	const path = url.search.length > 0
-		? url.searchParams.get("bookPath")
-		: "https://s3.amazonaws.com/moby-dick/";
+	const path = url.searchParams.get("bookPath") || "https://s3.amazonaws.com/moby-dick/";
 
 	storage.init(function () {
 
@@ -29,3 +27,5 @@ window.onload = function () {
 
 	window.storage = storage;
 };
+
+export const main = (path, options) => new Reader(path, options || {});
