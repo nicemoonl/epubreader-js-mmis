@@ -241,7 +241,8 @@ export class Reader {
 			styles: undefined,
 			pagination: false, // ??
 			language: undefined,
-			openbook: true
+			openbook: true,
+			fullscreen: true
 		});
 
 		if (this.settings.restore && this.isSaved()) {

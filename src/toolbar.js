@@ -111,7 +111,7 @@ export class Toolbar {
 		menu2.add(bookmarkBox);
 
 		let fullscreenBtn = null;
-		if (document.fullscreenEnabled) {
+		if (reader.settings.fullscreen && document.fullscreenEnabled) {
 
 			const fullscreenBox = new UIDiv().setId("btn-f").setClass("box");
 			fullscreenBtn = new UIInput("button");
