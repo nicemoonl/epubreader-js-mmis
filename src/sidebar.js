@@ -11,6 +11,7 @@ export class Sidebar {
 	constructor(reader) {
 
 		const strings = reader.strings;
+		const controls = reader.settings.controls;
 		const keys = [
 			"sidebar/close",
 			"sidebar/contents",
@@ -36,7 +37,9 @@ export class Sidebar {
 		container.addMenu(openerBox);
 
 		container.addTab("btn-t", strings.get(keys[1]), new TocPanel(reader));
-		container.addTab("btn-d", strings.get(keys[2]), new BookmarksPanel(reader));
+		if (controls.bookmarks) {
+			container.addTab("btn-d", strings.get(keys[2]), new BookmarksPanel(reader));
+		}
 		container.addTab("btn-a", strings.get(keys[3]), new AnnotationsPanel(reader));
 		container.addTab("btn-s", strings.get(keys[4]), new SearchPanel(reader));
 		container.addTab("btn-c", strings.get(keys[5]), new SettingsPanel(reader));
@@ -60,7 +63,9 @@ export class Sidebar {
 
 			openerBtn.setTitle(strings.get(keys[0]));
 			container.setLabel("btn-t", strings.get(keys[1]));
-			container.setLabel("btn-d", strings.get(keys[2]));
+			if (controls.bookmarks) {
+				container.setLabel("btn-d", strings.get(keys[2]));
+			}
 			container.setLabel("btn-a", strings.get(keys[3]));
 			container.setLabel("btn-s", strings.get(keys[4]));
 			container.setLabel("btn-c", strings.get(keys[5]));

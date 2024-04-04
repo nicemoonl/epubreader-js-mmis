@@ -244,6 +244,7 @@ export class Reader {
 			controls: {
 				arrows: !this.isMobile,
 				openbook: true,
+				bookmarks: true,
 				fullscreen: document.fullscreenEnabled
 			}
 		});
