@@ -1543,6 +1543,7 @@ class Toolbar {
 	constructor(reader) {
 
 		const strings = reader.strings;
+		const controls = reader.settings.controls;
 
 		const container = new UIDiv().setId("toolbar");
 		const keys = [
@@ -1566,90 +1567,98 @@ class Toolbar {
 		openerBox.add(openerBtn);
 		menu1.add(openerBox);
 
-		const prevBox = new UIDiv().setId("btn-p").setClass("box");
-		const prevBtn = new UIInput("button");
-		prevBtn.setTitle(strings.get(keys[1]));
-		prevBtn.dom.onclick = (e) => {
+		let prevBox, prevBtn;
+		let nextBox, nextBtn;
+		if (controls.arrows) {
+			prevBox = new UIDiv().setId("btn-p").setClass("box");
+			prevBtn = new UIInput("button");
+			prevBtn.setTitle(strings.get(keys[1]));
+			prevBtn.dom.onclick = (e) => {
 
-			reader.emit("prev");
-			e.preventDefault();
-			prevBtn.dom.blur();
-		};
-		prevBox.add(prevBtn);
-		menu1.add(prevBox);
+				reader.emit("prev");
+				e.preventDefault();
+				prevBtn.dom.blur();
+			};
+			prevBox.add(prevBtn);
+			menu1.add(prevBox);
 
-		const nextBox = new UIDiv().setId("btn-n").setClass("box");
-		const nextBtn = new UIInput("button");
-		nextBtn.dom.title = strings.get(keys[2]);
-		nextBtn.dom.onclick = (e) => {
+			nextBox = new UIDiv().setId("btn-n").setClass("box");
+			nextBtn = new UIInput("button");
+			nextBtn.dom.title = strings.get(keys[2]);
+			nextBtn.dom.onclick = (e) => {
 
-			reader.emit("next");
-			e.preventDefault();
-			nextBtn.dom.blur();
-		};
-		nextBox.add(nextBtn);
-		menu1.add(nextBox);
+				reader.emit("next");
+				e.preventDefault();
+				nextBtn.dom.blur();
+			};
+			nextBox.add(nextBtn);
+			menu1.add(nextBox);
+		}
 
 		const menu2 = new UIDiv().setClass("menu-2");
-		const onload = (e) => {
+		let openbookBtn;
+		if (controls.openbook) {
+			const onload = (e) => {
 
-			storage.clear();
-			storage.set(e.target.result, () => {
-				reader.unload();
-				reader.init(e.target.result, { restore: true });
-				const url = new URL(window.location.origin);
-				window.history.pushState({}, "", url);
-			});
-		};
-		const onerror = (e) => {
-			console.error(e);
-		};
-		const storage = window.storage;
-		const openbookBox = new UIDiv().setId("btn-o").setClass("box");
-		const openbookBtn = new UIInput("file");
-		openbookBtn.dom.title = strings.get(keys[3]);
-		openbookBtn.dom.accept = "application/epub+zip";
-		openbookBtn.dom.onchange = (e) => {
+				storage.clear();
+				storage.set(e.target.result, () => {
+					reader.unload();
+					reader.init(e.target.result, { restore: true });
+					const url = new URL(window.location.origin);
+					window.history.pushState({}, "", url);
+				});
+			};
+			const onerror = (e) => {
+				console.error(e);
+			};
+			const storage = window.storage;
+			const openbookBox = new UIDiv().setId("btn-o").setClass("box");
+			openbookBtn = new UIInput("file");
+			openbookBtn.dom.title = strings.get(keys[3]);
+			openbookBtn.dom.accept = "application/epub+zip";
+			openbookBtn.dom.onchange = (e) => {
 
-			if (e.target.files.length === 0)
-				return;
+				if (e.target.files.length === 0)
+					return;
 
-			if (window.FileReader) {
+				if (window.FileReader) {
 
-				const fr = new FileReader();
-				fr.onload = onload;
-				fr.readAsArrayBuffer(e.target.files[0]);
-				fr.onerror = onerror;
-			} else {
-				alert(strings.get(keys[4]));
-			}
-			
-		};
-		openbookBtn.dom.onclick = (e) => {
+					const fr = new FileReader();
+					fr.onload = onload;
+					fr.readAsArrayBuffer(e.target.files[0]);
+					fr.onerror = onerror;
+				} else {
+					alert(strings.get(keys[4]));
+				}
 
-			openbookBtn.dom.blur();
-		};
-		openbookBox.add(openbookBtn);
-		if (reader.settings.openbook) {
+			};
+			openbookBtn.dom.onclick = (e) => {
+
+				openbookBtn.dom.blur();
+			};
+			openbookBox.add(openbookBtn);
 			menu2.add(openbookBox);
 		}
 
-		const bookmarkBox = new UIDiv().setId("btn-b").setClass("box");
-		const bookmarkBtn = new UIInput("button");
-		bookmarkBtn.setTitle(strings.get(keys[5]));
-		bookmarkBtn.dom.onclick = (e) => {
+		let bookmarkBox, bookmarkBtn;
+		if (controls.bookmarks) {
+			bookmarkBox = new UIDiv().setId("btn-b").setClass("box");
+			bookmarkBtn = new UIInput("button");
+			bookmarkBtn.setTitle(strings.get(keys[5]));
+			bookmarkBtn.dom.onclick = (e) => {
 
-			const cfi = this.locationCfi;
-			const val = reader.isBookmarked(cfi) === -1;
-			reader.emit("bookmarked", val);
-			e.preventDefault();
-			bookmarkBtn.dom.blur();
-		};
-		bookmarkBox.add(bookmarkBtn);
-		menu2.add(bookmarkBox);
+				const cfi = this.locationCfi;
+				const val = reader.isBookmarked(cfi) === -1;
+				reader.emit("bookmarked", val);
+				e.preventDefault();
+				bookmarkBtn.dom.blur();
+			};
+			bookmarkBox.add(bookmarkBtn);
+			menu2.add(bookmarkBox);
+		}
 
-		let fullscreenBtn = null;
-		if (document.fullscreenEnabled) {
+		let fullscreenBtn;
+		if (controls.fullscreen) {
 
 			const fullscreenBox = new UIDiv().setId("btn-f").setClass("box");
 			fullscreenBtn = new UIInput("button");
@@ -1690,16 +1699,20 @@ class Toolbar {
 
 		reader.on("relocated", (location) => {
 
-			const cfi = location.start.cfi;
-			const val = reader.isBookmarked(cfi) === -1;
-			if (val) {
-				bookmarkBox.removeClass("bookmarked");
-			} else {
-				bookmarkBox.addClass("bookmarked");
+			if (controls.bookmarks) {
+				const cfi = location.start.cfi;
+				const val = reader.isBookmarked(cfi) === -1;
+				if (val) {
+					bookmarkBox.removeClass("bookmarked");
+				} else {
+					bookmarkBox.addClass("bookmarked");
+				}
+				this.locationCfi = cfi; // save location cfi
 			}
-			prevBox.dom.style.display = location.atStart ? "none" : "block";
-			nextBox.dom.style.display = location.atEnd ? "none" : "block";
-			this.locationCfi = cfi; // save location cfi
+			if (controls.arrows) {
+				prevBox.dom.style.display = location.atStart ? "none" : "block";
+				nextBox.dom.style.display = location.atEnd ? "none" : "block";
+			}
 		});
 
 		reader.on("bookmarked", (boolean) => {
@@ -1714,11 +1727,19 @@ class Toolbar {
 		reader.on("languagechanged", (value) => {
 
 			openerBtn.setTitle(strings.get(keys[0]));
-			openbookBtn.setTitle(strings.get(keys[1]));
-			bookmarkBtn.setTitle(strings.get(keys[3]));
 
-			if (fullscreenBtn) {
-				fullscreenBtn.setTitle(strings.get(keys[4]));
+			if (controls.arrows) {
+				prevBtn.setTitle(strings.get(keys[1]));
+				nextBtn.setTitle(strings.get(keys[2]));
+			}
+			if (controls.openbook) {
+				openbookBtn.setTitle(strings.get(keys[3]));
+			}
+			if (controls.bookmarks) {
+				bookmarkBtn.setTitle(strings.get(keys[5]));
+			}
+			if (controls.fullscreen) {
+				fullscreenBtn.setTitle(strings.get(keys[6]));
 			}
 		});
 	}
@@ -2556,6 +2577,7 @@ class Sidebar {
 	constructor(reader) {
 
 		const strings = reader.strings;
+		const controls = reader.settings.controls;
 		const keys = [
 			"sidebar/close",
 			"sidebar/contents",
@@ -2581,8 +2603,12 @@ class Sidebar {
 		container.addMenu(openerBox);
 
 		container.addTab("btn-t", strings.get(keys[1]), new TocPanel(reader));
-		container.addTab("btn-d", strings.get(keys[2]), new BookmarksPanel(reader));
-		container.addTab("btn-a", strings.get(keys[3]), new AnnotationsPanel(reader));
+		if (controls.bookmarks) {
+			container.addTab("btn-d", strings.get(keys[2]), new BookmarksPanel(reader));
+		}
+		if (controls.annotations) {
+			container.addTab("btn-a", strings.get(keys[3]), new AnnotationsPanel(reader));
+		}
 		container.addTab("btn-s", strings.get(keys[4]), new SearchPanel(reader));
 		container.addTab("btn-c", strings.get(keys[5]), new SettingsPanel(reader));
 		container.addTab("btn-i", strings.get(keys[6]), new MetadataPanel(reader));
@@ -2605,8 +2631,12 @@ class Sidebar {
 
 			openerBtn.setTitle(strings.get(keys[0]));
 			container.setLabel("btn-t", strings.get(keys[1]));
-			container.setLabel("btn-d", strings.get(keys[2]));
-			container.setLabel("btn-a", strings.get(keys[3]));
+			if (controls.bookmarks) {
+				container.setLabel("btn-d", strings.get(keys[2]));
+			}
+			if (controls.annotations) {
+				container.setLabel("btn-a", strings.get(keys[3]));
+			}
 			container.setLabel("btn-s", strings.get(keys[4]));
 			container.setLabel("btn-c", strings.get(keys[5]));
 			container.setLabel("btn-i", strings.get(keys[6]));
@@ -2706,7 +2736,9 @@ class Reader {
 		this.toolbar = new Toolbar(this);
 		this.content = new Content(this);
 		this.sidebar = new Sidebar(this);
-		this.notedlg = new NoteDlg(this);
+		if (this.settings.controls.annotations) {
+			this.notedlg = new NoteDlg(this);
+		}
 
 		this.book = undefined;
 		this.rendition = undefined;
@@ -2929,7 +2961,13 @@ class Reader {
 			styles: undefined,
 			pagination: false, // ??
 			language: undefined,
-			openbook: true
+			controls: {
+				arrows: !this.isMobile,
+				openbook: true,
+				bookmarks: true,
+				annotations: true,
+				fullscreen: document.fullscreenEnabled
+			}
 		});
 
 		if (this.settings.restore && this.isSaved()) {
@@ -3014,6 +3052,10 @@ class Reader {
 			if (stored.styles) {
 				this.settings.styles = this.defaults(this.settings.styles || {},
 					stored.styles);
+			}
+			if (stored.controls) {
+				this.settings.controls = this.defaults(this.settings.controls || {},
+					stored.controls);
 			}
 			// Merge the rest
 			this.settings = this.defaults(this.settings, stored);
