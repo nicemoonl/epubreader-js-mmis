@@ -40,7 +40,9 @@ export class Sidebar {
 		if (controls.bookmarks) {
 			container.addTab("btn-d", strings.get(keys[2]), new BookmarksPanel(reader));
 		}
-		container.addTab("btn-a", strings.get(keys[3]), new AnnotationsPanel(reader));
+		if (controls.annotations) {
+			container.addTab("btn-a", strings.get(keys[3]), new AnnotationsPanel(reader));
+		}
 		container.addTab("btn-s", strings.get(keys[4]), new SearchPanel(reader));
 		container.addTab("btn-c", strings.get(keys[5]), new SettingsPanel(reader));
 		container.addTab("btn-i", strings.get(keys[6]), new MetadataPanel(reader));
@@ -66,7 +68,9 @@ export class Sidebar {
 			if (controls.bookmarks) {
 				container.setLabel("btn-d", strings.get(keys[2]));
 			}
-			container.setLabel("btn-a", strings.get(keys[3]));
+			if (controls.annotations) {
+				container.setLabel("btn-a", strings.get(keys[3]));
+			}
 			container.setLabel("btn-s", strings.get(keys[4]));
 			container.setLabel("btn-c", strings.get(keys[5]));
 			container.setLabel("btn-i", strings.get(keys[6]));

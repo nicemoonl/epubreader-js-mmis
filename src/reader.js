@@ -18,7 +18,9 @@ export class Reader {
 		this.toolbar = new Toolbar(this);
 		this.content = new Content(this);
 		this.sidebar = new Sidebar(this);
-		this.notedlg = new NoteDlg(this);
+		if (this.settings.controls.annotations) {
+			this.notedlg = new NoteDlg(this);
+		}
 
 		this.book = undefined;
 		this.rendition = undefined;
@@ -245,6 +247,7 @@ export class Reader {
 				arrows: !this.isMobile,
 				openbook: true,
 				bookmarks: true,
+				annotations: true,
 				fullscreen: document.fullscreenEnabled
 			}
 		});
