@@ -5,6 +5,7 @@ export class Toolbar {
 	constructor(reader) {
 
 		const strings = reader.strings;
+		const controls = reader.settings.controls;
 
 		const container = new UIDiv().setId("toolbar");
 		const keys = [
@@ -53,46 +54,46 @@ export class Toolbar {
 		menu1.add(nextBox);
 
 		const menu2 = new UIDiv().setClass("menu-2");
-		const onload = (e) => {
+		if (controls.openbook) {
+			const onload = (e) => {
 
-			storage.clear();
-			storage.set(e.target.result, () => {
-				reader.unload();
-				reader.init(e.target.result, { restore: true });
-				const url = new URL(window.location.origin);
-				window.history.pushState({}, "", url);
-			});
-		};
-		const onerror = (e) => {
-			console.error(e);
-		};
-		const storage = window.storage;
-		const openbookBox = new UIDiv().setId("btn-o").setClass("box");
-		const openbookBtn = new UIInput("file");
-		openbookBtn.dom.title = strings.get(keys[3]);
-		openbookBtn.dom.accept = "application/epub+zip";
-		openbookBtn.dom.onchange = (e) => {
+				storage.clear();
+				storage.set(e.target.result, () => {
+					reader.unload();
+					reader.init(e.target.result, { restore: true });
+					const url = new URL(window.location.origin);
+					window.history.pushState({}, "", url);
+				});
+			};
+			const onerror = (e) => {
+				console.error(e);
+			};
+			const storage = window.storage;
+			const openbookBox = new UIDiv().setId("btn-o").setClass("box");
+			const openbookBtn = new UIInput("file");
+			openbookBtn.dom.title = strings.get(keys[3]);
+			openbookBtn.dom.accept = "application/epub+zip";
+			openbookBtn.dom.onchange = (e) => {
 
-			if (e.target.files.length === 0)
-				return;
+				if (e.target.files.length === 0)
+					return;
 
-			if (window.FileReader) {
+				if (window.FileReader) {
 
-				const fr = new FileReader();
-				fr.onload = onload;
-				fr.readAsArrayBuffer(e.target.files[0]);
-				fr.onerror = onerror;
-			} else {
-				alert(strings.get(keys[4]));
-			}
-			
-		};
-		openbookBtn.dom.onclick = (e) => {
+					const fr = new FileReader();
+					fr.onload = onload;
+					fr.readAsArrayBuffer(e.target.files[0]);
+					fr.onerror = onerror;
+				} else {
+					alert(strings.get(keys[4]));
+				}
+				
+			};
+			openbookBtn.dom.onclick = (e) => {
 
-			openbookBtn.dom.blur();
-		};
-		openbookBox.add(openbookBtn);
-		if (reader.settings.openbook) {
+				openbookBtn.dom.blur();
+			};
+			openbookBox.add(openbookBtn);
 			menu2.add(openbookBox);
 		}
 
@@ -111,7 +112,7 @@ export class Toolbar {
 		menu2.add(bookmarkBox);
 
 		let fullscreenBtn = null;
-		if (reader.settings.fullscreen && document.fullscreenEnabled) {
+		if (controls.fullscreen && document.fullscreenEnabled) {
 
 			const fullscreenBox = new UIDiv().setId("btn-f").setClass("box");
 			fullscreenBtn = new UIInput("button");

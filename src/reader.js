@@ -241,8 +241,10 @@ export class Reader {
 			styles: undefined,
 			pagination: false, // ??
 			language: undefined,
-			openbook: true,
-			fullscreen: true
+			controls: {
+				openbook: true,
+				fullscreen: true
+			}
 		});
 
 		if (this.settings.restore && this.isSaved()) {
@@ -327,6 +329,10 @@ export class Reader {
 			if (stored.styles) {
 				this.settings.styles = this.defaults(this.settings.styles || {},
 					stored.styles);
+			}
+			if (stored.controls) {
+				this.settings.controls = this.defaults(this.settings.controls || {},
+					stored.controls);
 			}
 			// Merge the rest
 			this.settings = this.defaults(this.settings, stored);
