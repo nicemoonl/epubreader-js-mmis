@@ -242,8 +242,9 @@ export class Reader {
 			pagination: false, // ??
 			language: undefined,
 			controls: {
+				arrows: !this.isMobile,
 				openbook: true,
-				fullscreen: true
+				fullscreen: document.fullscreenEnabled
 			}
 		});
 
