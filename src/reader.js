@@ -63,7 +63,7 @@ export class Reader {
 
 		this.book = ePub(this.settings.bookPath);
 		this.rendition = this.book.renderTo("viewer", {
-			manager: this.isMobile ? "continuous" : "default",
+			manager: this.settings.manager,
 			flow: this.settings.flow,
 			spread: this.settings.spread.mod,
 			minSpreadWidth: this.settings.spread.min,
@@ -203,6 +203,7 @@ export class Reader {
 		this.settings = {
 			bookPath: bookPath,
 			arrows: this.isMobile ? "none" : "content", // none | content | toolbar
+			manager: this.isMobile ? "continuous" : "default",
 			restore: true,
 			history: true,
 			openbook: true,
@@ -287,6 +288,7 @@ export class Reader {
 		this.settings.previousLocationCfi = this.rendition.location.start.cfi;
 		const cfg = Object.assign({}, this.settings);
 		delete cfg.arrows;
+		delete cfg.manager;
 		delete cfg.history;
 		delete cfg.restore;
 		delete cfg.openbook;
