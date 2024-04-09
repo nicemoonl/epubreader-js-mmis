@@ -661,6 +661,107 @@ const detectMobile = () => {
     ]
     return matches.some((i) => navigator.userAgent.match(i))
 }
+;// CONCATENATED MODULE: ./src/storage.js
+class Storage {
+
+	constructor() {
+
+		this.name = "epubjs-reader";
+		this.version = 1.0;
+		this.db;
+		this.indexedDB = window.indexedDB ||
+			window.webkitIndexedDB ||
+			window.mozIndexedDB ||
+			window.OIndexedDB ||
+			window.msIndexedDB;
+
+		if (this.indexedDB === undefined) {
+
+			alert("The IndexedDB API not available in your browser.");
+		}
+	}
+
+	init(callback) {
+
+		if (this.indexedDB === undefined) {
+			callback();
+			return;
+		}
+
+		const time = Date.now();
+		const onerror = (e) => console.error("IndexedDB", e);
+		const request = indexedDB.open(this.name, this.version);
+		request.onupgradeneeded = (e) => {
+
+			const db = e.target.result;
+			if (db.objectStoreNames.contains("entries") === false) {
+				db.createObjectStore("entries");
+			}
+		}
+
+		request.onsuccess = (e) => {
+
+			this.db = e.target.result;
+			this.db.onerror = onerror;
+			callback();
+			console.log(`storage.init: ${Date.now() - time} ms`);
+		}
+
+		request.onerror = onerror;
+	}
+
+	get(callback) {
+
+		if (this.db === undefined) {
+			callback();
+			return;
+		}
+
+		const time = Date.now();
+		const transaction = this.db.transaction(["entries"], "readwrite");
+		const objectStore = transaction.objectStore("entries");
+		const request = objectStore.get(0);
+		request.onsuccess = (e) => {
+
+			callback(e.target.result);
+			console.log(`storage.get: ${Date.now() - time} ms`);
+		}
+	}
+
+	set(data, callback) {
+
+		if (this.db === undefined) {
+			callback();
+			return;
+		}
+
+		const time = Date.now();
+		const transaction = this.db.transaction(["entries"], "readwrite");
+		const objectStore = transaction.objectStore("entries");
+		const request = objectStore.put(data, 0);
+		request.onsuccess = () => {
+
+			callback();
+			console.log(`storage.set: ${Date.now() - time} ms`);
+		}
+	}
+
+	clear() {
+
+		if (this.db === undefined) {
+			return;
+		}
+
+		const time = Date.now();
+		const transaction = this.db.transaction(["entries"], "readwrite");
+		const objectStore = transaction.objectStore("entries");
+		const request = objectStore.clear();
+		request.onsuccess = () => {
+
+			console.log(`storage.clear: ${Date.now() - time} ms`);
+		}
+	}
+}
 ;// CONCATENATED MODULE: ./src/strings.js
 class Strings {
 
@@ -1659,10 +1760,10 @@ class Toolbar {
 		if (settings.openbook) {
 			const onload = (e) => {
 
-				storage.clear();
-				storage.set(e.target.result, () => {
+				reader.storage.clear();
+				reader.storage.set(e.target.result, () => {
 					reader.unload();
-					reader.init(e.target.result, { restore: true });
+					reader.init(e.target.result);
 					const url = new URL(window.location.origin);
 					window.history.pushState({}, "", url);
 				});
@@ -1670,7 +1771,6 @@ class Toolbar {
 			const onerror = (e) => {
 				console.error(e);
 			};
-			const storage = window.storage;
 			const openbookBox = new UIDiv().setId("btn-o").setClass("box");
 			openbookBtn = new UIInput("file");
 			openbookBtn.dom.title = strings.get(keys[3]);
@@ -2802,27 +2902,34 @@ class NoteDlg {
 
 
 
+
 class Reader {
 
 	constructor(bookPath, settings) {
 
 		this.settings = undefined;
 		this.isMobile = detectMobile();
-		this.cfgInit(bookPath, settings);
-
-		this.strings = new Strings(this);
-		this.toolbar = new Toolbar(this);
-		this.content = new Content(this);
-		this.sidebar = new Sidebar(this);
-		if (this.settings.annotations) {
-			this.notedlg = new NoteDlg(this);
-		}
-
-		this.book = undefined;
-		this.rendition = undefined;
-		this.displayed = undefined;
-
-		this.init();
+		this.storage = new Storage();
+		this.storage.init(() => this.storage.get((data) => {
+				const url = new URL(window.location);
+				let path = bookPath;
+				if (settings && !settings.openbook) {
+					path = bookPath;
+					if (data) this.storage.clear();
+				} else if (data && url.search.length === 0) {
+					path = data;
+				}
+				this.cfgInit(path, settings);
+				this.strings = new Strings(this);
+				this.toolbar = new Toolbar(this);
+				this.content = new Content(this);
+				this.sidebar = new Sidebar(this);
+				if (this.settings.annotations) {
+					this.notedlg = new NoteDlg(this);
+				}
+				this.init();
+			})
+		);
 
 		window.onbeforeunload = this.unload.bind(this);
 		window.onhashchange = this.hashChanged.bind(this);
@@ -2851,7 +2958,7 @@ class Reader {
 
 		this.book = ePub(this.settings.bookPath);
 		this.rendition = this.book.renderTo("viewer", {
-			manager: this.isMobile ? "continuous" : "default",
+			manager: this.settings.manager,
 			flow: this.settings.flow,
 			spread: this.settings.spread.mod,
 			minSpreadWidth: this.settings.spread.min,
@@ -2991,6 +3098,7 @@ class Reader {
 		this.settings = {
 			bookPath: bookPath,
 			arrows: this.isMobile ? "none" : "content", // none | content | toolbar
+			manager: this.isMobile ? "continuous" : "default",
 			restore: true,
 			history: true,
 			openbook: true,
@@ -3075,6 +3183,7 @@ class Reader {
 		this.settings.previousLocationCfi = this.rendition.location.start.cfi;
 		const cfg = Object.assign({}, this.settings);
 		delete cfg.arrows;
+		delete cfg.manager;
 		delete cfg.history;
 		delete cfg.restore;
 		delete cfg.openbook;
@@ -3143,141 +3252,12 @@ class Reader {
 }
 
 event_emitter_default()(Reader.prototype);
-;// CONCATENATED MODULE: ./src/storage.js
-class Storage {
-
-	constructor() {
-
-		this.name = 'epubjs-reader';
-		this.version = 1.0;
-		this.database;
-		this.indexedDB = window.indexedDB ||
-			window.webkitIndexedDB ||
-			window.mozIndexedDB ||
-			window.OIndexedDB ||
-			window.msIndexedDB;
-
-		if (this.indexedDB === undefined) {
-
-			alert('The IndexedDB API not available in your browser.');
-		}
-	}
-
-	init(callback) {
-
-		if (this.indexedDB === undefined) {
-			callback();
-			return;
-		}
-
-		const scope = this;
-		const request = indexedDB.open(this.name, this.version);
-		request.onupgradeneeded = function (event) {
-
-			const db = event.target.result;
-			if (db.objectStoreNames.contains('entries') === false) {
-
-				db.createObjectStore("entries");
-			}
-		};
-
-		request.onsuccess = function (event) {
-
-			scope.database = event.target.result;
-			scope.database.onerror = function (event) {
-
-				console.error('IndexedDB', event);
-			};
-			callback();
-		}
-
-		request.onerror = function (event) {
-
-			console.error('IndexedDB', event);
-		};
-	}
-
-	get(callback) {
-
-		if (this.database === undefined) {
-			callback();
-			return;
-		}
-
-		const transaction = this.database.transaction(['entries'], 'readwrite');
-		const objectStore = transaction.objectStore('entries');
-		const request = objectStore.get(0);
-		request.onsuccess = function (event) {
-
-			callback(event.target.result);
-			console.log('storage.get');
-		};
-	}
-
-	set(data, callback) {
-
-		if (this.database === undefined) {
-			callback();
-			return;
-		}
-
-		const transaction = this.database.transaction(['entries'], 'readwrite');
-		const objectStore = transaction.objectStore('entries');
-		const request = objectStore.put(data, 0);
-		request.onsuccess = function () {
-
-			callback();
-			console.log('storage.set');
-		};
-	}
-
-	clear() {
-
-		if (this.database === undefined)
-			return;
-
-		const transaction = this.database.transaction(['entries'], 'readwrite');
-		const objectStore = transaction.objectStore('entries');
-		const request = objectStore.clear();
-		request.onsuccess = function () {
-
-			console.log('storage.clear');
-		};
-	}
-}
-
 ;// CONCATENATED MODULE: ./src/main.js
 
 
-
-"use strict";
-
 window.ResizeObserver = undefined;
-window.onload = function () {
 
-	const storage = new Storage();
-	const url = new URL(window.location);
-	const path = url.searchParams.get("bookPath") || "https://s3.amazonaws.com/moby-dick/";
-
-	storage.init(function () {
-
-		storage.get(function (data) {
-
-			if (data !== undefined && url.search.length === 0) {
-
-				window.reader = new Reader(data);
-
-			} else {
-
-				window.reader = new Reader(path);
-			}
-		});
-	});
-
-	window.storage = storage;
-};
-
-const main = (path, options) => new Reader(path, options || {});
+const main = (path, settings) => new Reader(path, settings);
 })();
 
 epubreader = __webpack_exports__;
