@@ -1,4 +1,4 @@
-import { UIPanel, UIRow, UIText } from "../ui.js";
+import { UIBox, UIDiv, UIPanel, UIRow, UIText } from "../ui.js";
 
 export class MetadataPanel extends UIPanel {
 
@@ -16,6 +16,8 @@ export class MetadataPanel extends UIPanel {
 			"sidebar/metadata/publisher",
 			"sidebar/metadata/title"
 		];
+		const headerLabel = new UIText(strings.get(keys[0])).setClass("label");
+		this.add(new UIBox(headerLabel).addClass("header"));
 
 		const creatorLabel = new UIText(strings.get(keys[1])).setClass("label");
 		const creatorValue = new UIText().setClass("value");
@@ -53,7 +55,7 @@ export class MetadataPanel extends UIPanel {
 		titleRow.add([titleLabel, titleValue]);
 
 		this.setId("metadata");
-		this.add([
+		this.add(new UIBox([
 			creatorRow,
 			descriptionRow,
 			identifierRow,
@@ -61,7 +63,7 @@ export class MetadataPanel extends UIPanel {
 			pubdateRow,
 			publisherRow,
 			titleRow
-		]);
+		]));
 
 		//-- events --//
 
@@ -121,6 +123,7 @@ export class MetadataPanel extends UIPanel {
 
 		reader.on("languagechanged", (value) => {
 
+			headerLabel.setValue(strings.get(keys[0]));
 			creatorLabel.setValue(strings.get(keys[1]));
 			descriptionLabel.setValue(strings.get(keys[2]));
 			identifierLabel.setValue(strings.get(keys[3]));
