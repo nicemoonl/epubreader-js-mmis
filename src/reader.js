@@ -1,6 +1,7 @@
 import EventEmitter from "event-emitter";
 
 import { extend, detectMobile } from "./utils.js";
+import { Storage } from "./storage.js";
 import { Strings } from "./strings.js";
 import { Toolbar } from "./toolbar.js";
 import { Content } from "./content.js";
@@ -13,21 +14,27 @@ export class Reader {
 
 		this.settings = undefined;
 		this.isMobile = detectMobile();
-		this.cfgInit(bookPath, settings);
-
-		this.strings = new Strings(this);
-		this.toolbar = new Toolbar(this);
-		this.content = new Content(this);
-		this.sidebar = new Sidebar(this);
-		if (this.settings.annotations) {
-			this.notedlg = new NoteDlg(this);
-		}
-
-		this.book = undefined;
-		this.rendition = undefined;
-		this.displayed = undefined;
-
-		this.init();
+		this.storage = new Storage();
+		this.storage.init(() => this.storage.get((data) => {
+				const url = new URL(window.location);
+				let path = bookPath;
+				if (settings && !settings.openbook) {
+					path = bookPath;
+					if (data) this.storage.clear();
+				} else if (data && url.search.length === 0) {
+					path = data;
+				}
+				this.cfgInit(path, settings);
+				this.strings = new Strings(this);
+				this.toolbar = new Toolbar(this);
+				this.content = new Content(this);
+				this.sidebar = new Sidebar(this);
+				if (this.settings.annotations) {
+					this.notedlg = new NoteDlg(this);
+				}
+				this.init();
+			})
+		);
 
 		window.onbeforeunload = this.unload.bind(this);
 		window.onhashchange = this.hashChanged.bind(this);
