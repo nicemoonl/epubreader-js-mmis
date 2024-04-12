@@ -164,8 +164,11 @@ export class Reader {
 
 	navItemFromCfi(cfi) {
 
+		// This feature was added to solve the problem of duplicate titles in 
+		// bookmarks. But this still has no solution because when reloading the 
+		// reader, rendition cannot get the range from the previously saved CFI.
 		const range = this.rendition.getRange(cfi);
-		const idref = range.startContainer.parentNode.id;
+		const idref = range ? range.startContainer.parentNode.id : undefined;
 		const location = this.rendition.currentLocation();
 		const href = location.start.href;
 		return this.navItems[href + "#" + idref] || this.navItems[href];
