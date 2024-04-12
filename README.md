@@ -9,7 +9,7 @@
 
 ## Getting Started
 
-Open up [epubreader-js](https://intity.github.io/epubjs-reader/) in a browser.
+Open up [epubreader-js](https://intity.github.io/epubreader-js/) in a browser.
 
 You can change the ePub it opens by passing a link to `bookPath` in the url:
 
