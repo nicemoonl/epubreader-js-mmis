@@ -327,6 +327,10 @@
 	justify-items: left;
 }
 
+#metadata.panel li #item-box span {
+	cursor: auto;
+}
+
 #metadata.panel li #item-box span.label {
 	font-weight: bold;
 }
