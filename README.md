@@ -55,7 +55,6 @@ The **epubreader-js** application settings is a JavaScript object that you pass 
     const path = url.searchParams.get("bookPath") || "https://s3.amazonaws.com/moby-dick/"
     window.onload = (e) => {
         epubreader.main(path)
-        e.stopPropagation()
     }
 </script>
 ```
@@ -69,7 +68,6 @@ Let's say we want to disable the openbook function, which is designed to open an
         epubreader.main(url, {
             openbook: false
         })
-        e.stopPropagation()
     }
 </script>
 ```
@@ -87,3 +85,4 @@ The epubreader-js application supports the following features:
 5. Annotations
 6. Search by sections of the book
 7. Output epub metadata
+8. Keybindings
