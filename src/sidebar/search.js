@@ -34,6 +34,7 @@ export class SearchPanel extends UIPanel {
 		container.add(this.items);
 		this.add([new UIBox(search), container]);
 		this.reader = reader;
+		this.selector = undefined;
 		//
 		// improvement of the highlighting of keywords is required...
 		//
@@ -59,6 +60,11 @@ export class SearchPanel extends UIPanel {
 		const item = new UIItem();
 		link.dom.onclick = () => {
 
+			if (this.selector && this.selector !== item)
+				this.selector.unselect();
+			
+			item.select();
+			this.selector = item;
 			this.reader.rendition.display(data.cfi);
 			return false;
 		};

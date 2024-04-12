@@ -39,7 +39,7 @@ export class TocPanel extends UIPanel {
 
 			const link = new UILink(chapter.href, chapter.label);
 			const item = new UIItem(list).setId(chapter.id);
-			const tbox = new UIDiv().setId("expander");
+			const ibtn = new UISpan();
 
 			link.dom.onclick = (e) => {
 
@@ -52,7 +52,7 @@ export class TocPanel extends UIPanel {
 				this.reader.rendition.display(chapter.href);
 				e.preventDefault();
 			};
-			item.add([tbox, link]);
+			item.add([ibtn, link]);
 			this.reader.navItems[chapter.href] = {
 				id: chapter.id,
 				label: chapter.label
@@ -67,19 +67,18 @@ export class TocPanel extends UIPanel {
 			if (chapter.subitems && chapter.subitems.length > 0) {
 
 				const subItems = this.generateToc(chapter.subitems, item);
-				const tbtn = new UISpan().setClass("toggle-collapsed");
-				tbtn.dom.onclick = () => {
+				ibtn.setClass("toggle-collapsed");
+				ibtn.dom.onclick = () => {
 
 					if (subItems.expanded) {
 						subItems.collaps();
-						tbtn.setClass("toggle-collapsed");
+						ibtn.setClass("toggle-collapsed");
 					} else {
 						subItems.expand();
-						tbtn.setClass("toggle-expanded");
+						ibtn.setClass("toggle-expanded");
 					}
 					return false;
 				};
-				tbox.add(tbtn);
 				item.add(subItems);
 			}
 

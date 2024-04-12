@@ -718,6 +718,22 @@ export class UIItem extends UIElement {
 		this.selected = false;
 	}
 
+	add() {
+		let len = 0;
+		const box = new UIDiv().setId("item-box");
+		for (let i = 0; i < arguments.length; i++) {
+			const argument = arguments[i];
+			if (argument instanceof UIList) {
+				super.add(argument);
+			} else {
+				box.add(argument);
+				len++;
+			}
+		}
+		if (len) super.add(box);
+		return this;
+	}
+
 	select() {
 
 		this.selected = true;
