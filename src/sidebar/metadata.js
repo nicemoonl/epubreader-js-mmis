@@ -13,11 +13,12 @@ export class MetadataPanel extends UIPanel {
 		this.add(new UIBox(label).addClass("header"));
 		labels[key] = label;
 
-		this.items = new UIList()
+		this.items = new UIList();
 		this.setId("metadata");
+		this.add(container);
 
 		const init = (prop, meta) => {
-			if (meta[prop] === undefined || 
+			if (meta[prop] === undefined ||
 				meta[prop] === null || (typeof meta[prop] === "string" && meta[prop].length === 0)) {
 				return;
 			}
@@ -39,11 +40,13 @@ export class MetadataPanel extends UIPanel {
 
 		reader.on("metadata", (meta) => {
 
-			document.title = meta.title;
+			this.items.clear();
 			container.clear();
 			container.add(this.items);
-			for (const prop in meta) init(prop, meta);
-			this.add(container);
+			document.title = meta.title;
+			for (const prop in meta) {
+				init(prop, meta);
+			}
 		});
 
 		reader.on("languagechanged", (value) => {
