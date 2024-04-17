@@ -1,11 +1,10 @@
-# Epub.js Reader
+# epubreader-js
 
 ![UI](demo-ui.png)
 
 ## About the Reader
 
-[Epub.js](https://github.com/futurepress/epub.js) library.
-
+The **epubreader-js** application is based on the [epub.js](https://github.com/futurepress/epub.js) library and is a fork of the [epubjs-reader](https://github.com/futurepress/epubjs-reader) repository.
 
 ## Getting Started
 
@@ -76,13 +75,13 @@ Let's say we want to disable the openbook function, which is designed to open an
 
 ## Features
 
-The epubreader-js application supports the following features:
+The **epubreader-js** application supports the following features:
 
-1. Initial support for mobile devices
-2. Saving settings in the browser’s local storage
-3. Opening a book file from the device’s file system
-4. Bookmarks
-5. Annotations
-6. Search by sections of the book
-7. Output epub metadata
-8. Keybindings
+- Initial support for mobile devices
+- Saving settings in the browser’s local storage
+- Opening a book file from the device’s file system
+- Bookmarks
+- Annotations
+- Search by sections of the book
+- Output epub metadata
+- Keybindings
