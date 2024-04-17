@@ -12,7 +12,7 @@ export class SettingsPanel extends UIPanel {
 			"sidebar/settings",
 			"sidebar/settings/language",
 			"sidebar/settings/fontsize",
-			"sidebar/settings/layout",
+			"sidebar/settings/flow",
 			"sidebar/settings/spread",
 			"sidebar/settings/spread/minwidth"
 		];
@@ -48,15 +48,15 @@ export class SettingsPanel extends UIPanel {
 		fontSizeRow.add(fontSizeLabel);
 		fontSizeRow.add(fontSize);
 
-		//-- layout configure --//
+		//-- flow configure --//
 
-		const layoutLabel = new UILabel(strings.get(keys[3]), "layout");
-		const layoutRow = new UIRow();
-		const layout = new UISelect().setOptions({
+		const flowLabel = new UILabel(strings.get(keys[3]), "flow");
+		const flowRow = new UIRow();
+		const flow = new UISelect().setOptions({
 			paginated: "Paginated",
 			scrolled: "Scrolled"
 		});
-		layout.dom.onchange = (e) => {
+		flow.dom.onchange = (e) => {
 
 			reader.emit("flowchanged", e.target.value);
 
@@ -72,9 +72,9 @@ export class SettingsPanel extends UIPanel {
 				});
 			}
 		};
-		layout.setId("layout");
-		layoutRow.add(layoutLabel);
-		layoutRow.add(layout);
+		flow.setId("flow");
+		flowRow.add(flowLabel);
+		flowRow.add(flow);
 
 		//-- spdead configure --//
 
@@ -128,7 +128,7 @@ export class SettingsPanel extends UIPanel {
 		this.add(new UIBox([
 			languageRow,
 			fontSizeRow,
-			layoutRow,
+			flowRow,
 			spreadRow,
 			minSpreadWidthRow,
 			//paginationRow
@@ -140,7 +140,7 @@ export class SettingsPanel extends UIPanel {
 
 			language.setValue(cfg.language);
 			fontSize.setValue(cfg.styles.fontSize);
-			layout.setValue(cfg.flow);
+			flow.setValue(cfg.flow);
 			spread.setValue(cfg.spread.mod);
 			minSpreadWidth.setValue(cfg.spread.min);
 			minSpreadWidth.dom.disabled = cfg.spread.mod === "none";
@@ -162,7 +162,7 @@ export class SettingsPanel extends UIPanel {
 			headerLabel.setTextContent(strings.get(keys[0]));
 			languageLabel.setTextContent(strings.get(keys[1]));
 			fontSizeLabel.setTextContent(strings.get(keys[2]));
-			layoutLabel.setTextContent(strings.get(keys[3]));
+			flowLabel.setTextContent(strings.get(keys[3]));
 			spreadLabel.setTextContent(strings.get(keys[4]));
 			minSpreadWidthLabel.setTextContent(strings.get(keys[5]));
 		});
