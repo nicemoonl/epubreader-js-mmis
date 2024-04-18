@@ -46,28 +46,22 @@ npm run prepare
 
 ## Pre-configuration
 
-The **epubreader-js** application settings is a JavaScript object that you pass as an argument to the `main` function. By default, initialization of **epubreader-js** application settings is performed at the `Reader` class level. However, a simpler solution is to do pre-configuration in the [index.html](dist/index.html) file. For example, this is what a call to the `main` function looks like:
+The **epubreader-js** application settings is a JavaScript object that you pass as an argument to the `Reader` constructor. You can make preliminary settings in the file [index.html](dist/index.html). For example, this is what the default `Reader` initialization looks like:
 
 ```html
-<script type="text/javascript">
+<script type="module">
     const url = new URL(window.location)
     const path = url.searchParams.get("bookPath") || "https://s3.amazonaws.com/moby-dick/"
-    window.onload = (e) => {
-        epubreader.main(path)
-    }
+    window.onload = (e) => new Reader(path)
 </script>
 ```
 
-Let's say we want to disable the openbook function, which is designed to open an epub file on a personal computer. This can be useful for integrating a public library into your site. Let's do this:
+Let's say we want to disable the `openbook` feature, which is designed to open an epub file on a personal computer. This can be useful for integrating a public library into your site. Let's do this:
 
 ```html
-<script type="text/javascript">
+<script type="module">
     const url = "{{bookPath}}"
-    window.onload = (e) => {
-        epubreader.main(url, {
-            openbook: false
-        })
-    }
+    window.onload = (e) => new Reader(url, { openbook: false })
 </script>
 ```
 
