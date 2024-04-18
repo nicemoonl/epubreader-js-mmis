@@ -795,7 +795,7 @@ class Strings {
 				"sidebar/settings": "Settings",
 				"sidebar/settings/language": "Language",
 				"sidebar/settings/fontsize": "Font size (%)",
-				"sidebar/settings/layout": "Layout",
+				"sidebar/settings/flow": "Flow",
 				"sidebar/settings/pagination": ["Pagination", "Generate pagination"],
 				"sidebar/settings/spread": "Spread",
 				"sidebar/settings/spread/minwidth": "Minimum spread width",
@@ -803,12 +803,16 @@ class Strings {
 				"sidebar/metadata/title": "Title",
 				"sidebar/metadata/creator": "Creator",
 				"sidebar/metadata/description": "Description",
+				"sidebar/metadata/pubdate": "Pubdate",
 				"sidebar/metadata/publisher": "Publisher",
 				"sidebar/metadata/identifier": "Identifier",
 				"sidebar/metadata/language": "Language",
-				"sidebar/metadata/pubdate": "Pubdate",
-				"sidebar/metadata/modified_date": "Modified date",
 				"sidebar/metadata/rights": "Rights",
+				"sidebar/metadata/modified_date": "Modified date",
+				"sidebar/metadata/layout": "Layout", // rendition:layout
+				"sidebar/metadata/flow": "Flow", // rendition:flow
+				"sidebar/metadata/spread": "Spread", // rendition:spread
+				"sidebar/metadata/direction": "Direction", // page-progression-direction
 
 				"notedlg/label": "Note",
 				"notedlg/add": "Add"
@@ -839,7 +843,7 @@ class Strings {
 				"sidebar/settings": "Réglages",
 				"sidebar/settings/language": "Langue",
 				"sidebar/settings/fontsize": "???",
-				"sidebar/settings/layout": "???",
+				"sidebar/settings/flow": "???",
 				"sidebar/settings/pagination": ["Pagination", "Établir une pagination"],
 				"sidebar/settings/spread": "???",
 				"sidebar/settings/spread/minwidth": "???",
@@ -847,12 +851,16 @@ class Strings {
 				"sidebar/metadata/title": "???",
 				"sidebar/metadata/creator": "???",
 				"sidebar/metadata/description": "???",
+				"sidebar/metadata/pubdate": "???",
 				"sidebar/metadata/publisher": "???",
 				"sidebar/metadata/identifier": "???",
 				"sidebar/metadata/language": "Langue",
-				"sidebar/metadata/pubdate": "???",
-				"sidebar/metadata/modified_date": "???",
 				"sidebar/metadata/rights": "???",
+				"sidebar/metadata/modified_date": "???",
+				"sidebar/metadata/layout": "???",
+				"sidebar/metadata/flow": "???",
+				"sidebar/metadata/spread": "???",
+				"sidebar/metadata/direction": "???",
 
 				"notedlg/label": "???",
 				"notedlg/add": "Ajouter"
@@ -883,7 +891,7 @@ class Strings {
 				"sidebar/settings": "設定",
 				"sidebar/settings/language": "表示言語",
 				"sidebar/settings/fontsize": "???",
-				"sidebar/settings/layout": "???",
+				"sidebar/settings/flow": "???",
 				"sidebar/settings/pagination": ["ページネーション", "ページネーションを生成します。"],
 				"sidebar/settings/spread": "???",
 				"sidebar/settings/spread/minwidth": "???",
@@ -891,12 +899,16 @@ class Strings {
 				"sidebar/metadata/title": "???",
 				"sidebar/metadata/creator": "???",
 				"sidebar/metadata/description": "???",
+				"sidebar/metadata/pubdate": "???",
 				"sidebar/metadata/publisher": "???",
 				"sidebar/metadata/identifier": "???",
 				"sidebar/metadata/language": "表示言語",
-				"sidebar/metadata/pubdate": "???",
-				"sidebar/metadata/modified_date": "???",
 				"sidebar/metadata/rights": "???",
+				"sidebar/metadata/modified_date": "???",
+				"sidebar/metadata/layout": "???",
+				"sidebar/metadata/flow": "???",
+				"sidebar/metadata/spread": "???",
+				"sidebar/metadata/direction": "???",
 
 				"notedlg/label": "???",
 				"notedlg/add": "追加"
@@ -927,7 +939,7 @@ class Strings {
 				"sidebar/settings": "Настройки",
 				"sidebar/settings/language": "Язык",
 				"sidebar/settings/fontsize": "Размер шрифта",
-				"sidebar/settings/layout": "Макет",
+				"sidebar/settings/flow": "Поток",
 				"sidebar/settings/pagination": ["Нумерация страниц", "Генерировать нумерацию страниц"],
 				"sidebar/settings/spread": "Разворот",
 				"sidebar/settings/spread/minwidth": "Мин. ширина колонки",
@@ -935,12 +947,16 @@ class Strings {
 				"sidebar/metadata/title": "Заголовок",
 				"sidebar/metadata/creator": "Автор",
 				"sidebar/metadata/description": "Описание",
+				"sidebar/metadata/pubdate": "Дата публикации",
 				"sidebar/metadata/publisher": "Издатель",
 				"sidebar/metadata/identifier": "Идентификатор",
 				"sidebar/metadata/language": "Язык",
-				"sidebar/metadata/pubdate": "Дата публикации",
-				"sidebar/metadata/modified_date": "Дата изменения",
 				"sidebar/metadata/rights": "Лицензия",
+				"sidebar/metadata/modified_date": "Дата изменения",
+				"sidebar/metadata/layout": "Макет",
+				"sidebar/metadata/flow": "Поток",
+				"sidebar/metadata/spread": "Разворот",
+				"sidebar/metadata/direction": "Направление",
 
 				"notedlg/label": "Заметка",
 				"notedlg/add": "Добавить"
@@ -2475,7 +2491,7 @@ class SettingsPanel extends UIPanel {
 			"sidebar/settings",
 			"sidebar/settings/language",
 			"sidebar/settings/fontsize",
-			"sidebar/settings/layout",
+			"sidebar/settings/flow",
 			"sidebar/settings/spread",
 			"sidebar/settings/spread/minwidth"
 		];
@@ -2511,15 +2527,15 @@ class SettingsPanel extends UIPanel {
 		fontSizeRow.add(fontSizeLabel);
 		fontSizeRow.add(fontSize);
 
-		//-- layout configure --//
+		//-- flow configure --//
 
-		const layoutLabel = new UILabel(strings.get(keys[3]), "layout");
-		const layoutRow = new UIRow();
-		const layout = new UISelect().setOptions({
+		const flowLabel = new UILabel(strings.get(keys[3]), "flow");
+		const flowRow = new UIRow();
+		const flow = new UISelect().setOptions({
 			paginated: "Paginated",
 			scrolled: "Scrolled"
 		});
-		layout.dom.onchange = (e) => {
+		flow.dom.onchange = (e) => {
 
 			reader.emit("flowchanged", e.target.value);
 
@@ -2535,9 +2551,9 @@ class SettingsPanel extends UIPanel {
 				});
 			}
 		};
-		layout.setId("layout");
-		layoutRow.add(layoutLabel);
-		layoutRow.add(layout);
+		flow.setId("flow");
+		flowRow.add(flowLabel);
+		flowRow.add(flow);
 
 		//-- spdead configure --//
 
@@ -2591,7 +2607,7 @@ class SettingsPanel extends UIPanel {
 		this.add(new UIBox([
 			languageRow,
 			fontSizeRow,
-			layoutRow,
+			flowRow,
 			spreadRow,
 			minSpreadWidthRow,
 			//paginationRow
@@ -2603,7 +2619,7 @@ class SettingsPanel extends UIPanel {
 
 			language.setValue(cfg.language);
 			fontSize.setValue(cfg.styles.fontSize);
-			layout.setValue(cfg.flow);
+			flow.setValue(cfg.flow);
 			spread.setValue(cfg.spread.mod);
 			minSpreadWidth.setValue(cfg.spread.min);
 			minSpreadWidth.dom.disabled = cfg.spread.mod === "none";
@@ -2625,7 +2641,7 @@ class SettingsPanel extends UIPanel {
 			headerLabel.setTextContent(strings.get(keys[0]));
 			languageLabel.setTextContent(strings.get(keys[1]));
 			fontSizeLabel.setTextContent(strings.get(keys[2]));
-			layoutLabel.setTextContent(strings.get(keys[3]));
+			flowLabel.setTextContent(strings.get(keys[3]));
 			spreadLabel.setTextContent(strings.get(keys[4]));
 			minSpreadWidthLabel.setTextContent(strings.get(keys[5]));
 		});
