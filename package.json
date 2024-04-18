@@ -1,9 +1,17 @@
 {
-    "name": "epubjs-reader",
-    "version": "0.3.1",
-    "repository": "https://github.com/futurepress/epubjs-reader",
+    "name": "epubreader-js",
+    "version": "0.3.2",
+    "homepage": "https://github.com/intity/epubreader-js",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/intity/epubreader-js.git"
+    },
     "description": "ePub.js Reader",
-    "main": "src/main.js",
+    "bugs": {
+        "url": "https://github.com/intity/epubreader-js/issues"
+    },
+    "main": "src/reader.js",
+    "type": "module",
     "scripts": {
         "build": "webpack --mode=production --progress",
         "serve": "webpack serve",
