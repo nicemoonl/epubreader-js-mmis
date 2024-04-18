@@ -8,11 +8,8 @@ const config = {
 	},
 	output: {
 		path: path.resolve(__dirname, 'dist'),
-		filename: 'js/[name].js',
-		sourceMapFilename: 'js/[name].js.map',
-		library: 'epubreader'
+		library: '[name]'
 	},
-	devtool: 'source-map',
 	optimization: {
 		minimize: false
 	},
@@ -59,8 +56,14 @@ const config = {
 
 module.exports = (env, args) => {
 
+	config.devtool = env.WEBPACK_SERVE ? 'eval-source-map' : 'source-map';
+
 	if (args.optimizationMinimize) {
 		config.output.filename = 'js/[name].min.js';
+		config.output.sourceMapFilename = 'js/[name].min.js.map';
+	} else {
+		config.output.filename = 'js/[name].js';
+		config.output.sourceMapFilename = 'js/[name].js.map';
 	}
 
 	return config;
