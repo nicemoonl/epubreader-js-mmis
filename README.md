@@ -84,4 +84,4 @@ The **epubreader-js** application supports the following features:
 - Annotations
 - Search by sections of the book
 - Output epub metadata
-- Keybindings
+- [Keybindings](docs/keybindings.md)
