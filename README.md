@@ -50,6 +50,7 @@ The **epubreader-js** application settings is a JavaScript object that you pass 
 
 ```html
 <script type="module">
+    import { Reader } from "./js/epubreader.min.js"
     const url = new URL(window.location)
     const path = url.searchParams.get("bookPath") || "https://s3.amazonaws.com/moby-dick/"
     window.onload = (e) => new Reader(path)
@@ -60,6 +61,7 @@ Let's say we want to disable the `openbook` feature, which is designed to open a
 
 ```html
 <script type="module">
+    import { Reader } from "./js/epubreader.min.js"
     const url = "{{bookPath}}"
     window.onload = (e) => new Reader(url, { openbook: false })
 </script>
