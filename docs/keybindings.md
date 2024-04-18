@@ -6,9 +6,9 @@ The **epubreader-js** application supports the following keybindings.
 
 | Key          | Description                |
 | ------------ | -------------------------- |
-| <kdb>+</kdb> | Increasing font size       |
-| <kdb>-</kdb> | Decrease font size         |
-| <kdb>0</kdb> | Reset font size to default |
+| <kbd>+</kbd> | Increasing font size       |
+| <kbd>-</kbd> | Decrease font size         |
+| <kbd>0</kbd> | Reset font size to default |
 
 > The font size increases/decreases as a percentage in steps of 2 units.
 
@@ -16,5 +16,5 @@ The **epubreader-js** application supports the following keybindings.
 
 | Key                   | Description         |
 | --------------------- | ------------------- |
-| <kdb>ArrowLeft</kdb>  | Go to previous page |
-| <kdb>ArrowRight</kdb> | Go to next page     |
+| <kbd>ArrowLeft</kbd>  | Go to previous page |
+| <kbd>ArrowRight</kbd> | Go to next page     |
