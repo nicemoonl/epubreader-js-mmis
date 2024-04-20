@@ -2,7 +2,7 @@ export class Storage {
 
 	constructor() {
 
-		this.name = "epubjs-reader";
+		this.name = "epubreader-js";
 		this.version = 1.0;
 		this.db;
 		this.indexedDB = window.indexedDB ||
@@ -13,7 +13,7 @@ export class Storage {
 
 		if (this.indexedDB === undefined) {
 
-			alert("The IndexedDB API not available in your browser.");
+			console.error("The IndexedDB API not available in your browser.");
 		}
 	}
 
