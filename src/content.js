@@ -37,8 +37,13 @@ export class Content {
 
 		const loader = new UIDiv().setId("loader");
 		const divider = new UIDiv().setId("divider");
+		const overlay = new UIDiv().setId("overlay");
+		overlay.dom.onclick = (e) => {
+			reader.emit("sidebaropener", false);
+			e.preventDefault();
+		};
 
-		container.add([divider, loader]);
+		container.add([loader, divider, overlay]);
 		document.body.appendChild(container.dom);
 
 		//-- events --//
@@ -98,6 +103,11 @@ export class Content {
 				next.addClass("active");
 				setTimeout(() => { next.removeClass("active"); }, 100);
 			}
+		});
+
+		reader.on("sidebaropener", (value) => {
+
+			overlay.dom.style.display = value ? "block" : "none";
 		});
 
 		reader.on("viewercleanup", () => {

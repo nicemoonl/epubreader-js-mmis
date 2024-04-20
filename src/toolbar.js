@@ -24,6 +24,7 @@ export class Toolbar {
 		openerBtn.dom.onclick = (e) => {
 
 			reader.emit("sidebaropener", true);
+			openerBtn.dom.blur();
 			e.preventDefault();
 		};
 		openerBox.add(openerBtn);
