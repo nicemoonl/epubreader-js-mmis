@@ -12,29 +12,36 @@ export class Reader {
 
 	constructor(bookPath, settings) {
 
+		const preinit = (data) => {
+			const url = new URL(window.location);
+			let path = bookPath;
+			if (settings && !settings.openbook) {
+				path = bookPath;
+				if (data) this.storage.clear();
+			} else if (data && url.search.length === 0) {
+				path = data;
+			}
+			this.cfgInit(path, settings);
+			this.strings = new Strings(this);
+			this.toolbar = new Toolbar(this);
+			this.content = new Content(this);
+			this.sidebar = new Sidebar(this);
+			if (this.settings.annotations) {
+				this.notedlg = new NoteDlg(this);
+			}
+			this.init();
+		}
+
 		this.settings = undefined;
 		this.isMobile = detectMobile();
 		this.storage = new Storage();
-		this.storage.init(() => this.storage.get((data) => {
-				const url = new URL(window.location);
-				let path = bookPath;
-				if (settings && !settings.openbook) {
-					path = bookPath;
-					if (data) this.storage.clear();
-				} else if (data && url.search.length === 0) {
-					path = data;
-				}
-				this.cfgInit(path, settings);
-				this.strings = new Strings(this);
-				this.toolbar = new Toolbar(this);
-				this.content = new Content(this);
-				this.sidebar = new Sidebar(this);
-				if (this.settings.annotations) {
-					this.notedlg = new NoteDlg(this);
-				}
-				this.init();
-			})
-		);
+		const openbook = settings && settings.openbook;
+
+		if (this.storage.indexedDB && (!settings || openbook)) {
+			this.storage.init(() => this.storage.get((data) => preinit(data)));
+		} else {
+			preinit();
+		}
 
 		window.onbeforeunload = this.unload.bind(this);
 		window.onhashchange = this.hashChanged.bind(this);
@@ -144,7 +151,7 @@ export class Reader {
 			this.settings.flow = value;
 			this.rendition.flow(value);
 		});
-		
+
 		this.on("spreadchanged", (value) => {
 			const mod = value.mod || this.settings.spread.mod;
 			const min = value.min || this.settings.spread.min;
@@ -209,7 +216,7 @@ export class Reader {
 			manager: this.isMobile ? "continuous" : "default",
 			restore: true,
 			history: true,
-			openbook: true,
+			openbook: this.storage.indexedDB ? true : false,
 			language: "en",
 			sectionId: undefined,
 			bookmarks: [],   // array | false
