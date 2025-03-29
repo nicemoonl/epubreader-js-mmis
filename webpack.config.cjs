@@ -49,6 +49,18 @@ const config = {
 					toType: "file",
 					force: true
 				},
+				{
+					from: "assets",
+					to: "assets",
+					toType: "dir",
+					force: true
+				},
+				{
+					from: "index.html",
+					to: "index.html",
+					toType: "file",
+					force: true
+				}
 			],
 			options: {
 				concurrency: 100,
