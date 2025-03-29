@@ -59,13 +59,13 @@ const config = {
 					from: "index.html",
 					to: "index.html",
 					toType: "file",
-					force: true
+					force: true,
+					transform: (content, absoluteFrom) => {
+						return content.toString().replace(/dist\//g, "")
+					}
 				}
-			],
-			options: {
-				concurrency: 100,
-			},
-		}),
+			]
+		})
 	],
 	performance: {
 		hints: false
