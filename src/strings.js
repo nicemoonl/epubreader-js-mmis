@@ -13,6 +13,9 @@ export class Strings {
 				"toolbar/bookmark": "Add this page to bookmarks",
 				"toolbar/settings": "Settings",
 				"toolbar/fullscreen": "Fullscreen",
+				"toolbar/zoom-in": "Zoom in",
+				"toolbar/zoom-out": "Zoom out",
+
 
 				"sidebar/close": "Close Sidebar",
 				"sidebar/contents": "Contents",
@@ -66,6 +69,9 @@ export class Strings {
 				"toolbar/bookmark": "新增書籤",
 				"toolbar/settings": "設置",
 				"toolbar/fullscreen": "全螢幕",
+				"toolbar/zoom-in": "放大",
+				"toolbar/zoom-out": "縮小",
+
 
 				"sidebar/close": "關閉側邊欄",
 				"sidebar/contents": "目錄",
@@ -120,6 +126,9 @@ export class Strings {
 				"toolbar/bookmark": "加为书签",
 				"toolbar/settings": "设置",
 				"toolbar/fullscreen": "全屏",
+				"toolbar/zoom-in": "放大",
+				"toolbar/zoom-out": "缩小",
+
 
 				"sidebar/close": "关闭侧边栏",
 				"sidebar/contents": "目录",

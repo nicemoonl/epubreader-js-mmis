@@ -1,4 +1,5 @@
 import { UIDiv, UIInput } from "./ui.js";
+import { readerConfig } from "./config.js";
 
 export class Toolbar {
 
@@ -15,7 +16,10 @@ export class Toolbar {
 			"toolbar/openbook",
 			"toolbar/openbook/error",
 			"toolbar/bookmark",
-			"toolbar/fullscreen"
+			"toolbar/fullscreen",
+			"toolbar/settings",
+			"toolbar/zoom-in",
+			"toolbar/zoom-out",
 		];
 		const menu1 = new UIDiv().setClass("menu-1");
 		const openerBox = new UIDiv().setId("btn-m").setClass("box");
@@ -119,11 +123,42 @@ export class Toolbar {
 			menu2.add(bookmarkBox);
 		}
 
+		// add zoom in and out buttons in top toolbar
+		if (true) {
+			// zoom out
+			const zoomOutBox = new UIDiv().setId("btn-zo").setClass("box");
+			const zoomOutBtn = new UIInput("button");
+			zoomOutBtn.setTitle(strings.get(keys[9]));
+			zoomOutBtn.dom.onclick = (e) => {
+				const step = readerConfig.fontsize.step;
+				let value = reader.settings.styles.fontSize;
+				value -= step;
+				reader.emit("styleschanged", { fontSize: value });
+				e.preventDefault();
+			};
+			zoomOutBox.add(zoomOutBtn);
+			menu2.add(zoomOutBox);
+
+			// zoom in
+			const zoomInBox = new UIDiv().setId("btn-zi").setClass("box");
+			const zoomInBtn = new UIInput("button");
+			zoomInBtn.setTitle(strings.get(keys[8]));
+			zoomInBtn.dom.onclick = (e) => {
+				const step = readerConfig.fontsize.step;
+				let value = reader.settings.styles.fontSize;
+				value += step;
+				reader.emit("styleschanged", { fontSize: value });
+				e.preventDefault();
+			};
+			zoomInBox.add(zoomInBtn);
+			menu2.add(zoomInBox);
+		}
+
 		// add setting button in top toolbar
 		if (true) {
 			const settingBox = new UIDiv().setId("btn-st").setClass("box");
 			const settingBtn = new UIInput("button");
-			settingBtn.setTitle(strings.get(keys[6]));
+			settingBtn.setTitle(strings.get(keys[7]));
 			settingBtn.dom.onclick = (e) => {
 				reader.emit("sidebaropener", true);
 				reader.sidebar.container.select("btn-c");
