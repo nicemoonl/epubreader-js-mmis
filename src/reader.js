@@ -79,6 +79,9 @@ export class Reader {
 			snap: true
 		});
 
+		// set font size
+		this.rendition.themes.fontSize(this.settings.styles.fontSize + "%");
+
 		const cfi = this.settings.previousLocationCfi;
 		if (cfi) {
 			this.displayed = this.rendition.display(cfi);
