@@ -23,10 +23,8 @@ export class SettingsPanel extends UIPanel {
 		const languageRow = new UIRow();
 		const language = new UISelect().setOptions({
 			en: "English",
-			fr: "French",
-			ja: "Japanese",
-			ru: "Russian",
-			zh: "Chinese"
+			tc: "繁體中文",
+			sc: "简体中文",
 		});
 		language.dom.onchange = (e) => {
 
@@ -54,8 +52,8 @@ export class SettingsPanel extends UIPanel {
 		const flowLabel = new UILabel(strings.get(keys[3]), "flow");
 		const flowRow = new UIRow();
 		const flow = new UISelect().setOptions({
-			paginated: "Paginated",
-			scrolled: "Scrolled"
+			paginated: strings.get("sidebar/settings/flow/paginated"),
+			scrolled: strings.get("sidebar/settings/flow/scrolled")
 		});
 		flow.dom.onchange = (e) => {
 
@@ -83,8 +81,8 @@ export class SettingsPanel extends UIPanel {
 		const spreadLabel = new UILabel(strings.get(keys[4]), "spread");
 		const spreadRow = new UIRow();
 		const spread = new UISelect().setOptions({
-			none: "None",
-			auto: "Auto"
+			none: strings.get("sidebar/settings/spread/none"),
+			auto: strings.get("sidebar/settings/spread/auto")
 		});
 		spread.dom.onchange = (e) => {
 
@@ -127,11 +125,11 @@ export class SettingsPanel extends UIPanel {
 		paginationRow.add(pagination);
 
 		this.add(new UIBox([
-			languageRow,
+			// languageRow, // disabled
 			fontSizeRow,
 			flowRow,
 			spreadRow,
-			minSpreadWidthRow,
+			// minSpreadWidthRow, // disabled
 			//paginationRow
 		]));
 
