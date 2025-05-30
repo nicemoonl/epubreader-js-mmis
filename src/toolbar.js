@@ -119,6 +119,20 @@ export class Toolbar {
 			menu2.add(bookmarkBox);
 		}
 
+		// add setting button in top toolbar
+		if (true) {
+			const settingBox = new UIDiv().setId("btn-st").setClass("box");
+			const settingBtn = new UIInput("button");
+			settingBtn.setTitle(strings.get(keys[6]));
+			settingBtn.dom.onclick = (e) => {
+				reader.emit("sidebaropener", true);
+				reader.sidebar.container.select("btn-c");
+				e.preventDefault();
+			};
+			settingBox.add(settingBtn);
+			menu2.add(settingBox);
+		}
+
 		let fullscreenBtn;
 		if (settings.fullscreen) {
 

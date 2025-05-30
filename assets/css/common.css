@@ -75,6 +75,10 @@
 	background-image: url("../img/bookmarks.svg");
 }
 
+#btn-st.box input {
+	background-image: url("../img/settings.svg");
+}
+
 #btn-f.box input {
 	background-image: url("../img/resize-full.svg");
 }
