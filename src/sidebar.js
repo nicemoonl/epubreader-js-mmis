@@ -50,6 +50,8 @@ export class Sidebar {
 		container.addTab("btn-i", strings.get(keys[6]), new MetadataPanel(reader));
 		container.select("btn-t");
 
+		this.container = container;
+
 		document.body.appendChild(container.dom);
 
 		//-- events --//

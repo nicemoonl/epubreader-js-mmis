@@ -1,4 +1,5 @@
 import { UIPanel, UIRow, UISelect, UIInput, UILabel, UINumber, UIText, UIBox, UIDiv } from "../ui.js";
+import { readerConfig } from "../config.js";
 
 export class SettingsPanel extends UIPanel {
 
@@ -36,7 +37,8 @@ export class SettingsPanel extends UIPanel {
 
 		const fontSizeLabel = new UILabel(strings.get(keys[2]), "fontsize");
 		const fontSizeRow = new UIRow();
-		const fontSize = new UINumber(100, 1);
+		const fontSizeStep = readerConfig.fontsize.step;
+		const fontSize = new UINumber(readerConfig.fontsize.default, fontSizeStep);
 		fontSize.dom.onchange = (e) => {
 
 			reader.emit("styleschanged", {
@@ -165,5 +167,9 @@ export class SettingsPanel extends UIPanel {
 			spreadLabel.setTextContent(strings.get(keys[4]));
 			minSpreadWidthLabel.setTextContent(strings.get(keys[5]));
 		});
+	}
+
+	updateFontSize(size) {
+		fontsize.value = size;
 	}
 }

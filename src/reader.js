@@ -7,6 +7,7 @@ import { Toolbar } from "./toolbar.js";
 import { Content } from "./content.js";
 import { Sidebar } from "./sidebar.js";
 import { NoteDlg } from "./notedlg.js";
+import { readerConfig } from "./config.js";
 
 export class Reader {
 
@@ -164,9 +165,17 @@ export class Reader {
 		});
 
 		this.on("styleschanged", (value) => {
-			const fontSize = value.fontSize;
+			let fontSize = value.fontSize;
+			const max = readerConfig.fontsize.max;
+			const min = readerConfig.fontsize.min;
+			if (fontSize > max) {
+				fontSize = max;
+			} else if (fontSize < min) {
+				fontSize = min;
+			}
 			this.settings.styles.fontSize = fontSize;
 			this.rendition.themes.fontSize(fontSize + "%");
+			this.sidebar.container.panels.find(panel => panel.getId() === "btn-c").panel.updateFontSize(fontSize);
 		});
 	}
 
@@ -345,7 +354,8 @@ export class Reader {
 
 	keyboardHandler(e) {
 
-		const step = 2;
+		const step = readerConfig.fontsize.step;
+		const defaultFontSize = readerConfig.fontsize.default;
 		let value = this.settings.styles.fontSize;
 
 		switch (e.key) {
@@ -360,7 +370,7 @@ export class Reader {
 				this.emit("styleschanged", { fontSize: value });
 				break;
 			case "0":
-				value = 100;
+				value = defaultFontSize;
 				this.emit("styleschanged", { fontSize: value });
 				break;
 			case "ArrowLeft":

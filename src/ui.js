@@ -602,6 +602,7 @@ export class UITabbedPanel extends UIDiv {
 		const panel = new UIDiv();
 		panel.setId(id);
 		panel.add(items);
+		panel.panel = items;
 		this.panels.push(panel);
 		this.panelsDiv.add(panel);
 		this.select(id);
