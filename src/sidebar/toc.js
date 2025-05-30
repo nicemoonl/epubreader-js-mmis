@@ -6,6 +6,7 @@ export class TocPanel extends UIPanel {
 
 		super();
 		const container = new UIDiv().setClass("list-container");
+		this.uiDiv = container;
 		const strings = reader.strings;
 		const keys = [
 			"sidebar/contents"
@@ -21,7 +22,9 @@ export class TocPanel extends UIPanel {
 		reader.on("navigation", (toc) => {
 
 			container.clear();
-			container.add(this.generateToc(toc));
+			const uiList = this.generateToc(toc);
+			container.add(uiList);
+			container.uiList = uiList;
 			this.add(container);
 		});
 
@@ -29,11 +32,17 @@ export class TocPanel extends UIPanel {
 
 			label.setValue(strings.get(keys[0]));
 		});
+
+		reader.on("relocated", () => {
+			// select the current chapter in toc when relocated
+			this.selectCurrentChapter();
+		});
 	}
 
 	generateToc(toc, parent) {
 
 		const list = new UIList(parent);
+		list.uiItems = [];
 
 		toc.forEach((chapter) => {
 
@@ -45,9 +54,6 @@ export class TocPanel extends UIPanel {
 
 				if (this.selector && this.selector !== item)
 					this.selector.unselect();
-
-				item.select();
-				this.selector = item;
 				this.reader.settings.sectionId = chapter.id;
 				this.reader.rendition.display(chapter.href);
 				// close sidebar when toc item is clicked
@@ -62,8 +68,6 @@ export class TocPanel extends UIPanel {
 
 			if (this.reader.settings.sectionId === chapter.id) {
 				list.expand();
-				item.select();
-				this.selector = item;
 			}
 
 			if (chapter.subitems && chapter.subitems.length > 0) {
@@ -85,8 +89,19 @@ export class TocPanel extends UIPanel {
 			}
 
 			list.add(item);
+			list.uiItems.push(item);
 		});
 
 		return list;
+	}
+
+	selectCurrentChapter() {
+		this.uiDiv.uiList.uiItems.forEach((item) => {
+			if (item.dom.id === this.reader.settings.sectionId) {
+				item.select();
+			} else {
+				item.unselect();
+			}
+		});
 	}
 }

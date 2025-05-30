@@ -126,6 +126,7 @@ export class Reader {
 
 		this.rendition.on("relocated", (location) => {
 			this.setLocation(location.start.cfi);
+			this.settings.sectionId = location.start.href;
 			this.emit("relocated", location);
 		});
 
