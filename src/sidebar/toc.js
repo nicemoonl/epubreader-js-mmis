@@ -50,6 +50,8 @@ export class TocPanel extends UIPanel {
 				this.selector = item;
 				this.reader.settings.sectionId = chapter.id;
 				this.reader.rendition.display(chapter.href);
+				// close sidebar when toc item is clicked
+				this.reader.emit("sidebaropener", false);
 				e.preventDefault();
 			};
 			item.add([ibtn, link]);
