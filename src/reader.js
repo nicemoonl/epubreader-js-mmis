@@ -210,10 +210,13 @@ export class Reader {
 	cfgInit(bookPath, settings) {
 
 		this.entryKey = md5(bookPath).toString();
+		// default settings
 		this.settings = {
 			bookPath: bookPath,
-			arrows: this.isMobile ? "none" : "content", // none | content | toolbar
-			manager: this.isMobile ? "continuous" : "default",
+			// arrows: this.isMobile ? "none" : "content", // none | content | toolbar
+			arrows: "content", // none | content | toolbar
+			// manager: this.isMobile ? "continuous" : "default",
+			manager: "default",
 			restore: true,
 			history: true,
 			openbook: this.storage.indexedDB ? true : false,
@@ -230,7 +233,8 @@ export class Reader {
 				fontSize: 100
 			},
 			pagination: undefined, // not implemented
-			fullscreen: document.fullscreenEnabled
+			fullscreen: document.fullscreenEnabled,
+			search: true, // customized, control search panel
 		};
 
 		extend(settings || {}, this.settings);

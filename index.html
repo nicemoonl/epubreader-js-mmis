@@ -21,10 +21,17 @@
 
 	<!-- Reader -->
 	<script type="module">
-		import { Reader } from "./dist/js/epubreader.min.js"
+		import { Reader } from "./dist/js/epubreader.js"
 		const url = new URL(window.location)
 		const path = url.searchParams.get("bookPath") || "https://s3.amazonaws.com/moby-dick/"
-		window.onload = (e) => new Reader(path)
+		const lang = url.searchParams.get("lang");
+			window.onload = (e) => new Reader(path, {
+				openbook: false, // disable opening epub file from local
+				bookmarks: false, // disable bookmarks
+				annotations: false, // disable annotations
+				language: lang || 'en',
+				search: false, // disable search keywords
+			})
 	</script>
 </head>
 
