@@ -153,6 +153,13 @@ only screen and (max-width: 568px) and (orientation: landscape) {
 	.arrow span {
 		font-size: 32px;
 	}
+	#prev {
+		padding: 0 0 0 10px;
+	}
+	
+	#next {
+		padding: 0 10px 0 0;
+	}
 }
 
 /**
@@ -178,6 +185,13 @@ only screen and (min-width: 568px) and (max-width: 932px) and (orientation: land
 
 	.arrow span {
 		font-size: 40px;
+	}
+	#prev {
+		padding: 0 0 0 10px;
+	}
+	
+	#next {
+		padding: 0 10px 0 0;
 	}
 }
 
