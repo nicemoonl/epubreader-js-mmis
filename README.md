@@ -1,6 +1,7 @@
-# epubreader-js
+# epubreader-js-mmis
 
-![UI](demo-ui.png)
+This is an enhanced fork of [epubreader-js(v0.3.3)](https://github.com/intity/epubreader-js) with several UI enhancements for personal use.
+This Project uses modified epub.js(v0.3.88).
 
 ## About the Reader
 
