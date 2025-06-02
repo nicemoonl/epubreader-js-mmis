@@ -59,9 +59,22 @@ export class Content {
 			updateProgressUI(e);
 		};
 
+		// Add touch support for mobile devices
+		progressContainer.dom.ontouchstart = (e) => {
+			isDragging = true;
+			updateProgressUI(e.touches[0]);
+		};
+
 		document.addEventListener('mousemove', (e) => {
 			if (isDragging) {
 				updateProgressUI(e);
+			}
+		});
+
+		document.addEventListener('touchmove', (e) => {
+			if (isDragging) {
+				e.preventDefault(); // Prevent scrolling while dragging
+				updateProgressUI(e.touches[0]);
 			}
 		});
 
@@ -79,9 +92,25 @@ export class Content {
 			}
 		});
 
+		document.addEventListener('touchend', () => {
+			if (isDragging) {
+				isDragging = false;
+				// Only update the page position when dragging ends
+				if (reader.book) {
+					const locations = reader.book.locations;
+					if (locations && locations.total) {
+						const targetCfi = locations.cfiFromPercentage(currentProgress);
+						reader.rendition.display(targetCfi);
+					}
+				}
+			}
+		});
+
 		const updateProgressUI = (e) => {
 			const rect = progressBar.dom.getBoundingClientRect();
-			const x = Math.max(0, Math.min(e.clientX - rect.left, rect.width));
+			// Handle both mouse and touch events
+			const clientX = e.clientX || e.pageX || e.touches[0].clientX;
+			const x = Math.max(0, Math.min(clientX - rect.left, rect.width));
 			currentProgress = x / rect.width;
 			progressHandle.dom.style.left = `${currentProgress * 100}%`;
 		};
