@@ -46,7 +46,9 @@ export class Sidebar {
 		if (controls.search) {
 			container.addTab("btn-s", strings.get(keys[4]), new SearchPanel(reader));
 		}
-		container.addTab("btn-c", strings.get(keys[5]), new SettingsPanel(reader));
+		if (controls.settings) {
+			container.addTab("btn-c", strings.get(keys[5]), new SettingsPanel(reader));
+		}
 		container.addTab("btn-i", strings.get(keys[6]), new MetadataPanel(reader));
 		container.select("btn-t");
 

@@ -155,7 +155,7 @@ export class Toolbar {
 		}
 
 		// add setting button in top toolbar
-		if (true) {
+		if (settings.settings) {
 			const settingBox = new UIDiv().setId("btn-st").setClass("box");
 			const settingBtn = new UIInput("button");
 			settingBtn.setTitle(strings.get(keys[7]));

@@ -226,10 +226,10 @@ export class Reader {
 		// default settings
 		this.settings = {
 			bookPath: bookPath,
-			// arrows: this.isMobile ? "none" : "content", // none | content | toolbar
-			arrows: "content", // none | content | toolbar
-			// manager: this.isMobile ? "continuous" : "default",
-			manager: "default",
+			arrows: this.isMobile ? "none" : "content", // none | content | toolbar
+			// arrows: "content", // none | content | toolbar
+			manager: this.isMobile ? "continuous" : "default",
+			// manager: "default",
 			restore: true,
 			history: true,
 			openbook: this.storage.indexedDB ? true : false,
@@ -237,7 +237,7 @@ export class Reader {
 			sectionId: undefined,
 			bookmarks: [],   // array | false
 			annotations: [], // array | false
-			flow: "paginated", // paginated | scrolled
+			flow: "scrolled", // paginated | scrolled
 			spread: {
 				mod: "auto", // auto | none
 				min: 800
@@ -248,6 +248,7 @@ export class Reader {
 			pagination: undefined, // not implemented
 			fullscreen: document.fullscreenEnabled,
 			search: true, // customized, control search panel
+			settings: !this.isMobile, // customized, control settings button in toolbar and side menu
 		};
 
 		extend(settings || {}, this.settings);

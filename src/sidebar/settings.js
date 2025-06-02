@@ -126,14 +126,25 @@ export class SettingsPanel extends UIPanel {
 		paginationRow.add(new UILabel(paginationStr[0], "pagination"));
 		paginationRow.add(pagination);
 
-		this.add(new UIBox([
-			// languageRow, // disabled
-			fontSizeRow,
-			flowRow,
-			spreadRow,
-			// minSpreadWidthRow, // disabled
-			//paginationRow
-		]));
+		if (reader.isMobile) {
+			this.add(new UIBox([
+				// languageRow, // disabled
+				fontSizeRow,
+				// flowRow, // disabled in mobile
+				// spreadRow, // disabled in mobile
+				// minSpreadWidthRow, // disabled
+				//paginationRow
+			]));
+		} else {
+			this.add(new UIBox([
+				// languageRow, // disabled
+				fontSizeRow,
+				flowRow,
+				spreadRow,
+				// minSpreadWidthRow, // disabled
+				//paginationRow
+			]));
+		}
 
 		//-- events --//
 
