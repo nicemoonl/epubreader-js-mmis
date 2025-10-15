@@ -166,7 +166,7 @@ export class Reader {
 		});
 
 		this.on("styleschanged", (value) => {
-			let fontSize = value.fontSize;
+			let fontSize = Math.round(parseInt(value.fontSize) / 10) * 10; // round to the nearest 10
 			const max = readerConfig.fontsize.max;
 			const min = readerConfig.fontsize.min;
 			if (fontSize > max) {
