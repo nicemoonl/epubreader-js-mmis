@@ -219,10 +219,28 @@ only screen and (min-width: 1024px) and (max-width: 1366px) and (orientation: la
 	}
 }
 
+/* Current Chapter Label Styles */
+#current-chapter {
+	position: fixed;
+	bottom: 32px;
+	left: 50%;
+	transform: translateX(-50%);
+	width: 80%;
+	height: 20px;
+	background: transparent;
+	z-index: 9;
+	text-align: center;
+	color: #5F6368;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	max-width: 80%;
+}
+
 /* Progress Bar Styles */
 #progress-container {
 	position: fixed;
-	bottom: 20px;
+	bottom: 10px;
 	left: 50%;
 	transform: translateX(-50%);
 	width: 80%;

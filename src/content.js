@@ -43,6 +43,11 @@ export class Content {
 			e.preventDefault();
 		};
 
+		// Add current chapter label
+		const currentChapter = new UIDiv().setId("current-chapter");
+		const chapterSpan = new UISpan("Current Chapter: ");
+		currentChapter.add(chapterSpan);
+
 		// Add progress bar container
 		const progressContainer = new UIDiv().setId("progress-container").setClass("hidden");
 		const progressBar = new UIDiv().setId("progress-bar");
@@ -115,7 +120,23 @@ export class Content {
 			progressHandle.dom.style.left = `${currentProgress * 100}%`;
 		};
 
-		container.add([loader, divider, overlay, progressContainer]);
+		// Function to update current chapter name
+		const updateChapterName = () => {
+			let chapterName = "";
+			if (reader.settings.sectionId && reader.navItems) {
+				// Find the current chapter from navItems
+				const currentNavItem = reader.navItems[reader.settings.sectionId];
+				if (currentNavItem) {
+					chapterName = currentNavItem.label;
+				} else {
+					chapterName = reader.settings.sectionId;
+				}
+			}
+			chapterSpan.setTextContent(chapterName);
+			chapterSpan.dom.title = chapterName;
+		};
+
+		container.add([loader, divider, overlay, currentChapter, progressContainer]);
 		document.body.appendChild(container.dom);
 
 		//-- events --//
@@ -140,6 +161,11 @@ export class Content {
 
 		reader.on("bookloaded", () => {
 			loader.dom.style.display = "none";
+		});
+
+		reader.on("navigation", () => {
+			// Update chapter name when navigation is loaded
+			updateChapterName();
 		});
 
 		reader.on("displayed", (renderer, cfg) => {
@@ -181,6 +207,9 @@ export class Content {
 				const progress = reader.book.locations.percentageFromCfi(location.start.cfi);
 				progressHandle.dom.style.left = `${progress * 100}%`;
 			}
+
+			// Update current chapter name
+			updateChapterName();
 		});
 
 		reader.on("prev", () => {
