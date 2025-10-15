@@ -17,8 +17,10 @@ export class SearchPanel extends UIPanel {
 
 			if (value.length === 0) {
 				this.items.clear();
+				this.searchQuery = undefined;
 			} else if (searchQuery !== value) {
 				this.items.clear();
+				this.searchQuery = value; // Store the query
 				this.doSearch(value).then(results => {
 
 					results.forEach(data => {
@@ -35,6 +37,7 @@ export class SearchPanel extends UIPanel {
 		this.add([new UIBox(search), container]);
 		this.reader = reader;
 		this.selector = undefined;
+		this.searchQuery = undefined; // Store current search query
 		//
 		// improvement of the highlighting of keywords is required...
 		//
@@ -57,6 +60,10 @@ export class SearchPanel extends UIPanel {
 	set(data) {
 
 		const link = new UILink("#" + data.cfi, data.excerpt);
+		// custom feature: highlight the keyword
+		if (this.searchQuery) {
+			link.dom.innerHTML = data.excerpt.replace(new RegExp(this.searchQuery, 'gi'), '<span class="highlight">' + this.searchQuery + '</span>');
+		}
 		const item = new UIItem();
 		link.dom.onclick = () => {
 

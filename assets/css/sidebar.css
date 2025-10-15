@@ -290,6 +290,16 @@
 	padding: 6px;
 }
 
+/* override search results styles */
+#search.panel li #item-box a {
+	color: #333;
+	text-decoration: none;
+}
+
+#search.panel li #item-box .highlight {
+	color: #1A73E8;
+}
+
 #search.panel input[type="search"] {
 	width: calc(100% - 22px);
 	height: 36px;
