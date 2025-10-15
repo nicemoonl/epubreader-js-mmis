@@ -177,6 +177,7 @@ export class Reader {
 			this.settings.styles.fontSize = fontSize;
 			this.rendition.themes.fontSize(fontSize + "%");
 			this.sidebar.container.panels.find(panel => panel.getId() === "btn-c").panel.updateFontSize(fontSize);
+			this.emit("uifontsizechanged", { fontSize: fontSize });
 		});
 	}
 

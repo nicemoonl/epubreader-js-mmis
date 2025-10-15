@@ -1,4 +1,4 @@
-import { UIDiv, UIInput } from "./ui.js";
+import { UIDiv, UIInput, UISelect } from "./ui.js";
 import { readerConfig } from "./config.js";
 
 export class Toolbar {
@@ -124,6 +124,7 @@ export class Toolbar {
 		}
 
 		// add zoom in and out buttons in top toolbar
+		let zoomSelectBox, zoomSelect;
 		if (true) {
 			// zoom out
 			const zoomOutBox = new UIDiv().setId("btn-zo").setClass("box");
@@ -138,6 +139,34 @@ export class Toolbar {
 			};
 			zoomOutBox.add(zoomOutBtn);
 			menu2.add(zoomOutBox);
+
+			// zoom select
+			zoomSelectBox = new UIDiv().setId("input-zoom").setClass("box");
+			zoomSelect = new UISelect().setOptions({
+				50: "50%",
+				60: "60%",
+				70: "70%",
+				80: "80%",
+				90: "90%",
+				100: "100%",
+				110: "110%",
+				120: "120%",
+				130: "130%",
+				140: "140%",
+				150: "150%",
+				160: "160%",
+				170: "170%",
+				180: "180%",
+				190: "190%",
+				200: "200%",
+			});
+			zoomSelect.setValue(reader.settings.styles.fontSize);
+			zoomSelect.dom.onchange = (e) => {
+				reader.emit("styleschanged", { fontSize: parseInt(e.target.value) });
+				e.preventDefault();
+			};
+			zoomSelectBox.add(zoomSelect);
+			menu2.add(zoomSelectBox);
 
 			// zoom in
 			const zoomInBox = new UIDiv().setId("btn-zi").setClass("box");
@@ -252,6 +281,10 @@ export class Toolbar {
 			if (settings.fullscreen) {
 				fullscreenBtn.setTitle(strings.get(keys[6]));
 			}
+		});
+
+		reader.on("uifontsizechanged", (value) => {
+			zoomSelect.setValue(value.fontSize);
 		});
 	}
 

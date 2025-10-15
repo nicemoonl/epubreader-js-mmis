@@ -24,6 +24,13 @@
 	height: 36px;
 }
 
+#toolbar #input-zoom.box {
+	padding: 15px 0;
+	width: auto;
+	height: 28px;
+	min-height: 28px;
+}
+
 #toolbar #btn-p.box,
 #toolbar #btn-n.box {
 	display: none;
