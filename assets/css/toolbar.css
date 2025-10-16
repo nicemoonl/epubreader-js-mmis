@@ -48,7 +48,8 @@
 	}
 
 	#toolbar #input-zoom.box {
-		display: none;
+		height: 30px;
+		padding: 11px 0;
 	}
 
 	#toolbar #btn-pf.box {
