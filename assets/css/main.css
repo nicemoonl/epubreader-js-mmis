@@ -65,26 +65,31 @@ body {
 }
 
 #prev {
-	text-align: start;
+	/* text-align: start; */
 }
 
 #next {
-	text-align: end;
+	/* text-align: end; */
 }
 
 .arrow {
 	flex: 1;
 	padding: 0 10px;
+	height: calc(100% - 116px);
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	cursor: pointer;
 }
 
 .arrow:disabled,
 .arrow.disabled {
 	visibility: hidden;
+	cursor: default;
 }
 
 .arrow span {
 	color: #E2E2E2;
-	cursor: pointer;
 	overflow: hidden;
 	font-size: 64px;
 	font-family: arial, sans-serif;
@@ -97,7 +102,7 @@ body {
 	-ms-user-select: none;
 }
 
-.arrow span:hover {
+.arrow:hover span {
 	color: #777;
 }
 
