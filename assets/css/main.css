@@ -284,3 +284,33 @@ only screen and (min-width: 1024px) and (max-width: 1366px) and (orientation: la
 	cursor: grabbing;
 	background: #333;
 }
+
+/* Progress Percentage Styles */
+#progress-percentage {
+	position: fixed;
+	bottom: 10px;
+	right: 0;
+	width: 10%;
+	height: 20px;
+	z-index: 9;
+	font-size: 14px;
+	color: #5F6368;
+	white-space: nowrap;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+#progress-percentage.hidden {
+	display: none;
+}
+
+@media only screen and (max-width: 700px) {
+	#progress-container {
+		width: 70%;
+	}
+
+	#progress-percentage {
+		font-size: 14px;
+	}
+}

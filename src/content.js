@@ -55,6 +55,11 @@ export class Content {
 		progressBar.add(progressHandle);
 		progressContainer.add(progressBar);
 
+		// Add Progress Percentage Display
+		const progressPercentage = new UIDiv().setId("progress-percentage").setClass("hidden");
+		const progressPercentageSpan = new UISpan("0 %");
+		progressPercentage.add(progressPercentageSpan);
+
 		// Add drag functionality to progress bar
 		let isDragging = false;
 		let currentProgress = 0;
@@ -118,6 +123,7 @@ export class Content {
 			const x = Math.max(0, Math.min(clientX - rect.left, rect.width));
 			currentProgress = x / rect.width;
 			progressHandle.dom.style.left = `${currentProgress * 100}%`;
+			progressPercentageSpan.setTextContent(`${Math.round(currentProgress * 100)} %`);
 		};
 
 		// Function to update current chapter name
@@ -136,7 +142,7 @@ export class Content {
 			chapterSpan.dom.title = chapterName;
 		};
 
-		container.add([loader, divider, overlay, currentChapter, progressContainer]);
+		container.add([loader, divider, overlay, currentChapter, progressContainer, progressPercentage]);
 		document.body.appendChild(container.dom);
 
 		//-- events --//
@@ -150,9 +156,19 @@ export class Content {
 					reader.book.locations.generate().then(() => {
 						// Update progress bar for initial location after locations are generated
 						if (reader.rendition.location) {
-							const progress = reader.book.locations.percentageFromCfi(reader.rendition.location.start.cfi);
-							progressHandle.dom.style.left = `${progress * 100}%`;
+							if (reader.rendition.location.atStart) {
+								progressHandle.dom.style.left = "0";
+								progressPercentageSpan.setTextContent( "0 %");
+							} else if (reader.rendition.location.atEnd) {
+								progressHandle.dom.style.left = "100%";
+								progressPercentageSpan.setTextContent( "100 %");
+							} else {
+								const progress = reader.book.locations.percentageFromCfi(reader.rendition.location.start.cfi);
+								progressHandle.dom.style.left = `${progress * 100}%`;
+								progressPercentageSpan.setTextContent(`${Math.floor(progress * 100)} %`);
+							}
 							progressContainer.removeClass("hidden");
+							progressPercentage.removeClass("hidden");
 						}
 					});
 				});
@@ -204,8 +220,17 @@ export class Content {
 
 			// Update progress bar position
 			if (reader.book.locations.length()) {
-				const progress = reader.book.locations.percentageFromCfi(location.start.cfi);
-				progressHandle.dom.style.left = `${progress * 100}%`;
+				if (location.atStart) {
+					progressHandle.dom.style.left = "0";
+					progressPercentageSpan.setTextContent( "0 %");
+				} else if (location.atEnd) {
+					progressHandle.dom.style.left = "100%";
+					progressPercentageSpan.setTextContent( "100 %");
+				} else {
+					const progress = reader.book.locations.percentageFromCfi(location.start.cfi);
+					progressHandle.dom.style.left = `${progress * 100}%`;
+					progressPercentageSpan.setTextContent(`${Math.floor(progress * 100)} %`);
+				}
 			}
 
 			// Update current chapter name
