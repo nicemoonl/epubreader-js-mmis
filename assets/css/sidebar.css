@@ -351,28 +351,11 @@
 	text-align: left;
 }
 
-/**
- * iPhone 5     : 320 x 568
- * iPhone 6/7/8 : 375 x 667
- * iPhone 11    : 375 x 812
- */
-@media
-only screen and (height: 320px) and (orientation: landscape),
-only screen and (height: 375px) and (orientation: landscape) {
-	#sidebar .tabs {
-		overflow: auto;
-	}
-}
-
-/**
- * iPhone 5 : 320 x 568
- */
-@media
-only screen and (width: 320px) and (orientation: portrait),
-only screen and (height: 320px) and (orientation: landscape) {
+/* mobile */
+@media only screen and (max-width: 700px) {
 	#sidebar {
-		width: 320px;
-		transform: translateX(-320px);
+		width: 100vw;
+		transform: translateX(-100vw);
 		grid-template-rows: 52px;
 	}
 
@@ -382,10 +365,7 @@ only screen and (height: 320px) and (orientation: landscape) {
 
 	#sidebar .tabs {
 		width: 52px;
-	}
-
-	#sidebar .panels {
-		width: 268px;
+		overflow: auto;
 	}
 
 	#sidebar .panel .box.header {
@@ -411,74 +391,5 @@ only screen and (height: 320px) and (orientation: landscape) {
 
 	#sidebar .list-container {
 		height: calc(100% - 67px);
-	}
-}
-
-/**
- * iPhone 6/7/8 : 375 x 667
- * iPhone 11    : 375 x 812
- */
-@media
-only screen and (width: 375px) and (orientation: portrait),
-only screen and (height: 375px) and (orientation: landscape) {
-	#sidebar {
-		width: 375px;
-		transform: translateX(-375px);
-	}
-
-	#sidebar .panels {
-		width: 317px;
-	}
-
-	#sidebar .tab-selector {
-		display: none;
-	}
-}
-
-/**
- * Pixel 7 : 412 x 915
- */
-@media
-only screen and (width: 412px) and (orientation: portrait),
-only screen and (height: 412px) and (orientation: landscape) {
-	#sidebar {
-		width: 412px;
-		transform: translateX(-412px);
-	}
-
-	#sidebar .panels {
-		width: 354px;
-	}
-}
-
-/**
- * iPhone 6/7/8 Plus : 414 x 736
- */
-@media
-only screen and (width: 414px) and (orientation: portrait),
-only screen and (height: 414px) and (orientation: landscape) {
-	#sidebar {
-		width: 414px;
-		transform: translateX(-414px);
-	}
-
-	#sidebar .panels {
-		width: 356px;
-	}
-}
-
-/**
- * iPhone 14/15 Pro Max : 430 x 932
- */
-@media
-only screen and (width: 430px) and (orientation: portrait),
-only screen and (height: 430px) and (orientation: landscape) {
-	#sidebar {
-		width: 430px;
-		transform: translateX(-430px);
-	}
-
-	#sidebar .panels {
-		width: 372px;
 	}
 }

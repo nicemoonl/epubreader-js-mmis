@@ -58,20 +58,7 @@ export class SettingsPanel extends UIPanel {
 			scrolled: strings.get("sidebar/settings/flow/scrolled")
 		});
 		flow.dom.onchange = (e) => {
-
 			reader.emit("flowchanged", e.target.value);
-
-			if (e.target.value === "scrolled") {
-				reader.emit("spreadchanged", {
-					mod: "none",
-					min: undefined
-				});
-			} else {
-				reader.emit("spreadchanged", {
-					mod: undefined,
-					min: undefined
-				});
-			}
 		};
 		flow.setId("flow");
 		flowRow.add(flowLabel);
@@ -92,7 +79,7 @@ export class SettingsPanel extends UIPanel {
 				mod: e.target.value,
 				min: undefined
 			});
-			minSpreadWidth.dom.disabled = e.target.value === "none";
+			reader.emit("spreaddisabled", e.target.value === "none");
 		};
 		spread.setId("spread");
 
@@ -177,6 +164,10 @@ export class SettingsPanel extends UIPanel {
 			flowLabel.setTextContent(strings.get(keys[3]));
 			spreadLabel.setTextContent(strings.get(keys[4]));
 			minSpreadWidthLabel.setTextContent(strings.get(keys[5]));
+		});
+
+		reader.on("flowchanged", (value) => {
+			flow.setValue(value);
 		});
 	}
 

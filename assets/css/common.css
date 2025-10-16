@@ -87,6 +87,28 @@
 	background-image: url("../img/settings.svg");
 }
 
+#btn-pf.box.scrolled input {
+	background-image: url("../img/page-flow-scroll.svg");
+}
+
+#btn-pf.box.paginated input {
+	background-image: url("../img/page-flow-page.svg");
+}
+
+#btn-ps.box.none input {
+	background-image: url("../img/page-single.svg");
+}
+
+#btn-ps.box.auto input {
+	background-image: url("../img/page-double.svg");
+}
+
+#btn-ps.box input[disabled] {
+	opacity: 0.3;
+	background-color: transparent;
+	cursor: default;
+}
+
 #btn-f.box input {
 	background-image: url("../img/resize-full.svg");
 }
@@ -115,12 +137,8 @@
 	background-image: url("../img/info.svg");
 }
 
-/**
- * iPhone 5 : 320 x 568
- */
-@media
-only screen and (width: 320px) and (orientation: portrait),
-only screen and (height: 320px) and (orientation: landscape) {
+/* mobile */
+@media only screen and (max-width: 700px) {
 	.box {
 		min-height: 30px;
 	}

@@ -15,6 +15,10 @@ export class Strings {
 				"toolbar/fullscreen": "Fullscreen",
 				"toolbar/zoom-in": "Zoom in",
 				"toolbar/zoom-out": "Zoom out",
+				"toolbar/flow/paginated": "Page Flow: Paginated",
+				"toolbar/flow/scrolled": "Page Flow: Scrolled",
+				"toolbar/spread/none": "Page Spread: Off",
+				"toolbar/spread/auto": "Page Spread: Auto",
 
 
 				"sidebar/close": "Close Sidebar",
@@ -71,6 +75,10 @@ export class Strings {
 				"toolbar/fullscreen": "全螢幕",
 				"toolbar/zoom-in": "放大",
 				"toolbar/zoom-out": "縮小",
+				"toolbar/flow/paginated": "翻頁模式: 分頁",
+				"toolbar/flow/scrolled": "翻頁模式: 滾動",
+				"toolbar/spread/none": "雙頁佈局: 單頁",
+				"toolbar/spread/auto": "雙頁佈局: 自動",
 
 
 				"sidebar/close": "關閉側邊欄",
@@ -128,6 +136,10 @@ export class Strings {
 				"toolbar/fullscreen": "全屏",
 				"toolbar/zoom-in": "放大",
 				"toolbar/zoom-out": "缩小",
+				"toolbar/flow/paginated": "翻页模式: 分页",
+				"toolbar/flow/scrolled": "翻页模式: 滚动",
+				"toolbar/spread/none": "双页布局: 单页",
+				"toolbar/spread/auto": "双页布局: 自动",
 
 
 				"sidebar/close": "关闭侧边栏",

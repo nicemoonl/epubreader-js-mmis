@@ -155,6 +155,19 @@ export class Reader {
 		this.on("flowchanged", (value) => {
 			this.settings.flow = value;
 			this.rendition.flow(value);
+
+			// update spread settings as well
+			if (value === "scrolled") {
+				this.emit("spreadchanged", {
+					mod: "none",
+					min: undefined
+				});
+			} else {
+				this.emit("spreadchanged", {
+					mod: undefined,
+					min: undefined
+				});
+			}
 		});
 
 		this.on("spreadchanged", (value) => {
@@ -176,7 +189,7 @@ export class Reader {
 			}
 			this.settings.styles.fontSize = fontSize;
 			this.rendition.themes.fontSize(fontSize + "%");
-			this.sidebar.container.panels.find(panel => panel.getId() === "btn-c").panel.updateFontSize(fontSize);
+			this.sidebar.container.panels.find(panel => panel.getId() === "btn-c")?.panel.updateFontSize(fontSize);
 			this.emit("uifontsizechanged", { fontSize: fontSize });
 		});
 	}

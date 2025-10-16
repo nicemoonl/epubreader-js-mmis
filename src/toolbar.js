@@ -183,6 +183,70 @@ export class Toolbar {
 			menu2.add(zoomInBox);
 		}
 
+		// add page flow toggle button in top toolbar
+		const updatePageFlow = (value) => {
+			const flow = value ?? reader.settings.flow;
+			if (flow === "scrolled") {
+				pageFlowBtn.setTitle(strings.get("toolbar/flow/scrolled"));
+				pageFlowBox.addClass("scrolled");
+				pageFlowBox.removeClass("paginated");
+				if (reader.settings.spread.mod !== "none") {
+					reader.emit("spreadchanged", {
+						mod: "none",
+						min: undefined
+					});
+				}
+				reader.emit("spreaddisabled", true);
+			} else {
+				pageFlowBtn.setTitle(strings.get("toolbar/flow/paginated"));
+				pageFlowBox.addClass("paginated");
+				pageFlowBox.removeClass("scrolled");
+				reader.emit("spreaddisabled", false);
+			}
+		};
+
+		let pageFlowBox, pageFlowBtn;
+		if (!reader.isMobile) {
+			pageFlowBox = new UIDiv().setId("btn-pf").setClass("box");
+			pageFlowBtn = new UIInput("button");
+			pageFlowBtn.dom.onclick = (e) => {
+				reader.emit("flowchanged", reader.settings.flow === "scrolled" ? "paginated" : "scrolled");
+			};
+			pageFlowBox.add(pageFlowBtn);
+			menu2.add(pageFlowBox);
+			updatePageFlow();
+		}
+
+		// add page spread toggle button in top toolbar
+		const updatePageSpread = (value) => {
+			const mod = value ?? reader.settings.spread.mod;
+			if (mod === "none") {
+				pageSpreadBtn.setTitle(strings.get("toolbar/spread/none"));
+				pageSpreadBox.addClass("none");
+				pageSpreadBox.removeClass("auto");
+			} else {
+				pageSpreadBtn.setTitle(strings.get("toolbar/spread/auto"));
+				pageSpreadBox.addClass("auto");
+				pageSpreadBox.removeClass("none");
+			}
+		};
+
+		let pageSpreadBox, pageSpreadBtn;
+		if (!reader.isMobile) {
+			pageSpreadBox = new UIDiv().setId("btn-ps").setClass("box");
+			pageSpreadBtn = new UIInput("button");
+			pageSpreadBtn.dom.onclick = (e) => {
+				reader.emit("spreadchanged", {
+					mod: reader.settings.spread.mod === "none" ? "auto" : "none",
+					min: undefined
+				});
+			};
+			pageSpreadBtn.dom.disabled = reader.settings.flow === "scrolled";
+			pageSpreadBox.add(pageSpreadBtn);
+			menu2.add(pageSpreadBox);
+			updatePageSpread();
+		}
+
 		// add setting button in top toolbar
 		if (settings.settings) {
 			const settingBox = new UIDiv().setId("btn-st").setClass("box");
@@ -197,6 +261,7 @@ export class Toolbar {
 			menu2.add(settingBox);
 		}
 
+		// add fullscreen button in top toolbar
 		let fullscreenBtn;
 		if (settings.fullscreen) {
 
@@ -285,6 +350,18 @@ export class Toolbar {
 
 		reader.on("uifontsizechanged", (value) => {
 			zoomSelect.setValue(value.fontSize);
+		});
+
+		reader.on("flowchanged", (value) => {
+			updatePageFlow(value);
+		});
+
+		reader.on("spreadchanged", (value) => {	
+			updatePageSpread(value.mod);
+		});
+
+		reader.on("spreaddisabled", (value) => {
+			pageSpreadBtn.dom.disabled = value;
 		});
 	}
 

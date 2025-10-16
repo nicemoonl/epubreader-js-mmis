@@ -36,12 +36,8 @@
 	display: none;
 }
 
-/**
- * iPhone 5 : 320 x 568
- */
-@media
-only screen and (width: 320px) and (orientation: portrait),
-only screen and (height: 320px) and (orientation: landscape) {
+/* mobile */
+@media only screen and (max-width: 700px) {
 	#toolbar {
 		height: 52px;
 	}
@@ -49,5 +45,17 @@ only screen and (height: 320px) and (orientation: landscape) {
 	#toolbar .box {
 		width: 52px;
 		height: 30px;
+	}
+
+	#toolbar #input-zoom.box {
+		display: none;
+	}
+
+	#toolbar #btn-pf.box {
+		display: none;
+	}
+
+	#toolbar #btn-ps.box {
+		display: none;
 	}
 }
