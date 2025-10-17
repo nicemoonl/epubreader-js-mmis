@@ -17,6 +17,7 @@ export class Content {
 				e.preventDefault();
 			};
 			prev.add(new UISpan(""));
+			prev.addClass("disabled");
 			container.add(prev);
 		}
 
@@ -32,6 +33,7 @@ export class Content {
 				e.preventDefault();
 			};
 			next.add(new UISpan(""));
+			next.addClass("disabled");
 			container.add(next);
 		}
 
@@ -47,6 +49,7 @@ export class Content {
 		const currentChapter = new UIDiv().setId("current-chapter");
 		const chapterSpan = new UISpan("Current Chapter: ");
 		currentChapter.add(chapterSpan);
+		currentChapter.addClass("hidden");
 
 		// Add progress bar container
 		const progressContainer = new UIDiv().setId("progress-container").setClass("hidden");
@@ -177,6 +180,9 @@ export class Content {
 
 		reader.on("bookloaded", () => {
 			loader.dom.style.display = "none";
+			prev.removeClass("disabled");
+			next.removeClass("disabled");
+			currentChapter.removeClass("hidden");
 		});
 
 		reader.on("navigation", () => {
