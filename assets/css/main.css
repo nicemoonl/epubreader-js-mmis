@@ -64,12 +64,20 @@ body {
 	border: none;
 }
 
-#prev {
-	/* text-align: start; */
+#prev > span {
+	background-image: url("../img/chevron-left.svg");
 }
 
-#next {
-	/* text-align: end; */
+#next > span {
+	background-image: url("../img/chevron-right.svg");
+}
+
+#prev:hover > span {
+	transform: translateX(-10px);
+}
+
+#next:hover > span {
+	transform: translateX(10px);
 }
 
 .arrow {
@@ -88,7 +96,7 @@ body {
 	cursor: default;
 }
 
-.arrow span {
+.arrow > span {
 	color: #E2E2E2;
 	overflow: hidden;
 	font-size: 64px;
@@ -96,13 +104,19 @@ body {
 	font-weight: bold;
 	vertical-align: middle;
 
+	width: 38px;
+	height: 38px;
+	background-size: contain;
+	background-repeat: no-repeat;
+	background-position: center;
+
 	user-select: none;
 	-webkit-user-select: none;
 	-moz-user-select: none;
 	-ms-user-select: none;
 }
 
-.arrow:hover span {
+.arrow:hover > span {
 	color: #777;
 }
 

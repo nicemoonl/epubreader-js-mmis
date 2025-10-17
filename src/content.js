@@ -16,7 +16,7 @@ export class Content {
 				reader.emit("prev");
 				e.preventDefault();
 			};
-			prev.add(new UISpan("<"));
+			prev.add(new UISpan(""));
 			container.add(prev);
 		}
 
@@ -31,7 +31,7 @@ export class Content {
 				reader.emit("next");
 				e.preventDefault();
 			};
-			next.add(new UISpan(">"));
+			next.add(new UISpan(""));
 			container.add(next);
 		}
 
