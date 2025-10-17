@@ -44,7 +44,7 @@
 	margin: 11px 0;
 	position: absolute;
 	transition: transform 0.5s;
-	border-left: 2px solid #1A73E8 !important;
+	border-left: 2px solid #245298 !important;
 }
 
 /* sidebar panels */
@@ -63,7 +63,7 @@
 	margin: 0;
 	padding: 0;
 	position: sticky;
-	font-size: small;
+	font-size: 14px;
 }
 
 #sidebar .panel > .box {
@@ -129,7 +129,7 @@
 
 #sidebar .panel li.selected {
 	margin-left: 0px;
-	border-left: 2px solid #1A73E8 !important;
+	border-left: 2px solid #245298 !important;
 	background-color: #F2F3F4 !important;
 }
 
@@ -260,6 +260,7 @@
 
 #contents.panel li a {
 	width: calc(100% - 24px);
+	color: #245298;
 }
 
 #contents.panel li #item-box span.toggle-collapsed::before {
@@ -346,6 +347,7 @@
 
 #metadata.panel li #item-box span.label {
 	font-weight: bold;
+	color: #245298;
 }
 
 #metadata.panel li #item-box span.value {
