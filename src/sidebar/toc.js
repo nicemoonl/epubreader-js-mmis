@@ -96,9 +96,14 @@ export class TocPanel extends UIPanel {
 	}
 
 	selectCurrentChapter() {
+		const currentNavItem = this.reader.navItems[this.reader.settings.sectionId]
 		this.uiDiv.uiList.uiItems.forEach((item) => {
-			if (item.dom.id === this.reader.settings.sectionId) {
-				item.select();
+			if (currentNavItem) {
+				if (item.dom.id === currentNavItem.id) {
+					item.select();
+				} else {
+					item.unselect();
+				}
 			} else {
 				item.unselect();
 			}
