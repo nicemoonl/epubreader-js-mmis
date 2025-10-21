@@ -56,6 +56,12 @@ export class Sidebar {
 
 		document.body.appendChild(container.dom);
 
+		// w3c
+		openerBtn.dom.tabIndex = -1;
+		container.tabs.forEach(tab => {
+			tab.button.dom.tabIndex = -1;
+		});
+
 		//-- events --//
 
 		reader.on("sidebaropener", (value) => {
@@ -65,6 +71,11 @@ export class Sidebar {
 			} else {
 				container.removeAttribute("class");
 			}
+
+			openerBtn.dom.tabIndex = value ? 0 : -1;
+			container.tabs.forEach(tab => {
+				tab.button.dom.tabIndex = value ? 0 : -1;
+			});
 		});
 
 		reader.on("languagechanged", (value) => {

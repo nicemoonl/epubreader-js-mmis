@@ -37,6 +37,12 @@ export class TocPanel extends UIPanel {
 			// select the current chapter in toc when relocated
 			this.selectCurrentChapter();
 		});
+
+		reader.on("sidebaropener", (value) => {
+			container.uiList.uiItems.forEach(item => {
+				item.dom.querySelector("a").tabIndex = value ? 0 : -1;
+			});
+		});
 	}
 
 	generateToc(toc, parent) {
@@ -60,6 +66,7 @@ export class TocPanel extends UIPanel {
 				this.reader.emit("sidebaropener", false);
 				e.preventDefault();
 			};
+			link.dom.tabIndex = -1; // w3c
 			item.add([ibtn, link]);
 			this.reader.navItems[chapter.href] = {
 				id: chapter.id,

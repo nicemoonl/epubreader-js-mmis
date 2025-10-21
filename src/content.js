@@ -18,6 +18,7 @@ export class Content {
 			};
 			prev.add(new UISpan(""));
 			prev.addClass("disabled");
+			prev.dom.tabIndex = -1;
 			container.add(prev);
 		}
 
@@ -34,6 +35,7 @@ export class Content {
 			};
 			next.add(new UISpan(""));
 			next.addClass("disabled");
+			next.dom.tabIndex = -1;
 			container.add(next);
 		}
 
@@ -183,6 +185,8 @@ export class Content {
 			prev.removeClass("disabled");
 			next.removeClass("disabled");
 			currentChapter.removeClass("hidden");
+			prev.dom.tabIndex = 0;
+			next.dom.tabIndex = 0;
 		});
 
 		reader.on("navigation", () => {
@@ -214,13 +218,17 @@ export class Content {
 			if (settings.arrows === "content") {
 				if (location.atStart) {
 					prev.addClass("disabled");
+					prev.dom.tabIndex = -1;
 				} else {
 					prev.removeClass("disabled");
+					prev.dom.tabIndex = 0;
 				}
 				if (location.atEnd) {
 					next.addClass("disabled");
+					next.dom.tabIndex = -1;
 				} else {
 					next.removeClass("disabled");
+					next.dom.tabIndex = 0;
 				}
 			}
 

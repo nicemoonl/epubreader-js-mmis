@@ -38,9 +38,19 @@ export class SearchPanel extends UIPanel {
 		this.reader = reader;
 		this.selector = undefined;
 		this.searchQuery = undefined; // Store current search query
-		//
-		// improvement of the highlighting of keywords is required...
-		//
+
+		// w3c
+		search.dom.tabIndex = -1;
+		this.items.dom.querySelectorAll("a").forEach(a => {
+			a.tabIndex = -1;
+		});
+		
+		this.reader.on("sidebaropener", (value) => {
+			search.dom.tabIndex = value ? 0 : -1;
+			this.items.dom.querySelectorAll("a").forEach(a => {
+				a.tabIndex = value ? 0 : -1;
+			});
+		});
 	}
 
 	/**

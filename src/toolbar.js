@@ -125,10 +125,11 @@ export class Toolbar {
 
 		// add zoom in and out buttons in top toolbar
 		let zoomSelectBox, zoomSelect;
+		let zoomOutBtn, zoomInBtn;
 		if (true) {
 			// zoom out
 			const zoomOutBox = new UIDiv().setId("btn-zo").setClass("box");
-			const zoomOutBtn = new UIInput("button");
+			zoomOutBtn = new UIInput("button");
 			zoomOutBtn.setTitle(strings.get(keys[9]));
 			zoomOutBtn.dom.onclick = (e) => {
 				const step = readerConfig.fontsize.step;
@@ -170,7 +171,7 @@ export class Toolbar {
 
 			// zoom in
 			const zoomInBox = new UIDiv().setId("btn-zi").setClass("box");
-			const zoomInBtn = new UIInput("button");
+			zoomInBtn = new UIInput("button");
 			zoomInBtn.setTitle(strings.get(keys[8]));
 			zoomInBtn.dom.onclick = (e) => {
 				const step = readerConfig.fontsize.step;
@@ -248,9 +249,10 @@ export class Toolbar {
 		}
 
 		// add setting button in top toolbar
-		if (settings.settings) {
-			const settingBox = new UIDiv().setId("btn-st").setClass("box");
-			const settingBtn = new UIInput("button");
+		let settingBox, settingBtn;
+		if (settings.toolbarsettings) {
+			settingBox = new UIDiv().setId("btn-st").setClass("box");
+			settingBtn = new UIInput("button");
 			settingBtn.setTitle(strings.get(keys[7]));
 			settingBtn.dom.onclick = (e) => {
 				reader.emit("sidebaropener", true);
@@ -362,6 +364,22 @@ export class Toolbar {
 
 		reader.on("spreaddisabled", (value) => {
 			pageSpreadBtn.dom.disabled = value;
+		});
+
+		reader.on("sidebaropener", (value) => {
+			// w3c: prevent selection of all buttons when sidebar is open
+			openerBtn.dom.tabIndex = value ? -1 : 0;
+			prevBtn && (prevBtn.dom.tabIndex = value ? -1 : 0);
+			nextBtn && (nextBtn.dom.tabIndex = value ? -1 : 0);
+			openbookBtn && (openbookBtn.dom.tabIndex = value ? -1 : 0);
+			bookmarkBtn && (bookmarkBtn.dom.tabIndex = value ? -1 : 0);
+			zoomOutBtn && (zoomOutBtn.dom.tabIndex = value ? -1 : 0);
+			zoomSelect && (zoomSelect.dom.tabIndex = value ? -1 : 0);
+			zoomInBtn && (zoomInBtn.dom.tabIndex = value ? -1 : 0);
+			pageFlowBtn && (pageFlowBtn.dom.tabIndex = value ? -1 : 0);
+			pageSpreadBtn && (pageSpreadBtn.dom.tabIndex = value ? -1 : 0);
+			settingBtn && (settingBtn.dom.tabIndex = value ? -1 : 0);
+			fullscreenBtn && (fullscreenBtn.dom.tabIndex = value ? -1 : 0);
 		});
 	}
 
