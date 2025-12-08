@@ -49,7 +49,9 @@ export class Sidebar {
 		if (controls.settings) {
 			container.addTab("btn-c", strings.get(keys[5]), new SettingsPanel(reader));
 		}
-		container.addTab("btn-i", strings.get(keys[6]), new MetadataPanel(reader));
+		if (controls.metadata) {
+			container.addTab("btn-i", strings.get(keys[6]), new MetadataPanel(reader));
+		}
 		container.select("btn-t");
 
 		this.container = container;
@@ -91,6 +93,12 @@ export class Sidebar {
 			container.setLabel("btn-s", strings.get(keys[4]));
 			container.setLabel("btn-c", strings.get(keys[5]));
 			container.setLabel("btn-i", strings.get(keys[6]));
+		});
+
+		reader.on("opensearchpanel", (value) => {
+			reader.emit("sidebaropener", true);
+			container.select("btn-s");
+			reader.emit("focussearchbar");
 		});
 	}
 }

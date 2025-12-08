@@ -75,6 +75,20 @@
 	background-image: url("../img/bookmarks.svg");
 }
 
+/* search button in toolbar */
+#btn-search.box #cancel-btn {
+	background-image: url("../img/cross.svg");
+}
+#btn-search.box #prev-btn {
+	background-image: url("../img/chevron-left.svg");
+}
+#btn-search.box #next-btn {
+	background-image: url("../img/chevron-right.svg");
+}
+#btn-search.box #search-btn {
+	background-image: url("../img/search-btn.svg");
+}
+
 #btn-zi.box input {
 	background-image: url("../img/zoom-in.svg");
 }

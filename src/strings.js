@@ -19,6 +19,12 @@ export class Strings {
 				"toolbar/flow/scrolled": "Page Flow: Scrolled",
 				"toolbar/spread/none": "Page Spread: Off",
 				"toolbar/spread/auto": "Page Spread: Auto",
+				"toolbar/search": "Search",
+				"toolbar/cancelsearch": "Cancel search",
+				"toolbar/prevsearch": "Previous result",
+				"toolbar/nextsearch": "Next result",
+				"sidebar/search/resultcount": "Number of results: {count}",
+				"sidebar/search/noresults": "No related search results",
 
 
 				"sidebar/close": "Close Sidebar",
@@ -34,7 +40,7 @@ export class Strings {
 				"sidebar/annotations/anchor": "Anchor",
 				"sidebar/annotations/cancel": "Cancel",
 				"sidebar/search": "Search",
-				"sidebar/search/placeholder": "Search",
+				"sidebar/search/placeholder": "Search in the book",
 				"sidebar/settings": "Settings",
 				"sidebar/settings/language": "Language",
 				"sidebar/settings/fontsize": "Font size (%)",
@@ -79,6 +85,12 @@ export class Strings {
 				"toolbar/flow/scrolled": "翻頁模式: 滾動",
 				"toolbar/spread/none": "雙頁佈局: 單頁",
 				"toolbar/spread/auto": "雙頁佈局: 自動",
+				"toolbar/search": "搜索",
+				"toolbar/cancelsearch": "取消搜索",
+				"toolbar/prevsearch": "上一結果",
+				"toolbar/nextsearch": "下一結果",
+				"sidebar/search/resultcount": "搜尋結果數量︰{count}",
+				"sidebar/search/noresults": "無相關搜尋結果",
 
 
 				"sidebar/close": "關閉側邊欄",
@@ -95,7 +107,7 @@ export class Strings {
 				"sidebar/annotations/cancel": "取消",
 
 				"sidebar/search": "搜索",
-				"sidebar/search/placeholder": "搜索",
+				"sidebar/search/placeholder": "搜索內文",
 				"sidebar/settings": "設置",
 				"sidebar/settings/language": "語言",
 				"sidebar/settings/fontsize": "字體大小 (%)",
@@ -140,7 +152,12 @@ export class Strings {
 				"toolbar/flow/scrolled": "翻页模式: 滚动",
 				"toolbar/spread/none": "双页布局: 单页",
 				"toolbar/spread/auto": "双页布局: 自动",
-
+				"toolbar/search": "搜索",
+				"toolbar/cancelsearch": "取消搜索",
+				"toolbar/prevsearch": "上一结果",
+				"toolbar/nextsearch": "下一结果",
+				"sidebar/search/resultcount": "搜索结果数量︰{count}",
+				"sidebar/search/noresults": "没有相关搜索结果",
 
 				"sidebar/close": "关闭侧边栏",
 				"sidebar/contents": "目录",
@@ -156,7 +173,7 @@ export class Strings {
 				"sidebar/annotations/cancel": "取消",
 
 				"sidebar/search": "搜索",
-				"sidebar/search/placeholder": "搜索",
+				"sidebar/search/placeholder": "搜索內文",
 				"sidebar/settings": "设置",
 				"sidebar/settings/language": "语言",
 				"sidebar/settings/fontsize": "字体大小 (%)",

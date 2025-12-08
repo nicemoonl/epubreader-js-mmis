@@ -20,6 +20,10 @@ export class Toolbar {
 			"toolbar/settings",
 			"toolbar/zoom-in",
 			"toolbar/zoom-out",
+			"toolbar/search",
+			"toolbar/cancelsearch",
+			"toolbar/prevsearch",
+			"toolbar/nextsearch",
 		];
 		const menu1 = new UIDiv().setClass("menu-1");
 		const openerBox = new UIDiv().setId("btn-m").setClass("box");
@@ -121,6 +125,52 @@ export class Toolbar {
 			};
 			bookmarkBox.add(bookmarkBtn);
 			menu2.add(bookmarkBox);
+		}
+
+		// add search button in top toolbar
+		let searchBox, searchBtn;
+		if (true) {
+			searchBox = new UIDiv().setId("btn-search").setClass("box");
+
+			// cancel button
+			const cancelBtn = new UIInput("button").setId("cancel-btn");
+			cancelBtn.setTitle(strings.get(keys[11]));
+			cancelBtn.dom.onclick = (e) => {
+				reader.emit("cancelsearch");
+				e.preventDefault();
+			};
+			searchBox.add(cancelBtn);
+
+			// previous result buttons
+			const prevBtn = new UIInput("button").setId("prev-btn");
+			prevBtn.setTitle(strings.get(keys[12]));
+			prevBtn.dom.onclick = (e) => {
+				reader.emit("prevsearchresult");
+				e.preventDefault();
+			};
+			searchBox.add(prevBtn);
+			searchBox.prevBtn = prevBtn;
+
+			// next result buttons
+			const nextBtn = new UIInput("button").setId("next-btn");
+			nextBtn.setTitle(strings.get(keys[13]));
+			nextBtn.dom.onclick = (e) => {
+				reader.emit("nextsearchresult");
+				e.preventDefault();
+			};
+			searchBox.add(nextBtn);
+			searchBox.nextBtn = nextBtn;
+
+			// search button
+			searchBtn = new UIInput("button").setId("search-btn");
+			searchBtn.setTitle(strings.get(keys[10]));
+			searchBtn.dom.onclick = (e) => {
+				reader.emit("opensearchpanel");
+				e.preventDefault();
+			};
+			searchBox.add(searchBtn);
+
+			menu2.add(searchBox);
 		}
 
 		// add zoom in and out buttons in top toolbar
@@ -380,6 +430,27 @@ export class Toolbar {
 			pageSpreadBtn && (pageSpreadBtn.dom.tabIndex = value ? -1 : 0);
 			settingBtn && (settingBtn.dom.tabIndex = value ? -1 : 0);
 			fullscreenBtn && (fullscreenBtn.dom.tabIndex = value ? -1 : 0);
+		});
+
+		// show "cancel", "previous" and "next" buttons in toolbar
+		reader.on("toolbarsearchactive", ([value, count]) => {
+			if (value) {
+				searchBox.addClass("active");
+				if (count === 0) {
+					// disable previous and next result buttons
+					searchBox.prevBtn.dom.disabled = true;
+					searchBox.nextBtn.dom.disabled = true;
+				} else {
+					// enable previous and next result buttons
+					searchBox.prevBtn.dom.disabled = false;
+					searchBox.nextBtn.dom.disabled = false;
+				}	
+			} else {
+				searchBox.removeClass("active");
+				// enable previous and next result buttons
+				searchBox.prevBtn.dom.disabled = false;
+				searchBox.nextBtn.dom.disabled = false;
+			}
 		});
 	}
 
