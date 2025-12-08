@@ -4,6 +4,7 @@ export class Content {
 
 	constructor(reader) {
 
+		const strings = reader.strings;
 		const settings = reader.settings;
 		const container = new UIDiv().setId("content");
 
@@ -16,7 +17,8 @@ export class Content {
 				reader.emit("prev");
 				e.preventDefault();
 			};
-			prev.add(new UISpan(""));
+			prev.add(new UISpan("").setClass("icon"));
+			prev.add(new UISpan(strings.get("content/prev")).setClass("text"));
 			prev.addClass("disabled");
 			prev.dom.tabIndex = -1;
 			container.add(prev);
@@ -33,7 +35,8 @@ export class Content {
 				reader.emit("next");
 				e.preventDefault();
 			};
-			next.add(new UISpan(""));
+			next.add(new UISpan(strings.get("content/next")).setClass("text"));
+			next.add(new UISpan("").setClass("icon"));
 			next.addClass("disabled");
 			next.dom.tabIndex = -1;
 			container.add(next);
@@ -154,6 +157,7 @@ export class Content {
 
 		reader.on("bookready", (cfg) => {
 			viewer.setClass(cfg.flow);
+			container.setClass("flow-" + cfg.flow);
 			loader.dom.style.display = "block";
 			// Generate locations for the book if not already generated
 			if (!reader.book.locations.length()) {
@@ -212,6 +216,7 @@ export class Content {
 
 		reader.on("flowchanged", (value) => {
 			viewer.setClass(value);
+			container.setClass("flow-" + value);
 		});
 
 		reader.on("relocated", (location) => {

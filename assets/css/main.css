@@ -33,6 +33,14 @@ body {
 	box-shadow: inset 0 0 50px rgba(0,0,0,.1);
 }
 
+#content.flow-scrolled {
+	box-sizing: border-box;
+	padding: 58px 0;
+	height: 100vh;
+	flex-direction: column;
+	align-items: center;
+}
+
 #viewer {
     color: inherit;
 	margin: 0 auto;
@@ -49,11 +57,8 @@ body {
 }
 
 #viewer.scrolled {
-    top: 58px;
-    bottom: 58px;
-    width: calc(100% - 116px);
-    height: calc(100% - 116px);
-    position: sticky;
+    width: 100%;
+		flex: 1;
 }
 
 #viewer .epub-view {
@@ -64,19 +69,29 @@ body {
 	border: none;
 }
 
-#prev > span {
+#content.flow-paginated #prev > .text,
+#content.flow-paginated #next > .text {
+	display: none;
+}
+
+#content.flow-scrolled #prev,
+#content.flow-scrolled #next {
+	flex: 0;
+}
+
+#prev > .icon {
 	background-image: url("../img/chevron-left.svg");
 }
 
-#next > span {
+#next > .icon {
 	background-image: url("../img/chevron-right.svg");
 }
 
-#prev:hover > span {
+#prev:hover > .icon {
 	transform: translateX(-5px);
 }
 
-#next:hover > span {
+#next:hover > .icon {
 	transform: translateX(5px);
 }
 
@@ -88,6 +103,10 @@ body {
 	justify-content: center;
 	align-items: center;
 	cursor: pointer;
+	user-select: none;
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
 }
 
 .arrow:disabled,
@@ -96,21 +115,36 @@ body {
 	cursor: default;
 }
 
+#content.flow-scrolled .arrow {
+	padding: 10px;
+}
+
 .arrow > span {
+	opacity: 0.5;
+	transition: transform 0.3s ease-out, opacity 0.3s;
+}
+
+.arrow > .text {
+	font-size: 18px;
+	font-family: arial, sans-serif;
+	font-weight: bold;
+	vertical-align: middle;
+	opacity: 0.5;
+}
+
+.arrow > .icon {
 	color: #E2E2E2;
 	overflow: hidden;
 	font-size: 64px;
 	font-family: arial, sans-serif;
 	font-weight: bold;
 	vertical-align: middle;
-	opacity: 0.5;
 
 	width: 38px;
 	height: 38px;
 	background-size: contain;
 	background-repeat: no-repeat;
 	background-position: center;
-	transition: transform 0.3s ease-out, opacity 0.3s;
 
 	user-select: none;
 	-webkit-user-select: none;
@@ -119,13 +153,16 @@ body {
 }
 
 .arrow:hover > span {
-	color: #777;
 	opacity: 0.8;
 }
 
-.arrow:active > span,
-.arrow.active > span {
+.arrow:active > span {
 	color: #000;
+}
+
+#content.flow-scrolled .arrow > .icon {
+	width: 24px;
+	height: 24px;
 }
 
 #divider {
@@ -338,5 +375,9 @@ only screen and (min-width: 1024px) and (max-width: 1366px) and (orientation: la
 
 	#progress-percentage {
 		font-size: 14px;
+	}
+
+	.arrow > .text {
+		font-size: 16px;
 	}
 }

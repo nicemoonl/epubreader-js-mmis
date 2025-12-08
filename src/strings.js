@@ -5,6 +5,9 @@ export class Strings {
 		this.language = reader.settings.language || "en";
 		this.values = {
 			en: {
+				"content/prev": "Previous chapter",
+				"content/next": "Next chapter",
+
 				"toolbar/sidebar": "Sidebar",
 				"toolbar/prev": "Previous page",
 				"toolbar/next": "Next page",
@@ -71,6 +74,9 @@ export class Strings {
 				"notedlg/add": "Add"
 			},
 			tc: {
+				"content/prev": "上一章",
+				"content/next": "下一章",
+
 				"toolbar/sidebar": "側邊欄",
 				"toolbar/prev": "上一頁",
 				"toolbar/next": "下一頁",
@@ -138,6 +144,9 @@ export class Strings {
 				"notedlg/add": "添加"
 			},
 			sc: {
+				"content/prev": "上一章",
+				"content/next": "下一章",
+
 				"toolbar/sidebar": "侧边栏",
 				"toolbar/prev": "上一页",
 				"toolbar/next": "下一页",
