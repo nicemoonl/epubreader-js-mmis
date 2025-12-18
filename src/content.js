@@ -221,20 +221,61 @@ export class Content {
 
 		reader.on("relocated", (location) => {
 			if (settings.arrows === "content") {
-				if (location.atStart) {
-					prev.addClass("disabled");
-					prev.dom.tabIndex = -1;
-				} else {
-					prev.removeClass("disabled");
-					prev.dom.tabIndex = 0;
-				}
-				if (location.atEnd) {
-					next.addClass("disabled");
-					next.dom.tabIndex = -1;
-				} else {
-					next.removeClass("disabled");
-					next.dom.tabIndex = 0;
-				}
+				setTimeout(() => {
+					if (reader.settings.flow === "paginated") {
+						if (location.atStart) {
+							prev.addClass("disabled");
+							prev.dom.tabIndex = -1;
+						} else {
+							prev.removeClass("disabled");
+							prev.dom.tabIndex = 0;
+						}
+						if (location.atEnd) {
+							next.addClass("disabled");
+							next.dom.tabIndex = -1;
+						} else {
+							next.removeClass("disabled");
+							next.dom.tabIndex = 0;
+						}
+					} else { // reader.settings.flow === "scrolled"
+						if (reader.book && reader.book.spine && reader.book.spine.spineItems) {
+							// use book spine to check
+							const spineItems = reader.book.spine.spineItems;
+							const currentHref = reader.settings.sectionId;
+
+							const linearItems = spineItems.filter(item => {
+								return item.linear !== false && item.linear !== "no";
+							});
+							
+							let currentIndex = -1;
+							for (let i = 0; i < linearItems.length; i++) {
+								if (linearItems[i].href === currentHref) {
+									currentIndex = i;
+									break;
+								}
+							}
+							
+							const isFirstChapter = currentIndex === 0;
+							const isLastChapter = currentIndex === linearItems.length - 1;
+							
+							if (isFirstChapter) {
+								prev.addClass("disabled");
+								prev.dom.tabIndex = -1;
+							} else {
+								prev.removeClass("disabled");
+								prev.dom.tabIndex = 0;
+							}
+							
+							if (isLastChapter) {
+								next.addClass("disabled");
+								next.dom.tabIndex = -1;
+							} else {
+								next.removeClass("disabled");
+								next.dom.tabIndex = 0;
+							}
+						}
+					}
+				}, 100);
 			}
 
 			// Update progress bar position

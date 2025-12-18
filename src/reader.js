@@ -127,6 +127,10 @@ export class Reader {
 
 		this.rendition.on("relocated", (location) => {
 			this.setLocation(location.start.cfi);
+			if (this.settings.sectionId !== location.start.href) {
+				// if section/chapter changes, stop speech
+				this.stopSpeech();
+			}
 			this.settings.sectionId = location.start.href;
 			this.emit("relocated", location);
 		});
@@ -193,6 +197,8 @@ export class Reader {
 			this.sidebar.container.panels.find(panel => panel.getId() === "btn-c")?.panel.updateFontSize(fontSize);
 			this.emit("uifontsizechanged", { fontSize: fontSize });
 		});
+
+		this.initSpeech();
 	}
 
 	/* ------------------------------- Common ------------------------------- */
@@ -209,6 +215,70 @@ export class Reader {
 		return this.navItems[href + "#" + idref] || this.navItems[href];
 	}
 
+	/**
+	 * Get all text content from the current page(s)
+	 * @returns {string} All text content from currently displayed pages
+	 */
+	getCurrentPageText() {
+
+		if (!this.rendition) {
+			return "";
+		}
+
+		const contents = this.rendition.getContents();
+		let allText = "";
+
+		contents.forEach((content) => {
+			if (content && content.document && content.document.body) {
+				const text = content.document.body.textContent || content.document.body.innerText || "";
+				allText += text + "\n";
+			}
+		});
+
+		return allText.trim();
+	}
+
+	initSpeech() {
+		const speech = new SpeechSynthesisUtterance("");
+		speech.lang = this.settings.language === "tc" ? "zh-HK" : this.settings.language === "sc" ? "zh-CN" : "en-US";
+		speech.rate = 1.0;
+		speech.volume = 1.0;
+		speech.pitch = 1.0;
+		
+		// Wait for voices to load
+		const setVoice = () => {
+			const voices = speechSynthesis.getVoices();
+			if (voices.length > 0) {
+				speech.voice = voices.find(voice => voice.lang.startsWith(speech.lang)) || voices[0];
+			}
+		};
+		
+		setVoice();
+		speechSynthesis.onvoiceschanged = setVoice;
+
+		speech.onend = () => {
+			console.log("Speech has ended");
+			this.speech = null; // Clear after ending
+		};
+		speech.onerror = (e) => {
+			console.error("Speech error:", e);
+		};
+		speech.onpause = () => {
+			console.log("Speech has paused");
+		};
+		speech.onresume = () => {
+			console.log("Speech has resumed");
+		};
+
+		this.speech = speech;
+
+		document.addEventListener('visibilitychange', () => {
+			if (document.hidden) this.pauseSpeech();
+		});
+		window.addEventListener('pagehide', this.pauseSpeech);
+		window.addEventListener('beforeunload', this.stopSpeech);
+		window.addEventListener('unload', () => this.stopSpeech());
+	}
 	/* ------------------------------ Bookmarks ----------------------------- */
 
 	/**
@@ -396,6 +466,72 @@ export class Reader {
 			case "ArrowRight":
 				this.emit("next");
 				break;
+			case "p":
+			case "P":
+				// Play/pause speech
+				this.toggleSpeech();
+				break;
+			case "o":
+			case "O":
+				this.stopSpeech();
+				break;
+		}
+	}
+
+	toggleSpeech() {
+		if (!this.speech) {
+			this.initSpeech();
+		}
+
+		const synth = window.speechSynthesis;
+		
+		// If currently speaking or paused, handle pause/resume
+		if (synth.speaking || synth.paused) {
+			if (synth.paused) {
+				synth.resume();
+			} else {
+				synth.pause();
+			}
+		} else {
+			// Not speaking, start speech
+			if (!this.speech.text) {
+				const text = this.getCurrentPageText();
+				if (text) {
+					this.speech.text = text;
+				} else {
+					console.warn("No text available to speak");
+					return;
+				}
+			}
+			synth.speak(this.speech);
+			console.log("Speech has started: ", this.speech);
+		}
+	}
+
+	pauseSpeech() {
+		if (!this.speech) {
+			return;
+		}
+		if (window.speechSynthesis.speaking) {
+			window.speechSynthesis.pause();
+		}
+	}
+
+	stopSpeech() {
+		if (!this.speech) {
+			return;
+		}
+
+		if (window.speechSynthesis.paused) {
+			// if paused, need to resume before cancel to avoid unknown bug
+			window.speechSynthesis.resume();
+			setTimeout(() => {
+				window.speechSynthesis.cancel();
+				this.speech = null;
+			}, 100);
+		} else {
+			window.speechSynthesis.cancel();
+			this.speech = null;
 		}
 	}
 }
