@@ -24,7 +24,20 @@
 	<script type="module">
 		import { Reader } from "./dist/js/epubreader.js"
 		const url = new URL(window.location)
-		const path = url.searchParams.get("epubUrl") || url.searchParams.get("bookPath") || "https://s3.amazonaws.com/moby-dick/"
+		let path = url.searchParams.get("epubUrl") || url.searchParams.get("bookPath") || "https://s3.amazonaws.com/moby-dick/"
+		
+		// Handle blob URLs - decode if needed
+		if (path && path.startsWith("blob:")) {
+			try {
+				const decoded = decodeURIComponent(path);
+				if (decoded.startsWith("blob:")) {
+					path = decoded;
+				}
+			} catch (e) {
+				console.warn("Failed to decode blob URL, using original:", e);
+			}
+		}
+		
 		const lang = url.searchParams.get("lang");
 			window.onload = (e) => new Reader(path, {
 				openbook: false, // disable opening epub file from local
@@ -36,6 +49,8 @@
 				toolbarsettings: false, // disable settings button in toolbar
 				metadata: false, // enable metadata button in side menu
 				maxsearchresults: 100, // maximum number of search results for performance issues
+			},{
+				openAs: "epub", // open as epub since the path is blob url
 			})
 	</script>
 </head>

@@ -11,7 +11,7 @@ import { readerConfig } from "./config.js";
 
 export class Reader {
 
-	constructor(bookPath, settings) {
+	constructor(bookPath, settings, epubSettings) {
 
 		const preinit = (data) => {
 			const url = new URL(window.location);
@@ -34,6 +34,7 @@ export class Reader {
 		}
 
 		this.settings = undefined;
+		this.epubSettings = epubSettings;
 		this.isMobile = detectMobile();
 		this.storage = new Storage();
 		const openbook = settings && settings.openbook;
@@ -69,7 +70,7 @@ export class Reader {
 			this.cfgInit(bookPath, settings);
 		}
 
-		this.book = ePub(this.settings.bookPath);
+		this.book = ePub(this.settings.bookPath, this.epubSettings);
 		this.rendition = this.book.renderTo("viewer", {
 			manager: this.settings.manager,
 			flow: this.settings.flow,
