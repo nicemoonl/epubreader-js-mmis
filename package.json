@@ -20,7 +20,8 @@
         "build": "webpack --mode=production --progress",
         "serve": "webpack serve",
         "minify": "webpack --mode=production --optimization-minimize --progress",
-        "prepare": "npm run build && npm run minify"
+        "prepare": "npm run build && npm run minify",
+        "ngrok": "ngrok http 8080 --host-header=rewrite --request-header-add \"ngrok-skip-browser-warning: true\""
     },
     "author": "fchasen@gmail.com",
     "license": "MIT",
