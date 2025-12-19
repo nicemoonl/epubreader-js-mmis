@@ -25,9 +25,10 @@
 		import { Reader } from "./dist/js/epubreader.js"
 		const url = new URL(window.location)
 		let path = url.searchParams.get("epubUrl") || url.searchParams.get("bookPath") || "https://s3.amazonaws.com/moby-dick/"
-		
+		const isBlob = path && path.startsWith("blob:");
+
 		// Handle blob URLs - decode if needed
-		if (path && path.startsWith("blob:")) {
+		if (isBlob) {
 			try {
 				const decoded = decodeURIComponent(path);
 				if (decoded.startsWith("blob:")) {
@@ -50,7 +51,7 @@
 				metadata: false, // enable metadata button in side menu
 				maxsearchresults: 100, // maximum number of search results for performance issues
 			},{
-				openAs: "epub", // open as epub since the path is blob url
+				openAs: isBlob ? "epub" : undefined, // open as epub since the path is blob url
 			})
 	</script>
 </head>
