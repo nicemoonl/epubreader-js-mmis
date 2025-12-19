@@ -71,16 +71,39 @@ export class Content {
 		// Add drag functionality to progress bar
 		let isDragging = false;
 		let currentProgress = 0;
+		let intervalId = null;
+		const _progressUpdate = () => {
+			if (reader.book) {
+				const locations = reader.book.locations;
+				if (locations && locations.total) {
+					const targetCfi = locations.cfiFromPercentage(currentProgress);
+					reader.rendition.display(targetCfi);
+				}
+			}
+		};
+		const _startDragging = () => {
+			_progressUpdate();
+			intervalId = setInterval(() => {
+				_progressUpdate();
+			}, 500);
+		};
+		const _stopDragging = () => {
+			_progressUpdate();
+			clearInterval(intervalId);
+			intervalId = null;
+		};
 
 		progressContainer.dom.onmousedown = (e) => {
 			isDragging = true;
 			updateProgressUI(e);
+			_startDragging();
 		};
 
 		// Add touch support for mobile devices
 		progressContainer.dom.ontouchstart = (e) => {
 			isDragging = true;
 			updateProgressUI(e.touches[0]);
+			_startDragging();
 		};
 
 		document.addEventListener('mousemove', (e) => {
@@ -99,28 +122,14 @@ export class Content {
 		document.addEventListener('mouseup', () => {
 			if (isDragging) {
 				isDragging = false;
-				// Only update the page position when dragging ends
-				if (reader.book) {
-					const locations = reader.book.locations;
-					if (locations && locations.total) {
-						const targetCfi = locations.cfiFromPercentage(currentProgress);
-						reader.rendition.display(targetCfi);
-					}
-				}
+				_stopDragging();
 			}
 		});
 
 		document.addEventListener('touchend', () => {
 			if (isDragging) {
 				isDragging = false;
-				// Only update the page position when dragging ends
-				if (reader.book) {
-					const locations = reader.book.locations;
-					if (locations && locations.total) {
-						const targetCfi = locations.cfiFromPercentage(currentProgress);
-						reader.rendition.display(targetCfi);
-					}
-				}
+				_stopDragging();
 			}
 		});
 
