@@ -341,7 +341,7 @@ export class Reader {
 			sectionId: undefined,
 			bookmarks: [],   // array | false
 			annotations: [], // array | false
-			flow: "scrolled", // paginated | scrolled
+			flow: this.isMobile ? "scrolled" : "paginated", // paginated | scrolled
 			spread: {
 				mod: "auto", // auto | none
 				min: 800
