@@ -5,6 +5,7 @@ import { AnnotationsPanel } from "./sidebar/annotations.js";
 import { SearchPanel } from "./sidebar/search.js";
 import { SettingsPanel } from "./sidebar/settings.js";
 import { MetadataPanel } from "./sidebar/metadata.js";
+import { SpeechPanel } from "./sidebar/speech.js";
 
 export class Sidebar {
 
@@ -19,7 +20,8 @@ export class Sidebar {
 			"sidebar/annotations",
 			"sidebar/search",
 			"sidebar/settings",
-			"sidebar/metadata"
+			"sidebar/metadata",
+			"sidebar/texttospeech"
 		];
 
 		const container = new UITabbedPanel("vertical").setId("sidebar");
@@ -45,6 +47,9 @@ export class Sidebar {
 		}
 		if (controls.search) {
 			container.addTab("btn-s", strings.get(keys[4]), new SearchPanel(reader));
+		}
+		if (controls.texttospeech) {
+			container.addTab("btn-tts", strings.get(keys[4]), new SpeechPanel(reader));
 		}
 		if (controls.settings) {
 			container.addTab("btn-c", strings.get(keys[5]), new SettingsPanel(reader));

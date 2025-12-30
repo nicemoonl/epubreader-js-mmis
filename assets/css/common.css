@@ -143,6 +143,10 @@
 	background-image: url("../img/search.svg");
 }
 
+#btn-tts.box input {
+	background-image: url("../img/speech.svg");
+}
+
 #btn-c.box input {
 	background-image: url("../img/settings.svg");
 }

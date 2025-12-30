@@ -390,6 +390,17 @@
 	text-align: left;
 }
 
+/* speech panel */
+
+#speech.panel .button {
+	cursor: pointer;
+}
+
+#speech.panel .button.disabled {
+	opacity: 0.5;
+	cursor: not-allowed;
+}
+
 /* mobile */
 @media only screen and (max-width: 700px) {
 	#sidebar {

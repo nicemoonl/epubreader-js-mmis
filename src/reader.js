@@ -198,6 +198,14 @@ export class Reader {
 			this.emit("uifontsizechanged", { fontSize: fontSize });
 		});
 
+		this.on("playspeech", () => {
+			this.toggleSpeech();
+		});
+
+		this.on("stopspeech", () => {
+			this.stopSpeech();
+		});
+
 		this.initSpeech();
 	}
 
@@ -249,7 +257,18 @@ export class Reader {
 		const setVoice = () => {
 			const voices = speechSynthesis.getVoices();
 			if (voices.length > 0) {
-				speech.voice = voices.find(voice => voice.lang.startsWith(speech.lang)) || voices[0];
+				speech.voice = voices.find(voice => {
+					if (this.settings.language === "tc") {
+						return voice.lang.startsWith("zh-HK") || voice.lang.startsWith("yue-HK"); // yue-HK is for iOS
+					} else if (this.settings.language === "sc") {
+						return voice.lang.startsWith("zh-CN");
+					} else {
+						return voice.lang.startsWith("en-US");
+					}
+				}) || voices[0];
+			} else {
+				this.emit('speecherror', 'voices not loaded'); // for debug
+				return;
 			}
 		};
 		
@@ -489,8 +508,10 @@ export class Reader {
 		if (synth.speaking || synth.paused) {
 			if (synth.paused) {
 				synth.resume();
+				this.emit("speechuiupdate", { status: "playing" });
 			} else {
 				synth.pause();
+				this.emit("speechuiupdate", { status: "paused" });
 			}
 		} else {
 			// Not speaking, start speech
@@ -504,6 +525,7 @@ export class Reader {
 				}
 			}
 			synth.speak(this.speech);
+			this.emit("speechuiupdate", { status: "playing" });
 			console.log("Speech has started: ", this.speech);
 		}
 	}
@@ -514,6 +536,7 @@ export class Reader {
 		}
 		if (window.speechSynthesis.speaking) {
 			window.speechSynthesis.pause();
+			this.emit("speechuiupdate", { status: "paused" });
 		}
 	}
 
@@ -527,10 +550,12 @@ export class Reader {
 			window.speechSynthesis.resume();
 			setTimeout(() => {
 				window.speechSynthesis.cancel();
+				this.emit("speechuiupdate", { status: "stopped" });
 				this.speech = null;
 			}, 100);
 		} else {
 			window.speechSynthesis.cancel();
+			this.emit("speechuiupdate", { status: "stopped" });
 			this.speech = null;
 		}
 	}
