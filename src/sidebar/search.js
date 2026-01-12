@@ -41,6 +41,9 @@ export class SearchPanel extends UIPanel {
 
 					this.reader.emit("toolbarsearchactive", [true, results.length]);
 				});
+			} else {
+				// if the keyword is the same as the previous one, keep showing the result count
+				resultCount.dom.style.display = "block";
 			}
 			searchQuery = value;
 		};
