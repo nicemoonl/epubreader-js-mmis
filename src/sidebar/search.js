@@ -45,6 +45,7 @@ export class SearchPanel extends UIPanel {
 			} else {
 				// if the keyword is the same as the previous one, keep showing the result count
 				resultCount.dom.style.display = "block";
+				this.reader.emit("updatehighlightposition"); // update highlight position for search results
 			}
 			searchQuery = value;
 		};
