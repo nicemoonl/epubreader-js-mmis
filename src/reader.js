@@ -165,12 +165,14 @@ export class Reader {
 			if (value === "scrolled") {
 				this.emit("spreadchanged", {
 					mod: "none",
-					min: undefined
+					min: undefined,
+					disableUpdateHighlight: true, // flow change by rendition will update highlight automatically, no need to call it again
 				});
 			} else {
 				this.emit("spreadchanged", {
 					mod: undefined,
-					min: undefined
+					min: undefined,
+					disableUpdateHighlight: true, // flow change by rendition will update highlight automatically, no need to call it again
 				});
 			}
 		});
@@ -181,6 +183,9 @@ export class Reader {
 			this.settings.spread.mod = mod;
 			this.settings.spread.min = min;
 			this.rendition.spread(mod, min);
+			if (!value.disableUpdateHighlight) {
+				this.emit("updatehighlightposition"); // update highlight position for search results
+			}
 		});
 
 		this.on("styleschanged", (value) => {
@@ -196,6 +201,7 @@ export class Reader {
 			this.rendition.themes.fontSize(fontSize + "%");
 			this.sidebar.container.panels.find(panel => panel.getId() === "btn-c")?.panel.updateFontSize(fontSize);
 			this.emit("uifontsizechanged", { fontSize: fontSize });
+			this.emit("updatehighlightposition"); // update highlight position for search results
 		});
 
 		this.on("playspeech", () => {

@@ -9,6 +9,7 @@ export class SearchPanel extends UIPanel {
 		const strings = reader.strings;
 
 		let searchQuery = undefined;
+		this._searchResults = [];
 		const search = new UIInput("search").setId("nav-q");
 		search.dom.placeholder = strings.get("sidebar/search/placeholder");
 		search.dom.onsearch = () => {
@@ -102,6 +103,21 @@ export class SearchPanel extends UIPanel {
 		this.reader.on("nextsearchresult", () => {
 			this.selectPrevNextItem("next");
 		});
+
+		this.reader.on("updatehighlightposition", () => {
+			this.removeHighlights();
+			this.addHighlights();
+		});
+	}
+
+	addHighlights() {
+		if (this._searchResults.length > 0) {
+			this._searchResults.forEach(result => {
+				if (result.cfi) {
+					this.reader.rendition.annotations.add('highlight', result.cfi, {}, undefined, "search-highlight");
+				}
+			});
+		}
 	}
 
 	removeHighlights() {
@@ -145,14 +161,12 @@ export class SearchPanel extends UIPanel {
 				item.unload();
 			}
 		}
+
+		this._searchResults = allResults; // store the search results for highlight
 		
 		// Add ePub.js annotation highlights for matched keywords in the entire book
 		if (q && typeof this.reader.rendition !== "undefined" && typeof this.reader.rendition.annotations !== "undefined") {
-			allResults.forEach(result => {
-				if (result.cfi) {
-					this.reader.rendition.annotations.add('highlight', result.cfi, {}, undefined, "search-highlight");
-				}
-			});
+			this.addHighlights();
 		}
 		return await Promise.resolve(allResults);
 	}
