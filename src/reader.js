@@ -141,6 +141,20 @@ export class Reader {
 			if (this.book.package.metadata.direction === "rtl") {
 				this.rendition.next();
 			} else {
+				const isScrolled = this.settings.flow === "scrolled";
+				if (isScrolled) {
+					const location = this.rendition.currentLocation();
+					const spine = this.book.spine;
+					const currentHref = location && location.start && location.start.href;
+					if (spine && currentHref) {
+						const currentSection = spine.get(currentHref);
+						const prevSection = currentSection && currentSection.prev && currentSection.prev();
+						if (prevSection) {
+							this.rendition.display(prevSection.href);
+							return;
+						}
+					}
+				}
 				this.rendition.prev();
 			}
 		});
@@ -149,6 +163,20 @@ export class Reader {
 			if (this.book.package.metadata.direction === "rtl") {
 				this.rendition.prev();
 			} else {
+				const isScrolled = this.settings.flow === "scrolled";
+				if (isScrolled) {
+					const location = this.rendition.currentLocation();
+					const spine = this.book.spine;
+					const currentHref = location && location.start && location.start.href;
+					if (spine && currentHref) {
+						const currentSection = spine.get(currentHref);
+						const nextSection = currentSection && currentSection.next && currentSection.next();
+						if (nextSection) {
+							this.rendition.display(nextSection.href);
+							return;
+						}
+					}
+				}
 				this.rendition.next();
 			}
 		});
