@@ -152,7 +152,8 @@ export class Content {
 				if (currentNavItem) {
 					chapterName = currentNavItem.label;
 				} else {
-					chapterName = reader.settings.sectionId;
+					// chapterName = reader.settings.sectionId;
+					chapterName = " ";
 				}
 			}
 			chapterSpan.setTextContent(chapterName);
