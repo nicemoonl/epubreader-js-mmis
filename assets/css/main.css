@@ -325,6 +325,10 @@ only screen and (min-width: 1024px) and (max-width: 1366px) and (orientation: la
 	cursor: pointer;
 	display: flex;
 	align-items: center;
+	user-select: none;
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
 }
 
 #progress-container.hidden {

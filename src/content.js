@@ -72,6 +72,17 @@ export class Content {
 		let isDragging = false;
 		let currentProgress = 0;
 		let intervalId = null;
+
+		const updateProgressUI = (e) => {
+			const rect = progressBar.dom.getBoundingClientRect();
+			// Handle both mouse and touch events
+			const clientX = e.clientX || e.pageX || (e.touches && e.touches[0] && e.touches[0].clientX);
+			const x = Math.max(0, Math.min(clientX - rect.left, rect.width));
+			currentProgress = x / rect.width;
+			progressHandle.dom.style.left = `${currentProgress * 100}%`;
+			progressPercentageSpan.setTextContent(`${Math.round(currentProgress * 100)} %`);
+		};
+
 		const _progressUpdate = () => {
 			if (reader.book) {
 				const locations = reader.book.locations;
@@ -81,67 +92,90 @@ export class Content {
 				}
 			}
 		};
+
 		const _startDragging = () => {
 			_progressUpdate();
 			intervalId = setInterval(() => {
 				_progressUpdate();
 			}, 500);
 		};
+
 		const _stopDragging = () => {
 			_progressUpdate();
 			clearInterval(intervalId);
 			intervalId = null;
 		};
 
-		progressContainer.dom.onmousedown = (e) => {
-			isDragging = true;
-			updateProgressUI(e);
-			_startDragging();
-		};
-
-		// Add touch support for mobile devices
-		progressContainer.dom.ontouchstart = (e) => {
-			isDragging = true;
-			updateProgressUI(e.touches[0]);
-			_startDragging();
-		};
-
-		document.addEventListener('mousemove', (e) => {
-			if (isDragging) {
+		// Prefer Pointer Events so we keep receiving move/up even when the pointer
+		// moves over the iframe content after a page change.
+		if (window.PointerEvent) {
+			progressContainer.dom.addEventListener("pointerdown", (e) => {
+				isDragging = true;
+				progressContainer.dom.setPointerCapture(e.pointerId);
 				updateProgressUI(e);
-			}
-		});
+				_startDragging();
+			});
 
-		document.addEventListener('touchmove', (e) => {
-			if (isDragging) {
-				e.preventDefault(); // Prevent scrolling while dragging
+			progressContainer.dom.addEventListener("pointermove", (e) => {
+				if (!isDragging) return;
+				updateProgressUI(e);
+			});
+
+			const pointerUpHandler = (e) => {
+				if (!isDragging) return;
+				isDragging = false;
+				try {
+					progressContainer.dom.releasePointerCapture(e.pointerId);
+				} catch (err) {
+					// ignore if capture was already released
+				}
+				_stopDragging();
+			};
+
+			progressContainer.dom.addEventListener("pointerup", pointerUpHandler);
+			progressContainer.dom.addEventListener("pointercancel", pointerUpHandler);
+		} else {
+			// Fallback for older browsers: mouse + touch events
+			progressContainer.dom.onmousedown = (e) => {
+				isDragging = true;
+				updateProgressUI(e);
+				_startDragging();
+			};
+
+			// Add touch support for mobile devices
+			progressContainer.dom.ontouchstart = (e) => {
+				isDragging = true;
 				updateProgressUI(e.touches[0]);
-			}
-		});
+				_startDragging();
+			};
 
-		document.addEventListener('mouseup', () => {
-			if (isDragging) {
-				isDragging = false;
-				_stopDragging();
-			}
-		});
+			document.addEventListener("mousemove", (e) => {
+				if (isDragging) {
+					updateProgressUI(e);
+				}
+			});
 
-		document.addEventListener('touchend', () => {
-			if (isDragging) {
-				isDragging = false;
-				_stopDragging();
-			}
-		});
+			document.addEventListener("touchmove", (e) => {
+				if (isDragging) {
+					e.preventDefault(); // Prevent scrolling while dragging
+					updateProgressUI(e.touches[0]);
+				}
+			});
 
-		const updateProgressUI = (e) => {
-			const rect = progressBar.dom.getBoundingClientRect();
-			// Handle both mouse and touch events
-			const clientX = e.clientX || e.pageX || e.touches[0].clientX;
-			const x = Math.max(0, Math.min(clientX - rect.left, rect.width));
-			currentProgress = x / rect.width;
-			progressHandle.dom.style.left = `${currentProgress * 100}%`;
-			progressPercentageSpan.setTextContent(`${Math.round(currentProgress * 100)} %`);
-		};
+			document.addEventListener("mouseup", () => {
+				if (isDragging) {
+					isDragging = false;
+					_stopDragging();
+				}
+			});
+
+			document.addEventListener("touchend", () => {
+				if (isDragging) {
+					isDragging = false;
+					_stopDragging();
+				}
+			});
+		}
 
 		// Function to update current chapter name
 		const updateChapterName = () => {
