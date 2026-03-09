@@ -196,11 +196,11 @@ export class Content {
 
 		reader.on("bookloaded", () => {
 			loader.dom.style.display = "none";
-			prev.removeClass("disabled");
-			next.removeClass("disabled");
-			currentChapter.removeClass("hidden");
-			prev.dom.tabIndex = 0;
-			next.dom.tabIndex = 0;
+			currentChapter && currentChapter.removeClass("hidden");
+			prev && prev.removeClass("disabled");
+			next && next.removeClass("disabled");
+			prev && (prev.dom.tabIndex = 0);
+			next && (next.dom.tabIndex = 0);
 		});
 
 		reader.on("navigation", () => {
