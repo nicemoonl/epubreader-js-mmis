@@ -143,6 +143,12 @@ export class SearchPanel extends UIPanel {
 		const book = this.reader.book;
 		const maxResults = this.reader.settings.maxsearchresults || 100;
 		const allResults = [];
+
+		q = q?.trim() || "";
+		if (q == "." || q == "") {
+			// block search for single dot (.)
+			return await Promise.resolve(allResults);
+		}
 		
 		// Search spine items sequentially and stop once it reaches the maximum number of results
 		for (const item of book.spine.spineItems) {
