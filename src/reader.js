@@ -364,10 +364,10 @@ export class Reader {
 		// default settings
 		this.settings = {
 			bookPath: bookPath,
-			arrows: this.isMobile ? "none" : "content", // none | content | toolbar
-			// arrows: "content", // none | content | toolbar
-			manager: this.isMobile ? "continuous" : "default",
-			// manager: "default",
+			// arrows: this.isMobile ? "none" : "content", // none | content | toolbar
+			arrows: "content", // none | content | toolbar
+			// manager: this.isMobile ? "continuous" : "default",
+			manager: "default",
 			restore: true,
 			history: true,
 			openbook: this.storage.indexedDB ? true : false,
@@ -375,7 +375,8 @@ export class Reader {
 			sectionId: undefined,
 			bookmarks: [],   // array | false
 			annotations: [], // array | false
-			flow: this.isMobile ? "scrolled" : "paginated", // paginated | scrolled
+			// flow: this.isMobile ? "scrolled" : "paginated", // paginated | scrolled
+			flow: "paginated", // paginated | scrolled
 			spread: {
 				mod: "auto", // auto | none
 				min: 800
