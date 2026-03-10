@@ -226,6 +226,31 @@ export class Content {
 					});
 				});
 			}
+
+			// Scroll to access next / previous page in paginated mode.
+			// Attach wheel listeners inside each rendition iframe so scrolling
+			// over the book content triggers prev/next.
+			if (reader.rendition) {
+				reader.rendition.on("rendered", (section, view) => {
+					const contents = view && view.contents;
+					const doc = contents && contents.document;
+					if (!doc || doc.__readerWheelBound) return;
+					doc.__readerWheelBound = true;
+
+					const onWheel = (e) => {
+						if (reader.settings.flow !== "paginated") return;
+						if (e.deltaY > 0) {
+							reader.emit("next");
+							e.preventDefault();
+						} else if (e.deltaY < 0) {
+							reader.emit("prev");
+							e.preventDefault();
+						}
+					};
+
+					doc.addEventListener("wheel", onWheel, { passive: false });
+				});
+			}
 		});
 
 		reader.on("bookloaded", () => {
