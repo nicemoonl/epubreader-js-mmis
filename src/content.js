@@ -387,5 +387,9 @@ export class Content {
 		reader.on("viewercleanup", () => {
 			viewer.clear();
 		});
+
+		reader.on("toggleViewerVisibility", (value) => {
+			viewer.dom.style.opacity = value ? "1" : "0";
+		});
 	}
 }

@@ -142,7 +142,9 @@ export class Reader {
 				this.rendition.next();
 			} else {
 				const isScrolled = this.settings.flow === "scrolled";
-				if (isScrolled) {
+				if (isScrolled) { // Scrolled mode
+					/* special handling as the prev button is for going to previous
+					*  chapter in scrolled mode */
 					const location = this.rendition.currentLocation();
 					const spine = this.book.spine;
 					const currentHref = location && location.start && location.start.href;
@@ -155,7 +157,70 @@ export class Reader {
 						}
 					}
 				}
-				this.rendition.prev();
+				else { // Paginated mode
+					/* special handling to solve the issue that when going to the previous page
+					*  from the first page of a chapter, it will not jump to the last page of the
+					*  previous chapter in paginated mode when the zoom is less than 100% */
+					if (this.settings?.styles?.fontSize < 100) { // if zoom is less than 100%
+						const location = this.rendition.currentLocation && this.rendition.currentLocation();
+						const isAtStartOfSection =
+							location &&
+							location.start &&
+							location.start.displayed &&
+							location.start.displayed.page === 1;
+						if (
+							isAtStartOfSection &&
+							this.book.spine
+						) {
+							const currentHref = location.start && location.start.href;
+							const spine = this.book.spine;
+							const currentSection = currentHref && spine.get(currentHref);
+							if (currentSection && currentSection.prev && currentSection.prev()) {
+								const prevSection = currentSection.prev();
+								if (prevSection) {
+									// Go to the last page of the previous chapter
+									this.emit("toggleViewerVisibility", false);
+									this.rendition.display(prevSection.href).then(() => {
+										// Jump directly to a CFI near the end of the rendered section
+										// (use the iframe DOM so the CFI resolves to a text node, avoiding Range IndexSizeError)
+										try {
+											const contentsList = this.rendition.getContents && this.rendition.getContents();
+											const contents = contentsList && contentsList[0];
+											const doc = contents && contents.document;
+											const body = doc && doc.body;
+											if (!contents || !doc || !body || !doc.createRange || !contents.cfiFromRange) return;
+	
+											const walker = doc.createTreeWalker(body, NodeFilter.SHOW_TEXT, null, false);
+											let lastText = null;
+											while (walker.nextNode()) {
+												const n = walker.currentNode;
+												if (n && n.nodeValue && n.nodeValue.trim().length) lastText = n;
+											}
+											if (!lastText) return;
+	
+											const len = lastText.nodeValue.length;
+											const start = Math.max(0, len - 1);
+											const range = doc.createRange();
+											range.setStart(lastText, start);
+											range.setEnd(lastText, len);
+	
+											const endCfi = contents.cfiFromRange(range);
+											if (endCfi) this.rendition.display(endCfi).finally(() => {
+												this.emit("toggleViewerVisibility", true);
+											});
+										} catch (e) {
+											// fallback: just stay at the start of prevSection
+											this.emit("toggleViewerVisibility", true);
+										}
+									});
+									return;
+								}
+							}
+						}
+					}
+				}
+				this.rendition.prev(); // fallback to use default behavior
+				this.emit("toggleViewerVisibility", true);
 			}
 		});
 
