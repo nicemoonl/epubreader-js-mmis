@@ -13,6 +13,11 @@ export class SearchPanel extends UIPanel {
 		const search = new UIInput("search").setId("nav-q");
 		search.dom.placeholder = strings.get("sidebar/search/placeholder");
 		search.dom.onsearch = () => {
+			if (this._isSearching) {
+				return;
+			}
+			this.reader.emit("issearching", true);
+
 			this.removeHighlights();
 			resultCount.dom.style.display = "none";
 
@@ -23,6 +28,7 @@ export class SearchPanel extends UIPanel {
 				this.items.listItems = [];
 				this.searchQuery = undefined;
 				this.reader.emit("toolbarsearchactive", [false, 0]);
+				this.reader.emit("issearching", false);
 			} else if (searchQuery !== value) {
 				this.items.clear();
 				this.items.listItems = [];
@@ -41,11 +47,14 @@ export class SearchPanel extends UIPanel {
 					}
 
 					this.reader.emit("toolbarsearchactive", [true, results.length]);
+				}).finally(() => {
+					this.reader.emit("issearching", false);
 				});
 			} else {
 				// if the keyword is the same as the previous one, keep showing the result count
 				resultCount.dom.style.display = "block";
 				this.reader.emit("updatehighlightposition"); // update highlight position for search results
+				this.reader.emit("issearching", false);
 			}
 			searchQuery = value;
 		};
@@ -109,13 +118,26 @@ export class SearchPanel extends UIPanel {
 			this.removeHighlights();
 			this.addHighlights();
 		});
+
+		this.reader.on("issearching", (value) => {
+			this._isSearching = value;
+			if (value) {
+				container.addClass("is-searching");
+			} else {
+				container.removeClass("is-searching");
+			}
+		});
 	}
 
 	addHighlights() {
 		if (this._searchResults.length > 0) {
 			this._searchResults.forEach(result => {
 				if (result.cfi) {
-					this.reader.rendition.annotations.add('highlight', result.cfi, {}, undefined, "search-highlight");
+					if (this._selectedSearchResult && this._selectedSearchResult.cfi === result.cfi) {
+						this.reader.rendition.annotations.add('highlight', result.cfi, {}, undefined, "search-highlight-active", { "fill": "#f06f00", "fill-opacity": "0.45" });
+					} else {
+						this.reader.rendition.annotations.add('highlight', result.cfi, {}, undefined, "search-highlight");
+					}
 				}
 			});
 		}
@@ -124,7 +146,7 @@ export class SearchPanel extends UIPanel {
 	removeHighlights() {
 		const toRemove = [];
 		Object.values(this.reader.rendition.annotations._annotations || {}).forEach(annotation => {
-			if (annotation.className === 'search-highlight') {
+			if (annotation.className === 'search-highlight' || annotation.className === 'search-highlight-active') {
 				toRemove.push({ cfiRange: annotation.cfiRange, type: annotation.type });
 			}
 		});
@@ -141,7 +163,7 @@ export class SearchPanel extends UIPanel {
 	async doSearch(q) {
 
 		const book = this.reader.book;
-		const maxResults = this.reader.settings.maxsearchresults || 100;
+		const maxResults = this.reader.settings.maxsearchresults || 100000;
 		const allResults = [];
 
 		q = q?.trim() || "";
@@ -193,7 +215,16 @@ export class SearchPanel extends UIPanel {
 			
 			item.select();
 			this.selector = item;
-			this.reader.rendition.display(data.cfi);
+			this._selectedSearchResult = data;
+			this.reader.emit("toggleViewerVisibility", false);
+			this.reader.rendition.display(data.cfi).then(() => {
+				setTimeout(() => {
+					this.reader.rendition.display(data.cfi).finally(() => {
+						this.reader.emit("toggleViewerVisibility", true);
+						this.reader.emit("updatehighlightposition");
+					});
+				}, 1000);
+			});
 
 			// close sidebar for mobile
 			if (this.reader.isMobile) {

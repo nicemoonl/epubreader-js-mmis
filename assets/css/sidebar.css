@@ -25,10 +25,30 @@
 }
 
 #sidebar .list-container {
+	position: relative;
 	flex: 1 1 0;
 	margin-top: 10px;
 	padding: 5px 0;
 	overflow: auto;
+}
+
+@keyframes loading-dots {
+	0%  {box-shadow: 20px 0 #0008, -20px 0 #0002;background: #0008 }
+	33% {box-shadow: 20px 0 #0008, -20px 0 #0002;background: #0002}
+	66% {box-shadow: 20px 0 #0002,-20px 0 #0008; background: #0002}
+	100%{box-shadow: 20px 0 #0002,-20px 0 #0008; background: #0008 }
+}
+
+#sidebar .list-container.is-searching::after {
+	content: '';
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	width: 15px;
+	aspect-ratio: 1;
+	border-radius: 50%;
+	animation: loading-dots 1s infinite linear alternate;
 }
 
 /* sidebar tabs */
@@ -304,7 +324,8 @@
 
 #search.panel li #item-box .highlight {
 	flex: 0 0 auto;
-	color: #1A73E8;
+	color: #1b66c9;
+	background-color: #1a73e821;
 }
 
 #search.panel #search-input-box {
