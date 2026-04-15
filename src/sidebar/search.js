@@ -26,6 +26,7 @@ export class SearchPanel extends UIPanel {
 			if (value.length === 0) {
 				this.items.clear();
 				this.items.listItems = [];
+				this._searchResults = [];
 				this.searchQuery = undefined;
 				this.reader.emit("toolbarsearchactive", [false, 0]);
 				this.reader.emit("issearching", false);
