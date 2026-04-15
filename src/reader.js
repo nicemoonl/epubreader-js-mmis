@@ -84,6 +84,34 @@ export class Reader {
 		// set font size
 		this.rendition.themes.fontSize(this.settings.styles.fontSize + "%");
 
+		this.rendition.themes.registerRules("app", {
+			body: {
+				"word-break": "break-word",
+			}
+			,
+			"img, svg, figure": {
+				"break-inside": "avoid",
+				"page-break-inside": "avoid",
+				"-webkit-column-break-inside": "avoid",
+				"max-width": "100%",
+				"height": "auto"
+			},
+			"[epub\\:type~='cover'], [type~='cover'], .cover, [id*='cover'], [class*='cover']": {
+				"break-inside": "avoid",
+				"page-break-inside": "avoid",
+				"-webkit-column-break-inside": "avoid"
+			},
+			"[epub\\:type~='cover'] img, [type~='cover'] img, .cover img, [id*='cover'] img, [class*='cover'] img": {
+				"display": "block",
+				"max-width": "100%",
+				"max-height": "100vh",
+				"margin-left": "auto",
+				"margin-right": "auto",
+				"object-fit": "contain"
+			}
+		});
+		this.rendition.themes.select("app");
+
 		const cfi = this.settings.previousLocationCfi;
 		if (cfi) {
 			this.displayed = this.rendition.display(cfi);
@@ -295,6 +323,7 @@ export class Reader {
 			this.sidebar.container.panels.find(panel => panel.getId() === "btn-c")?.panel.updateFontSize(fontSize);
 			this.emit("uifontsizechanged", { fontSize: fontSize });
 			this.emit("updatehighlightposition"); // update highlight position for search results
+			this.emit("updateProgressPercentage"); // update progress percentage
 		});
 
 		this.on("playspeech", () => {

@@ -109,31 +109,85 @@ export class Content {
 		// Prefer Pointer Events so we keep receiving move/up even when the pointer
 		// moves over the iframe content after a page change.
 		if (window.PointerEvent) {
-			progressContainer.dom.addEventListener("pointerdown", (e) => {
-				isDragging = true;
-				progressContainer.dom.setPointerCapture(e.pointerId);
-				updateProgressUI(e);
-				_startDragging();
-			});
+			let dragPointerId = null;
 
-			progressContainer.dom.addEventListener("pointermove", (e) => {
-				if (!isDragging) return;
-				updateProgressUI(e);
-			});
+			const removeDocumentPointerListeners = () => {
+				document.removeEventListener("pointermove", onDocumentPointerMove, true);
+				document.removeEventListener("pointerup", onDocumentPointerUp, true);
+				document.removeEventListener("pointercancel", onDocumentPointerUp, true);
+				document.removeEventListener("contextmenu", onDocumentContextMenuWhileDragging, true);
+			};
 
-			const pointerUpHandler = (e) => {
+			const endPointerDrag = (e, force) => {
 				if (!isDragging) return;
+				if (
+					!force &&
+					e &&
+					e.pointerId !== undefined &&
+					dragPointerId !== null &&
+					e.pointerId !== dragPointerId
+				) {
+					return;
+				}
+				const pid = dragPointerId;
 				isDragging = false;
+				dragPointerId = null;
+				removeDocumentPointerListeners();
 				try {
-					progressContainer.dom.releasePointerCapture(e.pointerId);
+					if (pid != null) {
+						progressContainer.dom.releasePointerCapture(pid);
+					}
 				} catch (err) {
 					// ignore if capture was already released
 				}
 				_stopDragging();
 			};
 
-			progressContainer.dom.addEventListener("pointerup", pointerUpHandler);
-			progressContainer.dom.addEventListener("pointercancel", pointerUpHandler);
+			const onDocumentPointerMove = (e) => {
+				if (!isDragging || e.pointerId !== dragPointerId) return;
+				updateProgressUI(e);
+			};
+
+			const onDocumentPointerUp = (e) => {
+				endPointerDrag(e, false);
+			};
+
+			// Opening the context menu (e.g. right-click) while dragging can prevent
+			// pointerup/pointercancel from reaching the progress bar; end the drag explicitly.
+			const onDocumentContextMenuWhileDragging = () => {
+				endPointerDrag(null, true);
+			};
+
+			const addDocumentPointerListeners = () => {
+				document.addEventListener("pointermove", onDocumentPointerMove, true);
+				document.addEventListener("pointerup", onDocumentPointerUp, true);
+				document.addEventListener("pointercancel", onDocumentPointerUp, true);
+				document.addEventListener("contextmenu", onDocumentContextMenuWhileDragging, true);
+			};
+
+			progressContainer.dom.addEventListener("pointerdown", (e) => {
+				if (e.button !== 0) return;
+				isDragging = true;
+				dragPointerId = e.pointerId;
+				progressContainer.dom.setPointerCapture(e.pointerId);
+				addDocumentPointerListeners();
+				updateProgressUI(e);
+				_startDragging();
+			});
+
+			progressContainer.dom.addEventListener("pointermove", (e) => {
+				if (!isDragging || e.pointerId !== dragPointerId) return;
+				updateProgressUI(e);
+			});
+
+			progressContainer.dom.addEventListener("pointerup", onDocumentPointerUp);
+			progressContainer.dom.addEventListener("pointercancel", onDocumentPointerUp);
+
+			progressContainer.dom.addEventListener("lostpointercapture", (e) => {
+				if (isDragging && e.pointerId === dragPointerId) {
+					endPointerDrag(e, true);
+				}
+			});
 		} else {
 			// Fallback for older browsers: mouse + touch events
 			progressContainer.dom.onmousedown = (e) => {
@@ -239,16 +293,16 @@ export class Content {
 
 					const onWheel = (e) => {
 						if (reader.settings.flow !== "paginated") return;
+						e.stopPropagation();
+						e.preventDefault();
 						if (e.deltaY > 0) {
 							reader.emit("next");
-							e.preventDefault();
 						} else if (e.deltaY < 0) {
 							reader.emit("prev");
-							e.preventDefault();
 						}
 					};
 
-					doc.addEventListener("wheel", onWheel, { passive: false });
+					doc.addEventListener("wheel", onWheel, { passive: false, capture: true });
 				});
 			}
 		});
@@ -344,23 +398,12 @@ export class Content {
 							}
 						}
 					}
+
+					// Update progress percentage
+					reader.emit("updateProgressPercentage", location);
 				}, 100);
 			}
 
-			// Update progress bar position
-			if (reader.book.locations.length()) {
-				if (location.atStart) {
-					progressHandle.dom.style.left = "0";
-					progressPercentageSpan.setTextContent( "0 %");
-				} else if (location.atEnd) {
-					progressHandle.dom.style.left = "100%";
-					progressPercentageSpan.setTextContent( "100 %");
-				} else {
-					const progress = reader.book.locations.percentageFromCfi(location.start.cfi);
-					progressHandle.dom.style.left = `${progress * 100}%`;
-					progressPercentageSpan.setTextContent(`${Math.floor(progress * 100)} %`);
-				}
-			}
 
 			// Update current chapter name
 			updateChapterName();
@@ -390,6 +433,24 @@ export class Content {
 
 		reader.on("toggleViewerVisibility", (value) => {
 			viewer.dom.style.opacity = value ? "1" : "0";
+		});
+
+		reader.on("updateProgressPercentage", (location) => {
+			// Update progress bar position
+			if (reader.book.locations.length()) {
+				if (location?.atStart) {
+					progressHandle.dom.style.left = "0";
+					progressPercentageSpan.setTextContent( "0 %");
+				} else if (location?.atEnd) {
+					progressHandle.dom.style.left = "100%";
+					progressPercentageSpan.setTextContent( "100 %");
+				} else {
+					const currentLocation = reader.rendition.currentLocation();
+					const progress = currentLocation?.start?.percentage;
+					progressHandle.dom.style.left = `${progress * 100}%`;
+					progressPercentageSpan.setTextContent(`${Math.floor(progress * 100)} %`);
+				}
+			}
 		});
 	}
 }
