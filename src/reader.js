@@ -614,15 +614,6 @@ export class Reader {
 			case "ArrowRight":
 				this.emit("next");
 				break;
-			case "p":
-			case "P":
-				// Play/pause speech
-				this.toggleSpeech();
-				break;
-			case "o":
-			case "O":
-				this.stopSpeech();
-				break;
 		}
 	}
 
