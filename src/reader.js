@@ -309,7 +309,7 @@ export class Reader {
 			}
 		});
 
-		this.on("styleschanged", (value) => {
+		this.on("styleschanged", async (value) => {
 			let fontSize = Math.round(parseInt(value.fontSize) / 10) * 10; // round to the nearest 10
 			const max = readerConfig.fontsize.max;
 			const min = readerConfig.fontsize.min;
@@ -320,8 +320,15 @@ export class Reader {
 			}
 			this.settings.styles.fontSize = fontSize;
 			this.rendition.themes.fontSize(fontSize + "%");
-			this.sidebar.container.panels.find(panel => panel.getId() === "btn-c")?.panel.updateFontSize(fontSize);
 			this.emit("uifontsizechanged", { fontSize: fontSize });
+			const isPaginated = this.settings.flow === "paginated";
+			if (isPaginated) { // Paginated mode
+				// force rerender the viewer to update the font size
+				const cfi = this.rendition.currentLocation().start.cfi;
+				this.rendition.clear();
+				await this.rendition.display(cfi);
+			}
+			this.sidebar.container.panels.find(panel => panel.getId() === "btn-c")?.panel.updateFontSize(fontSize);
 			this.emit("updatehighlightposition"); // update highlight position for search results
 			this.emit("updateProgressPercentage"); // update progress percentage
 		});
