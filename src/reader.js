@@ -319,18 +319,18 @@ export class Reader {
 				fontSize = min;
 			}
 			this.settings.styles.fontSize = fontSize;
+			const currentLocation = this.rendition.currentLocation(); // get the current location before fontsize change
 			this.rendition.themes.fontSize(fontSize + "%");
 			this.emit("uifontsizechanged", { fontSize: fontSize });
 			const isPaginated = this.settings.flow === "paginated";
 			if (isPaginated) { // Paginated mode
 				// force rerender the viewer to update the font size
-				const cfi = this.rendition.currentLocation().start.cfi;
+				const cfi = currentLocation?.start?.cfi || currentLocation?.end?.cfi;
 				this.rendition.clear();
 				await this.rendition.display(cfi);
 			}
 			this.sidebar.container.panels.find(panel => panel.getId() === "btn-c")?.panel.updateFontSize(fontSize);
 			this.emit("updatehighlightposition"); // update highlight position for search results
-			this.emit("updateProgressPercentage"); // update progress percentage
 		});
 
 		this.on("playspeech", () => {

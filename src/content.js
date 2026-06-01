@@ -353,7 +353,8 @@ export class Content {
 							prev.removeClass("disabled");
 							prev.dom.tabIndex = 0;
 						}
-						if (location.atEnd) {
+						const currentLocation = reader.rendition.currentLocation();
+						if (currentLocation?.start?.percentage == 1 || currentLocation?.end?.displayed?.page == currentLocation?.end?.displayed?.total) {
 							next.addClass("disabled");
 							next.dom.tabIndex = -1;
 						} else {
@@ -438,14 +439,14 @@ export class Content {
 		reader.on("updateProgressPercentage", (location) => {
 			// Update progress bar position
 			if (reader.book.locations.length()) {
+				const currentLocation = reader.rendition.currentLocation();
 				if (location?.atStart) {
 					progressHandle.dom.style.left = "0";
 					progressPercentageSpan.setTextContent( "0 %");
-				} else if (location?.atEnd) {
+				} else if (currentLocation?.start?.percentage == 1 || currentLocation?.end?.displayed?.page == currentLocation?.end?.displayed?.total) {
 					progressHandle.dom.style.left = "100%";
 					progressPercentageSpan.setTextContent( "100 %");
 				} else {
-					const currentLocation = reader.rendition.currentLocation();
 					const progress = currentLocation?.start?.percentage;
 					progressHandle.dom.style.left = `${progress * 100}%`;
 					progressPercentageSpan.setTextContent(`${Math.floor(progress * 100)} %`);
