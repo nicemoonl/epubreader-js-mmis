@@ -346,15 +346,15 @@ export class Content {
 			if (settings.arrows === "content") {
 				setTimeout(() => {
 					if (reader.settings.flow === "paginated") {
-						if (location.atStart) {
+						const currentLocation = reader.rendition.currentLocation();
+						if (location.atStart || currentLocation?.atStart) {
 							prev.addClass("disabled");
 							prev.dom.tabIndex = -1;
 						} else {
 							prev.removeClass("disabled");
 							prev.dom.tabIndex = 0;
 						}
-						const currentLocation = reader.rendition.currentLocation();
-						if (currentLocation?.start?.percentage == 1 || currentLocation?.end?.displayed?.page == currentLocation?.end?.displayed?.total) {
+						if (location.atEnd && (currentLocation?.start?.percentage == 1 || (currentLocation?.end?.percentage == 1 && currentLocation?.end?.displayed?.page == currentLocation?.end?.displayed?.total))) {
 							next.addClass("disabled");
 							next.dom.tabIndex = -1;
 						} else {
@@ -440,14 +440,14 @@ export class Content {
 			// Update progress bar position
 			if (reader.book.locations.length()) {
 				const currentLocation = reader.rendition.currentLocation();
-				if (location?.atStart) {
+				if (location?.atStart || currentLocation?.atStart) {
 					progressHandle.dom.style.left = "0";
 					progressPercentageSpan.setTextContent( "0 %");
-				} else if (currentLocation?.start?.percentage == 1 || currentLocation?.end?.displayed?.page == currentLocation?.end?.displayed?.total) {
+				} else if (location?.atEnd && (currentLocation?.start?.percentage == 1 || (currentLocation?.end?.percentage == 1 && currentLocation?.end?.displayed?.page == currentLocation?.end?.displayed?.total))) {
 					progressHandle.dom.style.left = "100%";
 					progressPercentageSpan.setTextContent( "100 %");
 				} else {
-					const progress = currentLocation?.start?.percentage;
+					const progress = Math.max(0.01, Math.min(0.99, currentLocation?.start?.percentage)); // clamp progress between 1% and 99%
 					progressHandle.dom.style.left = `${progress * 100}%`;
 					progressPercentageSpan.setTextContent(`${Math.floor(progress * 100)} %`);
 				}
